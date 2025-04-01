@@ -137,7 +137,7 @@ popupmenu proc
 	call	loadwloc
 popmn9:	pop	ds
 	mov	ss:retval,ax		; ##16
-	ret
+	VZ_RET
 popupmenu endp
 
 endwindow proc
@@ -146,7 +146,7 @@ endwindow proc
 	call	popwindow
 	pop	ax
 	popf
-	ret
+	VZ_RET
 endwindow endp
 
 ;--- System menu ---
@@ -168,7 +168,7 @@ _if e
 	mov	si,di
 _endif
 	call	popupmenu
-sysmnu9:ret
+sysmnu9:VZ_RET
 sysmenu	endp
 
 ;--- Do menu ---
@@ -208,14 +208,14 @@ domn4:	cmp	al,CM_ESC
 domn_esc:
 	mov	ax,INVALID
 	stc
-	ret
+	VZ_RET
 domn_x:	mov	ah,0
 domn_k:	mov	al,ah
 domn_shift:			; ##16
 	mov	ah,cl		;
 	or	ah,80h		;
 	stc
-	ret
+	VZ_RET
 domn_cr:	
 	tst	cl
 	js	domn_x
@@ -287,14 +287,14 @@ _endif
 domnc5:	mov	[bx].mn_sel,al
 	mov	ah,SEL_KEY
 domn9:	clc
-	ret
+	VZ_RET
 do_menu	endp
 
 extfunc proc
 	pushm	<bx,cx,dx,ds>
 	call	di
 	popm	<ds,dx,cx,bx>
-	ret
+	VZ_RET
 extfunc endp
 
 ;--- Check 1st key ---
@@ -310,9 +310,9 @@ chkkey	proc
 	cmp	al,5Fh
 	ja	chkkey
 	cmp	al,ah
-	ret
+	VZ_RET
 chkky_x:clz
-	ret
+	VZ_RET
 chkkey	endp
 
 ;--- Draw menu ---
@@ -372,7 +372,7 @@ _endif
 	inc	cl
 	cmp	dh,mn_h
 	jmpl	b,drmn1
-	ret
+	VZ_RET
 drawmenu endp
 
 dritm1:
@@ -398,7 +398,7 @@ _endif
 	call	putc
 dritm7:	call	itematr
 dritm8:	call	puts_t
-dritm9:	ret
+dritm9:	VZ_RET
 drawitem endp
 
 ;--- Set item attr ---
@@ -411,7 +411,7 @@ _if e
 	mov	al,ATR_WSEL
 _endif
 	call	setatr
-	ret
+	VZ_RET
 itematr	endp
 
 ;--- Draw border ---
@@ -434,7 +434,7 @@ _ifn z
 	call	putspc
   _endif
 _endif
-	ret
+	VZ_RET
 drawborder endp
 
 redraw_border	proc
@@ -444,7 +444,7 @@ redraw_border	proc
 		mov	si,titlep
 		call	drawborder
 		popm	<es,ds>
-		ret
+		VZ_RET
 redraw_border	endp
 
 ;--- Set message ptr ---
@@ -465,7 +465,7 @@ _repeat
 _until z
 	mov	si,di
 	popm	<es,di,dx,cx>
-	ret
+	VZ_RET
 setmsgp	endp
 
 ;--- Adjust window position ---
@@ -526,7 +526,7 @@ _endif
 	mov	refloc,dx
 	call	pushwindow
 	pop	bx
-	ret
+	VZ_RET
 
 adjwin1:
 	push	ax
@@ -563,7 +563,7 @@ _if a
 _endif
 	inc	dl
 	pop	ax
-	ret	
+	VZ_RET	
 adjwin	endp
 
 ;****************************
@@ -614,7 +614,7 @@ _endif
 	pop	drawfunc
 	call	loadwloc
 	popm	<ds,dx>
-	ret
+	VZ_RET
 windgets endp
 
 	endes
@@ -671,7 +671,7 @@ drbar8:	mov	[bx].mb_c,cl
 	popm	<dx,cx>
 	call	setwindow
 	pop	ds
-	ret
+	VZ_RET
 drawmbar endp
 
 ;--- Do menu bar ---
@@ -714,7 +714,7 @@ dobar2:
 	mov	al,cl
 	clc
 dobar9:	pop	ds
-	ret
+	VZ_RET
 do_mbar	endp
 
 ;----- Get menu bar key -----
@@ -736,7 +736,7 @@ _loop
 		lodsb
 		mov	dl,al
 		pop	ds
-		ret
+		VZ_RET
 get_mbar	endp
 
 		endcs
@@ -802,7 +802,7 @@ ENDIF
 	jmp	cmdmnu1
 cmdmnu8:clc
 cmdmnu9:pop	di
-	ret
+	VZ_RET
 cmdmenu	endp
 
 msgpoolp proc
@@ -813,7 +813,7 @@ cmditemp:
 	mov	di,bx
 	add	di,type _menu
 	add	di,ax
-	ret
+	VZ_RET
 msgpoolp endp
 
 ;--- Click Variables ---
@@ -822,7 +822,7 @@ msgpoolp endp
 click_var proc
 IFDEF NEWEXPR
 	mov	cx,ax
-	and	ch,not MENU_VAR
+	and	ch,not byte ptr MENU_VAR
 ELSE
 	mov	cl,al
 	clr	ch
@@ -855,7 +855,7 @@ _if e
 	call	editloc
 _endif
 	movseg	ds,ss
-clkvar9:ret
+clkvar9:VZ_RET
 click_var endp
 
 	public	windgetval
@@ -872,7 +872,7 @@ windgetval proc
 	call	scannum
 	jnc	getvar9
 getvar8:clr	dx
-getvar9:ret
+getvar9:VZ_RET
 windgetval endp
 
 ;--- Get command message ptr ---
@@ -914,7 +914,7 @@ cmdmp2:
 	jmps	cmdmp8
 cmdmp7:	clr	si
 cmdmp8:	popm	<di,cx>
-	ret
+	VZ_RET
 getcmdmsgp endp
 
 ;--- Command item function ---
@@ -942,11 +942,11 @@ cmdkey2:inc	cx
 	cmp	cl,[bx].mn_c
 	jne	cmdkey1
 	stc
-	ret
+	VZ_RET
 _endif
 	mov	al,cl
 	clc
-	ret
+	VZ_RET
 cmddraw:	
 	tstb	[bx].mn_valwd
 	jz	cmddr2
@@ -985,7 +985,7 @@ cmddr5:
 	call	dispval
 cmddr7:	mov	dl,[bx].mn_wd
 	call	fillspc
-	ret
+	VZ_RET
 cmditem	endp
 
 ;--- Disp value ---
@@ -1018,7 +1018,7 @@ val_cmd:
 val_var:
 IFDEF NEWEXPR
 	mov	cx,ax
-	and	ch,not MENU_VAR
+	and	ch,not byte ptr MENU_VAR
 ELSE
 	mov	cl,al
 	clr	ch
@@ -1040,7 +1040,7 @@ _endif
 valvar1:
 	call	putval
 dspval8:popm	<di,dx,cx,bx>
-	ret
+	VZ_RET
 dispval	endp
 
 	public	putval
@@ -1052,7 +1052,7 @@ putval	proc
 	call	printf
 	pop	ax
 	popm	<si,bx>
-	ret
+	VZ_RET
 putval	endp
 
 ;--- Disp key No. ---
@@ -1082,7 +1082,7 @@ _endif
 	call	putc
 	call	putspc
 	pop	ax
-	ret
+	VZ_RET
 dispkeynum endp
 
 ;--- Disp command key ---
@@ -1110,7 +1110,7 @@ _ifn c
 	call	putc
 _endif
 	pop	di
-	ret
+	VZ_RET
 dispkeycmd endp
 
 ;--- Disp macro key ---
@@ -1125,7 +1125,7 @@ dispkeymac1:
 	lodsw
 	call	dispkeysym
 _endif
-	ret
+	VZ_RET
 dispkeymac endp
 
 ;---- Get item number -----
@@ -1140,7 +1140,7 @@ getitemnum	proc
 	  _endif
 		mov	ah,MCHR_CMD
 	_endif
-		ret
+		VZ_RET
 getitemnum	endp
 
 ;--- Macro menu ---
@@ -1234,21 +1234,21 @@ _else
   _if e
 	mov	readmac,si
 	clc
-	ret
+	VZ_RET
   _endif
 	mov	al,[si]
 _endif
 	mov	ah,MCHR_CALL
 	clc
-	ret
+	VZ_RET
 edtmac_c:
 	clr	si
 macmnu_x:
 	stc
-	ret
+	VZ_RET
 mdlmenu1:
 	call	popupmenu
-	ret
+	VZ_RET
 macromenu endp
 
 ;--- Draw Macro menu ---
@@ -1257,7 +1257,7 @@ drawmac proc
 	tst	ah
 	jz	drmac0
 	stc
-	ret
+	VZ_RET
 drmac0:
 	mov	cx,ax
 	push	cx
@@ -1279,7 +1279,7 @@ _if z
 	inc	si
 _endif
 	call	puts
-	ret
+	VZ_RET
 drawmac endp
 
 ;--- Draw Module menu ---
@@ -1288,7 +1288,7 @@ draw_module	proc
 		cmp	ah,ITEM_DRAW
 	_ifn e
 		stc
-		ret
+		VZ_RET
 	_endif
 		mov	cx,ax
 		push	cx
@@ -1338,7 +1338,7 @@ draw_module	proc
 		call	printf
 		pop	ax
 		pop	bx
-		ret
+		VZ_RET
 draw_module	endp
 
 ;----- Count macro/module -----
@@ -1353,7 +1353,7 @@ cntmacro	proc
 skip_mdlttl:
 		add	si,[si].mh_namelen
 		add	si,type _mdlhead + 1
-		ret
+		VZ_RET
 	_endif
 		cmp	al,MENU_MDLMAC
 		je	cntmdlmac
@@ -1371,9 +1371,9 @@ cntmac1:	lodsw
 		add	si,ax
 _until
 		not	cx
-		ret
+		VZ_RET
 cntmac2:	dec	si
-		ret
+		VZ_RET
 cntmacro	endp
 
 cntmdlmac	proc
@@ -1400,9 +1400,9 @@ cntmmac1:	lodsw
 		add	si,ax
 _until
 		not	cx
-		ret
+		VZ_RET
 cntmmac2:	dec	si
-		ret
+		VZ_RET
 cntmdlmac	endp
 
 		endes
@@ -1412,4 +1412,3 @@ cntmdlmac	endp
 ;	End of 'menu.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

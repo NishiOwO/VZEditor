@@ -292,7 +292,7 @@ init		proc
 		mov	[bp].heap,ax
 		msdos	F_SWITCHAR,0
 		mov	[bp].swchr,dl
-		ret
+		VZ_RET
 init		endp
 
 init2		proc
@@ -306,7 +306,7 @@ init2		proc
 		add	ax,cx
 		mov	[bp].dslottop,ax
 		mov	[bp].dslotseg,ax
-		ret
+		VZ_RET
 init2		endp
 
 init3		proc
@@ -318,7 +318,7 @@ init3		proc
 		add	ax,CPYBFPARA
 	_endif
 		mov	[bp].cpybftop,ax
-		ret
+		VZ_RET
 init3		endp
 
 ofs2seg		proc
@@ -329,14 +329,14 @@ ofs2seg		proc
 		mov	cl,4
 		shr	ax,cl
 		pop	cx
-		ret
+		VZ_RET
 ofs2seg		endp
 
 nextseg		proc
 		call	ofs2seg
 		mov	dx,ds
 		add	ax,dx
-		ret
+		VZ_RET
 nextseg		endp
 		
 ;----- Display copied info -----
@@ -428,7 +428,7 @@ info_del:	mov	si,offset cgroup: mg_deleted
 		mov	si,offset cgroup: mg_Bmoved
 info8:		call	putmsg
 		call	putcrlf
-		ret
+		VZ_RET
 disp_info	endp
 
 disp_files	proc
@@ -436,7 +436,7 @@ disp_files	proc
 		call	putnumber
 		mov	si,offset cgroup: mg_files
 		call	putmsg
-		ret
+		VZ_RET
 disp_files	endp
 
 ;----- Display error message -----
@@ -489,7 +489,7 @@ _loop
 		mov	al,cl
 	_endif
 		call	putcrlf
-		ret
+		VZ_RET
 disp_error	endp
 
 ;----- Display parameters -----
@@ -531,7 +531,7 @@ _until
 		call	puts
 		call	putcrlf
 	_endif
-		ret
+		VZ_RET
 disp_parm	endp
 ENDIF
 
@@ -553,7 +553,7 @@ parm_read:
 		inc	si
 		call	read_option
 		jnc	parm_read
-		ret
+		VZ_RET
 	_endif
 		cmp	al,'['
 	_if e
@@ -646,7 +646,7 @@ parmend1:	jz	parm_end
 		jz	parm_dst
 parm_syntax:	mov	al,ER_SYNTAX
 parm_x:		stc
-		ret
+		VZ_RET
 	_endif
 		test	dl,PRS_EXT+PRS_WILD
 	_if z
@@ -703,7 +703,7 @@ parm_end:
 		mov	al,ER_SAME
 		je	parm_x
 parm9:		clc
-		ret
+		VZ_RET
 parse_parm	endp
 
 ;----- Load parameter list -----
@@ -719,7 +719,7 @@ loadparmlist	proc
 		add	[bp].parmlist,type Parmlist
 		dec	[bp].parmcnt
 		pop	di
-		ret
+		VZ_RET
 loadparmlist	endp
 
 ;----- Read response file -----
@@ -761,10 +761,10 @@ read_ref	proc
 	_endif
 		stz
 rref9:		clc
-		ret
+		VZ_RET
 rref_x:		mov	al,ER_FILENG
 		stc
-		ret
+		VZ_RET
 read_ref	endp
 
 ;----- Set src dir from filelist -----
@@ -786,7 +786,7 @@ set_srcdir	proc
 		call	getcurdir1
 		call	skipstr
 	_endif
-		ret
+		VZ_RET
 set_srcdir	endp
 
 ;----- Copy mask -----
@@ -839,7 +839,7 @@ cpym1:		or	[bp].mode,CPY_MASK
 		pop	bx
 	_endif
 ;		call	copy_parm
-;		ret
+;		VZ_RET
 copy_mask	endp
 
 ;----- Copy a parameter -----
@@ -876,7 +876,7 @@ cpypar1:
 		clr	al
 		stosb
 		pop	cx
-		ret
+		VZ_RET
 copy_parm	endp
 
 ;----- Make full path -----
@@ -927,7 +927,7 @@ mkfull1:	call	strcpy
 		call	setcurdir
 mkfull9:	popm	<dx,cx,bx>
 		mov	si,cx
-		ret
+		VZ_RET
 mkfullpath	endp
 
 ;----- Get drive No. -----
@@ -946,7 +946,7 @@ getdrive	proc
 	  _endif
 	_endif
 		inc	al
-		ret
+		VZ_RET
 getdrive	endp
 
 ;----- Get/Set current directory -----
@@ -959,7 +959,7 @@ getcurdir	proc
 		call	getcurdir1
 		mov	al,dl
 		popm	<di,si,dx>
-		ret
+		VZ_RET
 getcurdir	endp
 
 getcurdir1	proc
@@ -971,13 +971,13 @@ getcurdir1	proc
 		stosw
 		mov	si,di
 		msdos	F_CURDIR
-		ret
+		VZ_RET
 getcurdir1	endp
 
 setcurdir	proc
 		mov	dx,offset cgroup: pathbuf2
 		msdos	F_CHDIR
-		ret
+		VZ_RET
 setcurdir	endp
 
 ;----- Change to root directory -----
@@ -991,7 +991,7 @@ cd_rootdir	proc
 		msdos	F_CHDIR
 		pop	ax
 		mov	[si],al
-		ret
+		VZ_RET
 cd_rootdir	endp
 
 ;----- File to directory -----
@@ -1020,7 +1020,7 @@ file_to_dir	proc
 		mov	bx,cx
 	  _endif
 	_endif
-		ret
+		VZ_RET
 file_to_dir	endp
 
 ;----- Make destination directory -----
@@ -1056,7 +1056,7 @@ mkdst1:		push	ax
 _until
 _endif
 mkdst8:		popm	<ds,si>
-		ret
+		VZ_RET
 make_dstdir	endp
 
 ;----- Read option -----
@@ -1091,14 +1091,14 @@ read_option	proc
 		mov	ax,1
 		shl	ax,cl
 		or	word ptr [bp].option,ax
-		ret
+		VZ_RET
 ropt_x:		mov	dl,al
 		mov	al,ER_OPTION
 		stc
-		ret
+		VZ_RET
 ropt_help:	mov	al,ER_HELP
 		stc
-		ret
+		VZ_RET
 read_option	endp
 
 ;----- Parse path name -----
@@ -1146,7 +1146,7 @@ prsdone1:	jmp	prs_done
 prs_error:
 		stc
 		pop	di
-		ret
+		VZ_RET
 prs_drive:
 		cmp	_pvc,'A'
 		jne	prs_done
@@ -1248,7 +1248,7 @@ prs_done:
 		dec	si
 		clc
 		pop	di
-		ret
+		VZ_RET
 parse_path	endp
 
 isbslash	proc
@@ -1256,7 +1256,7 @@ isbslash	proc
 	_ifn e
 		cmp	al,'/'
 	_endif
-		ret
+		VZ_RET
 isbslash	endp
 
 ;------------------------------------------------
@@ -1287,12 +1287,12 @@ _repeat
 		mov	cl,MASK_DIR
 		call	scan_mask
 _while c
-		ret
+		VZ_RET
 readdirs1:
 		clr	si
 		clr	bx
 ;		call	read_a_dir
-;		ret
+;		VZ_RET
 read_dirs	endp
 
 ;----- Read a directory -----
@@ -1417,7 +1417,7 @@ radir8:
 		
 		test	[bp].option,OPT_S+OPT_G
 		jnz	read_subdir
-radir9:		ret
+radir9:		VZ_RET
 read_a_dir	endp
 
 ;----- Read sub-directory -----
@@ -1455,7 +1455,7 @@ _repeat
 		add	di,type Dirslot
 _until
 		clc
-		ret
+		VZ_RET
 read_subdir	endp
 
 ;----- Get directories -----
@@ -1538,7 +1538,7 @@ gdirs8:
 gdirs_x:
 		stc
 		pop	si
-		ret
+		VZ_RET
 get_dirs	endp
 
 ;----- Get files by response file -----
@@ -1581,7 +1581,7 @@ gfiles1:
 		cmp	di,[bp].dslotmax
 		jb	gfiles1
 		stc
-		ret
+		VZ_RET
 gfiles8:	
 		mov	dx,offset cgroup: mask_all
 		mov	bh,[bp].option
@@ -1591,7 +1591,7 @@ gfiles8:
 	_endif
 		mov	[bp].dslotp,di
 		clc
-		ret
+		VZ_RET
 get_files	endp
 
 ;---- Get a file from filelist -----
@@ -1604,7 +1604,7 @@ get_a_file	proc
 		cmp	si,[bp].refend
 	_if ae
 		stc
-		ret
+		VZ_RET
 	_endif
 		pushm	<cx,di,es>
 		movseg	es,ds
@@ -1640,7 +1640,7 @@ get_a_file	proc
 		dec	si
 		popm	<es,di,cx>
 		clc
-		ret
+		VZ_RET
 get_a_file	endp
 
 ;----- Make read path -----
@@ -1655,7 +1655,7 @@ makepath:	pushm	<di,es>
 		mov	di,offset cgroup: pathbuf
 		call	makepath1
 		popm	<es,di>
-		ret
+		VZ_RET
 makesrcpath	endp
 
 makedstpath	proc
@@ -1672,7 +1672,7 @@ makedstpath	proc
 	  _endif
 	_endif
 		movseg	ds,cs
-		ret
+		VZ_RET
 makedstpath	endp
 
 makedstpath1	proc
@@ -1683,7 +1683,7 @@ makedstpath1	proc
 		mov	es,ax
 	  _endif
 		call	makepath
-		ret
+		VZ_RET
 makedstpath1	endp
 
 makepath1	proc
@@ -1723,7 +1723,7 @@ makepath1	proc
 		pop	dx
 		pop	bx
 		movseg	ds,cs
-		ret
+		VZ_RET
 makepath1	endp
 
 ;----- Check destination directory -----
@@ -1750,7 +1750,7 @@ check_dst	proc
 	  _ifn z
 		mov	di,[bp].dslotp
 	  _endif
-		ret
+		VZ_RET
 	_endif
 xdst_loop:
 		mov	di,[bp].dslotp
@@ -1828,7 +1828,7 @@ xdst_clr:
   _until
 _endif
 		mov	di,[bp].dslotend
-		ret
+		VZ_RET
 check_dst	endp
 
 ;----- Check exclusive dir/mask -----
@@ -1844,7 +1844,7 @@ _repeat
 	_break c
 		call	strskip
 _until
-		ret
+		VZ_RET
 check_ex	endp
 
 ;----- Scan mask -----
@@ -1871,7 +1871,7 @@ _repeat
 _until
 scmask_c:	stc
 scmask9:	pop	cx
-		ret
+		VZ_RET
 scan_mask	endp
 
 ;----- Compare mask -----
@@ -1887,7 +1887,7 @@ comp_mask	proc
 	  _if e
 		stc
 	  _endif
-		ret
+		VZ_RET
 	_endif
 
 		pushm	<si,di>
@@ -1914,7 +1914,7 @@ cpmsk2:
 	_endif
 		clc
 cpmsk9:		popm	<di,si>
-		ret
+		VZ_RET
 cpmsk_a:
 _repeat
 		mov	al,es:[di]
@@ -1989,7 +1989,7 @@ _until
 	  _endif
 	_endif
 		mov	al,EL_OK
-docpy9:		ret
+docpy9:		VZ_RET
 do_copy		endp
 		assume	ds:cgroup
 
@@ -2056,7 +2056,7 @@ _until
 		msdos	F_CLOSE
 	_endif
 cfile9:		pop	ds
-		ret
+		VZ_RET
 copy_file	endp
 
 ;----- Requst copy buffer -----
@@ -2079,7 +2079,7 @@ req_cpybf	proc
 		mov	cx,8
 	rep	stosw
 		clr	di
-req9:		ret
+req9:		VZ_RET
 req_cpybf	endp
 
 ;----- Flush buffer -----
@@ -2149,7 +2149,7 @@ flush1:		call	do_verify
 	_endif
 		mov	ax,[bp].cpybftop
 		mov	[bp].cpybfend,ax
-flush9:		ret
+flush9:		VZ_RET
 do_flush	endp
 
 ;----- Open for write -----
@@ -2226,7 +2226,7 @@ openw4:		inc	[bp].openwcnt
 openw5:
 		mov	[bp].cpybf_q,ax
 		clc
-openw9:		ret
+openw9:		VZ_RET
 open_write	endp
 
 open_w		proc
@@ -2236,7 +2236,7 @@ open_w		proc
 		mov	al,O_UPDATE
 	    _endif
 		msdos	F_OPEN
-		ret
+		VZ_RET
 open_w		endp
 
 ;----- Open for /g -----
@@ -2257,7 +2257,7 @@ open_gather	proc
 		pop	ax
 		pop	dx
 		clc
-		ret
+		VZ_RET
 	  _endif
 	_endif
 		pop	bx
@@ -2267,7 +2267,7 @@ open_gather	proc
 		pop	dx
 		call	inc_ext
 		stc
-		ret
+		VZ_RET
 open_gather	endp
 
 inc_ext		proc
@@ -2287,7 +2287,7 @@ _until z
 		inc	si
 		pop	[si]
 		mov	byte ptr [si+2],0
-		ret
+		VZ_RET
 inc_ext		endp
 
 ;----- Write file -----
@@ -2348,7 +2348,7 @@ _until
 	_endif
 		mov	[bp].readmsgf,al
 write8:		clc
-write9:		ret
+write9:		VZ_RET
 do_write	endp
 
 ;----- Close files -----
@@ -2400,7 +2400,7 @@ _until
 		mov	al,ER_DSKFULL
 		stc
 	_endif
-close9:		ret
+close9:		VZ_RET
 close_file	endp
 
 ;----- Close/Delete a file -----
@@ -2456,7 +2456,7 @@ delete1:	msdos	F_CLOSE
 ;	    _endif
 	  _endif
 	_endif
-close19:	ret
+close19:	VZ_RET
 close1		endp
 
 ;----- Verify destination file -----
@@ -2529,7 +2529,7 @@ verify3:	mov	ax,es:cb_next
 _until
 		clc
 		mov	[bp].fh_v,bx
-verify9:	ret
+verify9:	VZ_RET
 do_verify	endp
 
 ;----- Verify one block -----
@@ -2579,11 +2579,11 @@ verb_x:
 		jc	verb9
 		clr	bx
 	      _endif
-		ret
+		VZ_RET
 	    _else
 		mov	al,ER_VERIFY
 		stc
-		ret
+		VZ_RET
 	    _endif
 	  _endif
 	_endif
@@ -2599,7 +2599,7 @@ verb_x:
 	    _endif
 	  _endif
 		clc
-verb9:		ret
+verb9:		VZ_RET
 verify_block	endp
 
 ;----- Check for Incremental copy -----
@@ -2660,7 +2660,7 @@ check_inc	proc
 chkinc8:
 		msdos	F_SEEK,1
 		stl	[di].cb_seek
-chkinc9:	ret
+chkinc9:	VZ_RET
 check_inc	endp
 
 ;---- Seek file -----
@@ -2683,7 +2683,7 @@ _repeat
 _loop
 	  _endif
 	_endif
-		ret
+		VZ_RET
 do_seek		endp
 
 ;----- Make directory -----
@@ -2747,7 +2747,7 @@ makedir		proc
 		msdos	F_ATTR,1
 	_endif
 		clc
-mkdir9:		ret
+mkdir9:		VZ_RET
 makedir		endp
 
 ;----- Display read message -----
@@ -2766,7 +2766,7 @@ disp_readmsg	proc
 		call	putc
 	  _endif
 	_endif
-		ret
+		VZ_RET
 disp_readmsg	endp
 
 ;----- Display file name -----
@@ -2825,7 +2825,7 @@ disp_fname	proc
 		call	putfname
 		popm	<es,ds>
 	_endif
-		ret
+		VZ_RET
 disp_fname	endp
 
 putfname	proc
@@ -2861,7 +2861,7 @@ _repeat
 		call	putspc
 		inc	cx
 _until
-		ret
+		VZ_RET
 putfname	endp
 		assume	ds:cgroup
 
@@ -2877,7 +2877,7 @@ echo_file	proc
 		inc	[bp].totalfiles
 	  _endif
 	_endif
-		ret
+		VZ_RET
 echo_file	endp
 
 ;------------------------------------------------
@@ -2897,7 +2897,7 @@ init_move	proc
 	_if e
 		or	[bp].mode,MOV_SAMEDRV
 	_endif
-		ret
+		VZ_RET
 init_move	endp
 
 ;----- Move file -----
@@ -2939,7 +2939,7 @@ move_file	proc
 	  _endif
 		inc	[bp].totalfiles
 	_endif
-move9:		ret
+move9:		VZ_RET
 move_file	endp
 
 ;----- Do delete -----
@@ -2968,7 +2968,7 @@ do_delete	proc
 		call	delete_dirs
 dodel9:		mov	al,EL_OK
 		clc
-		ret
+		VZ_RET
 do_delete	endp
 
 ;----- Init delete -----
@@ -2992,7 +2992,7 @@ init_del	proc
 	rep	stosb
 		call	getcurdir
 		call	cd_rootdir
-		ret
+		VZ_RET
 init_del	endp
 
 ;----- Delete directories -----
@@ -3034,7 +3034,7 @@ _until z
 		call	setcurdir
 		pop	dx
 		msdos	F_CTRL_C,1
-		ret
+		VZ_RET
 delete_dirs	endp
 
 rmdir		proc
@@ -3045,7 +3045,7 @@ rmdir		proc
 		msdos	F_RMDIR
 	  _endif
 	_endif
-		ret
+		VZ_RET
 rmdir		endp
 
 ;----- Delete by FCB -----
@@ -3082,7 +3082,7 @@ _until
 	  _endif
 		pop	ds
 	_endif
-		ret
+		VZ_RET
 del_fcb		endp
 
 ;----- Delete by file handle -----
@@ -3118,7 +3118,7 @@ _repeat
 	_endif
 		add	si,type Dirslot
 _until
-		ret
+		VZ_RET
 del_handle	endp
 
 ;----- Confirmation -----
@@ -3152,7 +3152,7 @@ _ifn z
     _endif
   _endif
 _endif
-		ret
+		VZ_RET
 confirm		endp
 
 		assume	ds:cgroup
@@ -3173,7 +3173,7 @@ skipspc1:
 		cmp	al,SPC
 		je	skipspc
 skpspc8:	dec	si
-		ret
+		VZ_RET
 skipspc		endp
 ;
 ;----- Skip string -----
@@ -3186,7 +3186,7 @@ strskip		proc
 		call	skipstr
 		mov	si,di
 		popm	<es,di>
-		ret
+		VZ_RET
 strskip		endp
 
 skipstr		proc
@@ -3196,7 +3196,7 @@ skipstr		proc
 	repnz	scasb
 		mov	ax,cx
 		pop	cx
-		ret
+		VZ_RET
 skipstr		endp
 ;
 ;----- Char to upper case -----
@@ -3210,7 +3210,7 @@ toupper		proc
 		sub	al,'a'-'A'
 		stc
 	_endif
-		ret
+		VZ_RET
 toupper		endp
 ;
 ;----- Copy string -----
@@ -3226,7 +3226,7 @@ _repeat
 		tst	al
 _until z
 		dec	di
-		ret
+		VZ_RET
 strcpy		endp
 ;
 ;----- Compare two strings -----
@@ -3248,7 +3248,7 @@ strcmp		proc
 		pop	di
 	rep	cmpsb
 strcmp9:	popm	<di,si,cx>
-		ret
+		VZ_RET
 strcmp		endp
 ;
 ;----- Put char/string -----
@@ -3260,7 +3260,7 @@ putc		proc
 		mov	dl,al
 		msdos	F_DSPCHR
 		pop	dx
-		ret
+		VZ_RET
 putc		endp
 putspc		endp
 
@@ -3271,7 +3271,7 @@ putcrlf		proc
 		mov	al,LF
 		call	putc
 		pop	ax
-		ret
+		VZ_RET
 putcrlf		endp
 
 puts		proc
@@ -3289,7 +3289,7 @@ puts		proc
 		mov	bx,1
 		msdos	F_WRITE
 puts9:		popm	<es,di,dx,cx,bx,ax>
-		ret
+		VZ_RET
 puts		endp
 
 putmsg		proc
@@ -3297,7 +3297,7 @@ putmsg		proc
 		movseg	ds,cs
 		call	puts
 		pop	ds
-		ret
+		VZ_RET
 putmsg		endp
 ;
 ;----- Put number -----
@@ -3344,7 +3344,7 @@ putnm6:		push	dx
 		tst	bx
 		jnz	putnm3
 		popm	<dx,bx>
-		ret
+		VZ_RET
 putnumber	endp
 
 

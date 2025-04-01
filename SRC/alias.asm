@@ -99,7 +99,7 @@ isatm3:
 	mov	di,si
 	stc
 isatm8:	pop	si
-	ret
+	VZ_RET
 isatom	endp
 
 ;--- Word length ---
@@ -118,7 +118,7 @@ wlen1:	lodsb
 wlen2:	dec	si
 	sub	cx,si
 	neg	cx
-	ret
+	VZ_RET
 wordlen	endp
 
 ;--- Statement length ---
@@ -141,7 +141,7 @@ slen2:	tst	al
 slen3:	dec	si
 	sub	cx,si
 	neg	cx
-wlen9:	ret
+wlen9:	VZ_RET
 statelen endp
 
 ;--- Insert string ---
@@ -179,7 +179,7 @@ insstr1:
 	pop	ds
 	popm	<di,si,dx,cx>
 	call	memmove
-	ret
+	VZ_RET
 insertstr endp
 
 ;--- Spread %n variables ---
@@ -205,7 +205,7 @@ _if z
 	clr	dl
 	jmps	spvar_all
 _endif
-spvar9:	ret
+spvar9:	VZ_RET
 
 spvar2:
 	inc	cx
@@ -313,7 +313,7 @@ _repeat
 	dec	dl
 _until
 skpar0:	clr	si
-skpar9:	ret
+skpar9:	VZ_RET
 seekparm endp
 
 ;--- Parse parmeter ---
@@ -329,32 +329,32 @@ parseparm proc
 	mov	di,si
 	call	parsepath
 	dec	si
-	test	dl,PRS_DRV
+	test	dl,VZ_PRS_DRV
 _ifn z
-	or	dl,PRS_DIR
+	or	dl,VZ_PRS_DIR
 _endif
-	and	dl,PRS_DIR+PRS_NAME+PRS_EXT
+	and	dl,VZ_PRS_DIR+VZ_PRS_NAME+VZ_PRS_EXT
 	shl	dh,1
 	mov	al,dl
 	and	al,dh
 	jz	papar0
-	test	al,PRS_DIR
+	test	al,VZ_PRS_DIR
 	jnz	papar2
 	mov	di,bx
-	test	al,PRS_NAME
+	test	al,VZ_PRS_NAME
 	jnz	papar2
 	mov	di,cx
 	inc	di
 papar2:	xchg	si,di
 	mov	ax,bx
-	test	dl,PRS_NAME
+	test	dl,VZ_PRS_NAME
 	jz	papar3
-	test	dh,PRS_NAME+PRS_EXT
+	test	dh,VZ_PRS_NAME+VZ_PRS_EXT
 	jz	papar4
 papar3:	mov	ax,cx
-	test	dl,PRS_EXT
+	test	dl,VZ_PRS_EXT
 	jz	papar5
-	test	dh,PRS_EXT
+	test	dh,VZ_PRS_EXT
 	jnz	papar5
 papar4:	mov	di,ax
 papar5:	mov	cx,di
@@ -362,7 +362,7 @@ papar5:	mov	cx,di
 	jmps	papar9
 papar0:	clr	cx
 papar9:	pop	di
-	ret
+	VZ_RET
 parseparm endp
 
 ;--- Dump alias ---
@@ -382,14 +382,14 @@ aliasmenu proc
 	mov	si,bx
 	add	si,type _menu
 	call	popupmenu
-almnu9:	ret
+almnu9:	VZ_RET
 aliasmenu endp
 
 drawalias proc
 	tst	ah
 _ifn z
 	stc
-	ret
+	VZ_RET
 _endif
 	mov	cl,al
 	clr	ch
@@ -399,7 +399,7 @@ _endif
 	call	fillspc
 	call	skipspc
 	call	puts
-	ret
+	VZ_RET
 drawalias endp
 
 ;--- Count alias ---
@@ -417,7 +417,7 @@ _repeat
 _loop
 cntal8:	mov	si,di
 	pop	di
-	ret
+	VZ_RET
 cntalias endp
 
 ;--- Parse command line ---
@@ -515,7 +515,7 @@ pacmd5:
 	mov	si,tmpbuf
 	call	ems_loadmap
 pacmd9:	tstb	poolf
-	ret
+	VZ_RET
 parseline endp
 
 ;--- Next statement ---
@@ -548,7 +548,7 @@ _endif
 	call	skipspc
 	mov	ax,si
 	pop	si
-next9:	ret
+next9:	VZ_RET
 nextstate endp
 
 ;--- Parse statement (%%,%env%) ---
@@ -616,7 +616,7 @@ _endif
 	add	si,cx
 	jmp	pastat1
 pastat9:dec	si
-	ret
+	VZ_RET
 parsestate endp
 
 	endes
@@ -627,4 +627,3 @@ ENDIF
 ;	End of 'alias.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

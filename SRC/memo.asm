@@ -81,7 +81,7 @@ settcp	proc
 settcp1:
 	call	setabsp
 	stl	[bp].tnowp
-	ret
+	VZ_RET
 settcp	endp
 
 	public	restcp,resetcp1
@@ -94,7 +94,7 @@ resetcp1:
 	mov	si,ax
 	call	toplin
 	mov	[bp].tnow,si
-	ret
+	VZ_RET
 restcp	endp
 
 ;--- Mark block ---
@@ -110,12 +110,12 @@ blkon1:	call	setnowp
 	sub	ax,[bp].tnow
 	mov	[bp].bofs,ax
 	clc
-	ret
+	VZ_RET
 _endif
 	mov	[bp].blkm,FALSE
 	call	scrout
 	clc
-	ret
+	VZ_RET
 se_markblk endp
 
 	public	setnowp,setabsp
@@ -125,7 +125,7 @@ setabsp: clr	dx
 	sub	ax,[bp].ttop		; ##1.5
 	sbb	dx,0
 	addl	[bp].headp
-	ret
+	VZ_RET
 
 ;--- Init block pointer ---
 ;<--
@@ -185,12 +185,12 @@ _endif
 iblk8:	pop	cx
 	mov	bl,cl
 	tst	si
-	ret
+	VZ_RET
 
 notblk:
 	mov	si,[bp].tnow
 	mov	bh,FALSE
-	ret
+	VZ_RET
 
 	endcs
 
@@ -210,7 +210,7 @@ _ifn z
 	mov	sends,ax
 _endif
 	pop	ax
-	ret
+	VZ_RET
 setsends endp
 
 ;--- Clear stack ---
@@ -235,7 +235,7 @@ _endif
 	call	setsends
 	pop	ax
 	clc
-	ret
+	VZ_RET
 clrstack endp
 
 ;--- Get end of main memory ---
@@ -250,7 +250,7 @@ getsends proc
 _if z
 	mov	ax,rends
 _endif
-	ret
+	VZ_RET
 getsends endp
 
 
@@ -297,7 +297,7 @@ opstk1:	mov	al,2
 _endif
 	clc
 opstk9:	pop	ds
-	ret
+	VZ_RET
 openstack endp
 
 	assume	ds:nothing
@@ -341,7 +341,7 @@ spsh_x2:
 spsh_x:	mov	dl,E_NOMEM
 	call	disperr
 spsh_c:	stc
-spsh9:	ret
+spsh9:	VZ_RET
 spsh1:
 	tst	dx
 	jnz	sfull
@@ -500,7 +500,7 @@ _else
 	clc
 _endif
 	popm	<ds,si,cx>
-	ret	
+	VZ_RET	
 cutstack endp
 
 ;--- Pull/Load from stack ---
@@ -589,7 +589,7 @@ spul_x:
 	call	restcp
 spul_c:
 	stc
-	ret
+	VZ_RET
 spul8:
 	mov	al,bh
 	call	set_ret
@@ -624,11 +624,11 @@ _if z
 _endif
 	call	scrout_fx
 	clc
-	ret
+	VZ_RET
 stkout1:
 	call	scrout_cp
 	clc
-	ret
+	VZ_RET
 se_pullblk endp
 se_loadblk endp
 
@@ -647,7 +647,7 @@ gblk_x:		mov	bh,-1
 		popm	<es,si,bx>
 set_ret:	cbw
 		mov	retval,ax
-		ret		
+		VZ_RET		
 get_blkm	endp
 
 get_blkinfo	proc
@@ -662,7 +662,7 @@ get_blkinfo	proc
 		mov	bh,es:[si]
 		clz
 	_endif
-		ret
+		VZ_RET
 get_blkinfo	endp
 
 ;--- Clear stack ---
@@ -675,13 +675,13 @@ se_clrstack proc
 	stc
 	jz	skil9
 	call	clrstack
-skil9:	ret
+skil9:	VZ_RET
 
 mc_clrstack:
 	mov	di,ax
 	call	setsends
 	clc
-	ret
+	VZ_RET
 se_clrstack endp
 
 ;--- Jump block ---
@@ -699,7 +699,7 @@ se_jumpblk proc
 	add	ax,cx
 	adc	dx,0
 	call	jumpto
-jblk9:	ret
+jblk9:	VZ_RET
 se_jumpblk endp
 
 ;----- Set Block target flag -----
@@ -729,7 +729,7 @@ set_blktgt	proc
 		mov	ax,1
 	_endif
 		mov	[bp].blktgt,ax
-		ret
+		VZ_RET
 set_blktgt	endp
 
 ;--- Move text ---
@@ -804,7 +804,7 @@ tful_x:	mov	dl,E_NOMEM
 tfulx1:	call	disperr
 tfulx2:	pop	dx
 	stc
-	ret
+	VZ_RET
 
 txtm1:
 	pop	dx
@@ -838,7 +838,7 @@ tcut:
 	popm	<di,si>
 txtm2:	pop	cx
 	clc
-	ret
+	VZ_RET
 txtmov	endp
 
 	public	txtmov1
@@ -851,7 +851,7 @@ txtmov1	proc
 	add	cx,di
 	mov	[bp].tend,cx		; update tend
 	pop	es
-	ret
+	VZ_RET
 txtmov1	endp
 
 	endcs
@@ -899,7 +899,7 @@ memmove		proc
 	_endif
 		cld
 move9:		popm	<di,si,dx,cx,ax>
-		ret
+		VZ_RET
 memmove		endp
 
 ;----- Clear memory -----
@@ -909,7 +909,7 @@ memclear	proc
 		clr	ax
 		shr	cx,1
 	rep	stosw
-		ret
+		VZ_RET
 memclear	endp
 
 	endbs
@@ -944,7 +944,7 @@ tadj3:	inc	si
 	cmp	si,bx
 _until e
 	popm	<si,cx,bx>
-	ret
+	VZ_RET
 ptradj	endp
 
 	public	ptradj2
@@ -974,7 +974,7 @@ _repeat
 _until e
 	popf
 	popm	<di,si,dx,cx,bx>
-	ret
+	VZ_RET
 
 padj2:
 	pushf
@@ -993,11 +993,11 @@ padj3:	cmpl	[bp+si]
 	popf
 	jc	padj4
 	addlw	[bp+si],cx
-	ret
+	VZ_RET
 padj4:	neg	cx
 	sublw	[bp+si],cx
 	neg	cx
-	ret
+	VZ_RET
 padj5:
 	cmp	bx,[bp+si]+2
 	ja	padj9
@@ -1007,7 +1007,7 @@ padj5:
 padj6:	mov	[bp+si],di
 	mov	[bp+si]+2,bx
 padj9:	popf
-	ret
+	VZ_RET
 ptradj2	endp
 
 ;--- Move segment ---
@@ -1082,7 +1082,7 @@ smov9:
 	popm	<es,ds,di,si,dx,cx>
 	mov	ax,di
 	sub	ax,si
-	ret
+	VZ_RET
 
 sgmove1:
 	push	cx
@@ -1101,7 +1101,7 @@ adj_stkp:
 	add	sends,ax
   _endif
 	add	rends,ax
-	ret
+	VZ_RET
 
 sgmove2:
 	test	si,EMSMASKW
@@ -1115,7 +1115,7 @@ _ifn z
   _endif
 	pop	bp
 _endif
-	ret
+	VZ_RET
 sgmove	endp
 
 	endcs
@@ -1140,7 +1140,7 @@ _repeat
 	mov	bp,[bp].w_next
 _until
 ;	add	rtops,ax
-	ret
+	VZ_RET
 adjustseg endp
 
 	public	adjustfar
@@ -1151,7 +1151,7 @@ adjustfar proc
 	call	adjustseg
 	pop	bp
 	call	adj_stkp
-	ret
+	VZ_RET
 adjustfar endp
 
 	endes
@@ -1179,7 +1179,7 @@ freemem proc
 	jnc	freem9
 freem0:	clr	ax
 freem9:	pop	ds
-	ret
+	VZ_RET
 freemem	endp
 
 	endcs

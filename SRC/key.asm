@@ -180,7 +180,7 @@ inifp8:	mov	fptype,cl
 	mov	fpmode,al
 	popm	<es,ds>
 ENDIF
-	ret	
+	VZ_RET	
 initfp	endp
 
 ;--- Check MS-KANJI API ---		; ##156.90
@@ -203,7 +203,7 @@ _ifn c
 	movseg	ds,cs
 	clc
 _endif
-	ret
+	VZ_RET
 ismskanji endp
 
 ENDIF
@@ -226,7 +226,7 @@ _if s
 	mov	dx,dosktbl
 	call	getkeytbl
 _endif
-	ret
+	VZ_RET
 getdoskey endp
 
 	public	setdoskey
@@ -238,7 +238,7 @@ setdoskey proc
 	mov	dx,dosktbl
 	mov	al,KEY_DOS
 	call	setkey
-	ret
+	VZ_RET
 setdoskey endp
 
 	public	setvzkey
@@ -254,7 +254,7 @@ _ifn e
 	stc
 _endif
 	pop	ds
-	ret
+	VZ_RET
 setvzkey endp
 
 ;--- Control EZKEY ---
@@ -281,7 +281,7 @@ _if z
   _endif
 	pop	es
 _endif
-	ret
+	VZ_RET
 on_ezkey endp
 
 vwx_call proc
@@ -459,7 +459,7 @@ gkey81:
 	pop	bx
 	popm	<ds,di,si,cx,bx>
 	tst	al
-	ret
+	VZ_RET
 getkey	endp
 
 ;----- Auto saver -----
@@ -469,7 +469,7 @@ pre_delay	proc
 		mov	as_waitc,ax
 		call	get_ringp
 		mov	as_ringp,ax
-		ret
+		VZ_RET
 pre_delay	endp
 
 check_delay	proc
@@ -498,7 +498,7 @@ check_delay	proc
 		mov	sp,gkey_sp
 		jmp	gkey0
 	_endif
-chkdly9:	ret
+chkdly9:	VZ_RET
 check_delay	endp
 
 get_time	proc
@@ -509,7 +509,7 @@ get_time	proc
 		add	al,dh
 		adc	ah,0
 		popm	<dx,cx>
-		ret
+		VZ_RET
 get_time	endp
 
 ;----- Event key -----
@@ -522,7 +522,7 @@ event_key	proc
 		call	do_evmac
 	_endif
 		pop	dx
-		ret
+		VZ_RET
 event_key	endp
 
 ;----- Scan Command -----
@@ -542,7 +542,7 @@ scancmkey	proc
 		add	bx,offset cgroup:tb_scancmd
 		call	cs:[bx]
 		pop	bx
-		ret
+		VZ_RET
 
 scc_sedit:
 		mov	cx,CM_FILER - CM_ESC
@@ -576,7 +576,7 @@ scfl7:		call	scankey
 	_if c
 scfl8:		mov	lastkey,ax
 	_endif
-scfl9:		ret
+scfl9:		VZ_RET
 
 scc_getc:
 		mov	cx,CM_FILER-CM_ESC
@@ -613,10 +613,10 @@ _endif
 	inc	di
 	and	di,not 1
 	stc
-	ret
+	VZ_RET
 sckey_x:
 	clc
-	ret
+	VZ_RET
 scankey endp
 
 ;--- Check STOP key ---
@@ -632,7 +632,7 @@ _ifn z
 	msdos	F_CONIO
 	stc
 _endif
-	ret
+	VZ_RET
 chkstopkey endp
 
 ;--- Convert prefix key ---
@@ -668,16 +668,16 @@ _if c
 	clr	ah			; stz
 	mov	retval,ax
 	mov	ax,cx
-	ret
+	VZ_RET
 _endif
 	add	dl,2
 	rorm	dl,3
 	or	al,dl
 	clr	ah
 cvpf9:	or	dl,1			; clz
-	ret
+	VZ_RET
 cvpf_x:	stc
-	ret
+	VZ_RET
 cvtpfix endp
 
 ;--- Get A,^A key ---
@@ -707,9 +707,9 @@ _endif
 	ja	cvpf_x
 	and	al,1Fh
 getal8:	clc
-	ret
+	VZ_RET
 getal_x:stc
-	ret
+	VZ_RET
 getalpha endp
 
 ;--- KANA to aplha ---
@@ -737,7 +737,7 @@ _if a
 	popm	<di,cx>
 _endif
 ENDIF
-	ret
+	VZ_RET
 cvtkanakey endp
 
 ;--- Store decimal word ---
@@ -749,7 +749,7 @@ storedeciw proc
 	xchg	al,ah
 	add	ax,3030h
 	stosw
-	ret
+	VZ_RET
 storedeciw endp
 
 ;--- Display key symbol ---
@@ -764,7 +764,7 @@ dispkeysym proc
 	pop	si
 	call	puts
 	popm	<di,si,cx>
-	ret
+	VZ_RET
 dispkeysym endp
 
 ;--- Set key symbol ---
@@ -792,7 +792,7 @@ _ifn e
 	cbw
 	call	setkeysym1
 _endif
-	ret
+	VZ_RET
 
 setkeysym1:
 	cmp	ax,0040h
@@ -810,7 +810,7 @@ setkeysym1:
 	stosb
 	clr	al
 	stosb
-	ret
+	VZ_RET
 setkeysym endp
 
 ;--- Set prefix key symbol ---
@@ -877,7 +877,7 @@ dsppk7:	tst	dh
 	stosb
 dsppk8:	clr	al
 	stosb
-	ret
+	VZ_RET
 setpkeysym endp
 
 ;--- Get one char ---
@@ -898,15 +898,15 @@ getc1:	mov	dl,SYS_GETC
 	cmp	al,CM_ESC
 	jne	getc8
 	stc
-	ret
+	VZ_RET
 getc2:	mov	al,dl
 	call	toupper
 getc8:	clc
-	ret
+	VZ_RET
 getc_x:
 	mov	ah,al
 	clr	al
-	ret
+	VZ_RET
 getc	endp
 
 ;--- Check FEP ---
@@ -917,7 +917,7 @@ resetfp:
 IFDEF US
 checkfp:
 ctrlfp:
-	ret
+	VZ_RET
 ELSE
 	mov	ah,SYS_DOS
 checkfp	proc
@@ -943,7 +943,7 @@ _else
 _endif
 chkfp9:	pop	ax
 	mov	sysmode0,ah
-	ret
+	VZ_RET
 checkfp	endp
 
 ;--- Control FEP ---
@@ -976,7 +976,7 @@ _ifn z
   _endif
 _endif
 	popm	<es,ds,dx,cx,bx>
-	ret
+	VZ_RET
 ctrlfp	endp
 
 ENDIF

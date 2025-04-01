@@ -112,7 +112,7 @@ _if z
 schex_x:stc
 _endif
 	dec	si
-	ret
+	VZ_RET
 scanhexa endp
 
 ;--- Scan substring2 in string1 (ignore case) ---
@@ -144,7 +144,7 @@ stri2:	lodsb
 	inc	di
 	jmp	stri1
 stri_o:	stc
-stri_x:	ret	
+stri_x:	VZ_RET	
 stristr	endp
 
 ;--- Is upper? ---
@@ -156,9 +156,9 @@ isupper	proc
 	cmp	al,'Z'
 	ja	notup
 	stc
-isupr9:	ret
+isupr9:	VZ_RET
 notup:	clc
-	ret
+	VZ_RET
 isupper	endp
 
 ;--- Is lower/alpha? ---
@@ -173,9 +173,9 @@ islower:
 	cmp	al,'z'
 	ja	notalp
 	stc
-	ret
+	VZ_RET
 notalp:	clc
-isal9:	ret
+isal9:	VZ_RET
 isalpha	endp
 
 ;--- Is digit ? ---
@@ -187,9 +187,9 @@ isdigit proc
 	cmp	al,'9'
 	ja	notdig
 	stc
-	ret
+	VZ_RET
 notdig:	clc
-	ret
+	VZ_RET
 isdigit endp
 
 ;--- Char to upper/lower case ---
@@ -202,7 +202,7 @@ _if c
 	sub	al,'a'-'A'
 	stc
 _endif
-	ret
+	VZ_RET
 toupper	endp
 
 ;--- Skip SPC,TAB ---
@@ -218,7 +218,7 @@ skipspc1:
 	cmp	al,SPC
 	je	skipspc
 skpspc8:dec	si
-	ret
+	VZ_RET
 skipspc	endp
 
 ;--- Messages ---

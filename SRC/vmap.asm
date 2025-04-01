@@ -139,7 +139,7 @@ _repeat
 		or	dl,ah
 	_else
 		stc
-		ret
+		VZ_RET
 	_endif
 _until
 		test	dl,not OPT_N
@@ -148,7 +148,7 @@ _until
 	_endif
 		mov	[bp].option,dl
 		clc
-		ret
+		VZ_RET
 readoption	endp
 
 ;------------------------------------------------
@@ -196,7 +196,7 @@ err_mcb:
 	 	call	puts
 	  _endif
 	_endif
-		ret
+		VZ_RET
 
 ;----- Is exist UMB ? -----
 ;<-- AX :UMB top segment (0=not exist)
@@ -213,7 +213,7 @@ _repeat
 		cmp	al,'M'
 _while e
 		stc
-		ret
+		VZ_RET
 isumb1:
 		cmp	[di].mcb_id,'M'
 		jne	isumb2
@@ -222,7 +222,7 @@ isumb1:
 		call	nextmcb
 		mov	ax,ds
 foundumb:	clc
-		ret
+		VZ_RET
 isumb2:
 		mov	ax,ds
 		clr	al
@@ -239,7 +239,7 @@ _repeat
 		cmp	ax,0F000h
 _until ae
 		clr	ax
-		ret
+		VZ_RET
 isexistumb	endp
 		
 ;----- Display UMB total -----
@@ -256,7 +256,7 @@ disp_umbsize	proc
 		call	printf1
 		pop	ax
 		call	putcrlf
-		ret
+		VZ_RET
 disp_umbsize	endp
 
 ;----- Walk Memory Arena -----
@@ -278,7 +278,7 @@ arena1:
 		tstb	[bp].subsegment
 		jnz	arena2
 		stc
-		ret
+		VZ_RET
 	_endif
 		mov	[bp].subsegment,FALSE
 		cmp	[bp].version,4
@@ -307,7 +307,7 @@ arena2:
 		mov	ax,[bp].mcbnext
 		tst	ax
 		jnz	arena1
-		ret
+		VZ_RET
 
 ;----- Stack MCBs -----
 
@@ -405,7 +405,7 @@ stkmcb4:	tst	ax
 		jmp	stkmcb1
 stkmcb8:
 		pop	ds
-		ret
+		VZ_RET
 stack_mcbs	endp
 
 ;----- Compare MCB owner name -----
@@ -418,7 +418,7 @@ cmp_name	proc
 		mov	cx,8
 	repe	cmpsb
 		popm	<di,si,cx>
-		ret
+		VZ_RET
 cmp_name	endp
 
 ;----- Check ROM -----
@@ -440,7 +440,7 @@ check_rom	proc
 	  _endif
 notrom:		stc
 yesrom:		pop	ax
-		ret
+		VZ_RET
 check_rom	endp
 
 ;----- Display MCB header -----
@@ -495,7 +495,7 @@ dsppsp:
 		mov	si,offset cgroup: pf_blks_size
 		call	printf1
 		add	sp,6
-		ret
+		VZ_RET
 disp_header	endp
 
 ;----- Display owner/parameters -----
@@ -571,7 +571,7 @@ dspenv:		tstw	[bp].pspSeg
 		jmps	dspowpr9
 	_endif
 dspparm:	call	disp_param
-dspowpr9:	ret
+dspowpr9:	VZ_RET
 disp_owner_parm endp
 
 ;----- Is device subsegment ? -----
@@ -592,7 +592,7 @@ issubseg	proc
 		mov	si,[si]
 	_endif
 		pop	di
-		ret
+		VZ_RET
 issubseg	endp
 
 ;----- Is CON device ? -----
@@ -611,9 +611,9 @@ isdevice	proc
 		call	sputname
 		pop	ds
 		stc
-		ret
+		VZ_RET
 not_dev:	clc
-		ret
+		VZ_RET
 isdevice	endp
 
 ;----- Is buffers ? -----
@@ -633,9 +633,9 @@ _repeat
 		cmp	ax,dx
 _until z
 		stc
-		ret
+		VZ_RET
 not_buf:	clc
-		ret
+		VZ_RET
 isbuffers	endp
 
 ;----- Display owner path in Env -----
@@ -672,7 +672,7 @@ disp_envowner	proc
 		mov	si,di
 		call	sputlower
 dspown9:	clr	di
-		ret
+		VZ_RET
 disp_envowner	endp
 
 ;----- Display Env -----
@@ -689,7 +689,7 @@ disp_env	proc
 		call	sputs
 		mov	[bp].dspvct,FALSE
 	_endif
-		ret
+		VZ_RET
 disp_env	endp
 
 ;----- Display parameter -----
@@ -715,7 +715,7 @@ _repeat
 		mov	ax,VECTCOLMS
 		call	sputlimit
 _while b
-dsppr9:		ret
+dsppr9:		VZ_RET
 disp_param	endp
 
 ;----- Display fooked vectors -----
@@ -738,7 +738,7 @@ _repeat
 	_endif
 nextvct:
 _loop
-		ret
+		VZ_RET
 dspvct1:
 		mov	al,[bp].vectcnt
 		tst	al
@@ -769,7 +769,7 @@ nextmcb		proc
 		add	dx,[di].mcb_size
 		inc	dx
 		mov	ds,dx
-		ret
+		VZ_RET
 nextmcb		endp
 
 ;----- Check MCB ID -----
@@ -780,7 +780,7 @@ check_mcb	proc
 	_ifn e
 		cmp	[di].mcb_id,'Z'
 	_endif
-		ret
+		VZ_RET
 check_mcb	endp
 
 ;----- Check System data -----
@@ -795,7 +795,7 @@ check_sys1:
 		cmp	[di].mcb_id,'I'
 	  _endif
 	_endif
-		ret
+		VZ_RET
 check_sys	endp
 
 memarena	endp
@@ -816,7 +816,7 @@ ems_xms		proc
 		mov	ax,bx
 		or	ax,cx
 	_if z
-		ret
+		VZ_RET
 	_endif
 		call	putcrlf
 		tst	bx
@@ -903,7 +903,7 @@ ems_xms		proc
 		call	disp_page
 		call	putcrlf
 	_endif
-		ret
+		VZ_RET
 
 xmscolm		proc
 		tst	bx
@@ -911,7 +911,7 @@ xmscolm		proc
 		mov	ax,XMSCOLMS
 		call	sfillspc
 	_endif
-		ret
+		VZ_RET
 xmscolm		endp
 
 ;----- Check EMS -----
@@ -943,7 +943,7 @@ check_ems	proc
 		pop	ax
 		and	al,0Fh
 		mov	[bp].emsver2,ax
-noems:		ret
+noems:		VZ_RET
 check_ems	endp
 
 
@@ -977,7 +977,7 @@ check_xms	proc
 		call	[bp].xms
 		mov	[bp].embfree,ax
 		mov	[bp].embmax,dx
-noxms:		ret
+noxms:		VZ_RET
 check_xms	endp
 
 ;----- Check HMA -----
@@ -1017,7 +1017,7 @@ _loop
 		jmps	sethmaowner
 hmaunknown:	mov	si,offset cgroup: mg_unknown
 sethmaowner:	mov	[bp].hmaowner,si
-		ret
+		VZ_RET
 check_hma	endp
 
 ;----- Display EMS block -----
@@ -1058,7 +1058,7 @@ _repeat
 		call	putcrlf
 _until
 
-		ret
+		VZ_RET
 disp_emsblk	endp
 
 ;----- Display EMS block page/size -----
@@ -1076,7 +1076,7 @@ disp_page	proc
 		pop	ax
 		pop	ax
 		popm	<di,cx>
-		ret
+		VZ_RET
 disp_page	endp
 	
 ems_xms		endp
@@ -1099,7 +1099,7 @@ printf1		proc
 		dec	di
 		mov	[bp].putp,di
 		popm	<es,ds,di,bx>
-		ret
+		VZ_RET
 printf1		endp
 
 ;----- Put string -----
@@ -1122,7 +1122,7 @@ puts		proc
 		msdos	F_WRITE
 	_endif
 		popm	<es,ds,di,dx,cx,bx,ax>
-		ret
+		VZ_RET
 puts		endp
 
 ;----- Put CR/LF & flash -----
@@ -1135,7 +1135,7 @@ putcrlf		proc
 		call	puts
 		call	sputbegin
 		pop	si
-		ret
+		VZ_RET
 putcrlf		endp
 
 ;----- Put string to buffer -----
@@ -1146,7 +1146,7 @@ sputbegin	proc
 		mov	[bp].putp,bx
 		mov	byte ptr ss:[bx],0
 		pop	bx
-		ret
+		VZ_RET
 sputbegin	endp
 ;
 ;----- sput string -----
@@ -1160,7 +1160,7 @@ _repeat
 		call	sputc
 _until z
 		pop	ds
-		ret
+		VZ_RET
 sputs		endp
 ;
 ;----- sput char -----
@@ -1179,7 +1179,7 @@ sputc		proc
 		mov	byte ptr es:[di],0
 	_endif
 		popm	<es,di>
-		ret
+		VZ_RET
 sputc		endp
 ;
 ;----- sput 8 char -----
@@ -1194,7 +1194,7 @@ _repeat
 	_break z
 _loop
 		pop	cx
-		ret
+		VZ_RET
 sputname	endp
 ;
 ;----- sput 8 char to lower case -----
@@ -1214,7 +1214,7 @@ _repeat
 		mov	[bp].dspown,TRUE
 _loop
 		pop	cx
-		ret
+		VZ_RET
 sputlower	endp
 ;
 ;----- char to lower case -----
@@ -1228,7 +1228,7 @@ tolower		proc
 		add	al,20h
 	  _endif
 	_endif
-		ret
+		VZ_RET
 tolower		endp
 ;
 ;----- sput limit -----
@@ -1240,7 +1240,7 @@ sputlimit	proc
 		add	ax,offset cgroup: pfbuf
 		cmp	[bp].putp,ax
 		pop	ax
-		ret
+		VZ_RET
 sputlimit	endp
 ;
 ;----- fill spaces -----
@@ -1254,7 +1254,7 @@ _repeat
 		call	sputspc
 		pop	ax
 _until
-		ret
+		VZ_RET
 sfillspc	endp
 
 $ld_strseg	macro

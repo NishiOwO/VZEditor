@@ -366,9 +366,9 @@ filer6:
 	test	flmode,FM_DOSBOX
     _ifn z
 	mov	refloc,0
-	mov	cx,DOSLEN-2
+	mov	cx,VZ_DOSLEN-2
 	mov	dl,W_DOSBOX
-	test	dossw,DOS_BOXTTL
+	test	dossw,VZ_DOS_BOXTTL
 _ifn z
 	mov	dl,W_CMDBOX
 _endif
@@ -381,7 +381,7 @@ gdos_c:	popf
 	call	setcurpath
 	jmp	filer1
       _endif
-	or	dossw,DOS_TBOX
+	or	dossw,VZ_DOS_TBOX
 	mov	doslen,cl
     _endif
   _endif
@@ -403,7 +403,7 @@ filer_x:
 ;	popf
 	pop	basemode
 	popm	<ds,bp>
-	ret
+	VZ_RET
 filer	endp	
 	
 ;--- Init filer ---
@@ -449,7 +449,7 @@ _endif
 	mov	bx,offset cgroup:mb_filer
 	mov	ax,filermnu
 	mov	[bx].mb_ttl,ax
-	ret	
+	VZ_RET	
 initfl1:
 	mov	ax,farseg
 	call	ems_map
@@ -468,7 +468,7 @@ _if z
 	lea	di,[bp].fl_path
 	call	strcpy
 _endif
-	ret
+	VZ_RET
 initfiler endp
 
 ;--- To new path ---
@@ -502,11 +502,11 @@ npath1:	call	initflwind
 	call	drawouter
 	call	dumpfile
 	clc
-	ret
+	VZ_RET
 clrpath:
 	mov	si,pathbuf
 	mov	byte ptr [si],0
-	ret
+	VZ_RET
 newpath endp
 
 ;--- Filer command table ---
@@ -585,7 +585,7 @@ scan_flcmd	proc
 		stc
 	_endif
 		popm	<di,cx>
-		ret
+		VZ_RET
 scan_flcmd	endp
 
 ;----- &Fl(path) -----
@@ -611,7 +611,7 @@ fx_filer	proc
 		call	maptexts
 	  _endif
 	_endif
-		ret
+		VZ_RET
 fx_filer	endp
 
 ;----- &Fm(c) -----
@@ -631,7 +631,7 @@ fx_mbar		proc
 	_endif
 		cbw
 		mov	retval,ax
-		ret
+		VZ_RET
 fx_mbar		endp
 
 ;----- &Fg(di[,al]) -----
@@ -644,7 +644,7 @@ fx_getpool	proc
 		clr	al
 		xchg	al,ah
 		mov	retval,ax
-		ret
+		VZ_RET
 fx_getpool	endp
 
 ;----- &Fi -----
@@ -663,7 +663,7 @@ fx_initpool	proc
 		mov	ss:retval,ax
 	_endif
 		popm	<ds,bp,si,bx>
-		ret
+		VZ_RET
 fx_initpool	endp
 
 ;----- &Fn -----
@@ -678,7 +678,7 @@ fx_nextpool	proc
 	_endif
 		mov	retval,ax
 		popm	<bx,si>
-		ret
+		VZ_RET
 fx_nextpool	endp
 
 ;----- Walk on menu bar -----
@@ -695,7 +695,7 @@ walk_mbar	proc
 		je	walk_left
 	_endif
 		clc
-		ret
+		VZ_RET
 walk_right:
 		inc	cx
 		cmp	cl,[bx].mb_c
@@ -714,7 +714,7 @@ walk1:
 		mov	lastpos,cl
 		call	get_mbar
 		stc
-		ret
+		VZ_RET
 walk_mbar	endp
 
 ;----- Is bottom of dir? -----
@@ -730,7 +730,7 @@ isbottom	proc
 		inc	sp
 	  _endif
 	_endif
-		ret
+		VZ_RET
 isbottom	endp
 
 ;--- Do filer ---	
@@ -784,7 +784,7 @@ doflwalk:
 	jc	doflkey1
 _endif
 	call	setflwind
-	ret
+	VZ_RET
 
 doflcmd1:
 	mov	ah,FALSE
@@ -800,7 +800,7 @@ _repeat
 	add	si,3
 	tstb	cs:[si]
 _until z
-	ret
+	VZ_RET
 
 do_flkey:
 ;	cmp	dl,':'			; [:] ##152.25
@@ -862,14 +862,14 @@ _ifn c
 	mov	refloc,dx
 	jmp	doflmenu1
 _endif
-	ret
+	VZ_RET
 
 do_filer endp
 
 do_wild proc
 	call	selwild
 	call	newpath0
-	ret
+	VZ_RET
 do_wild endp
 
 do_root proc
@@ -908,7 +908,7 @@ _endif
 	jmps	dospc9
 dospcx:	pop	ds
 dospc9:	popm	<cx,bx>
-	ret
+	VZ_RET
 do_cr:
 	call	isbottom		;;
 	call	set_poolp		;;
@@ -955,7 +955,7 @@ chgdir1:
 	call	getaccdir
 	call	newpath1
 	call	clrpath
-docr9:	ret
+docr9:	VZ_RET
 
 do_esc:
 	mov	ax,[bp].fl_poolend
@@ -979,7 +979,7 @@ csr_r:	call	chkdual
 	jb	fscrl1
 	tstb	rotate
         jnz	csr_top
-	ret
+	VZ_RET
 
 csr_ls:
 	mov	rotate,FALSE
@@ -991,7 +991,7 @@ csr_l:
 	jns	fscroll
 	tstb	rotate
         jnz	csr_end
-csr9:	ret
+csr9:	VZ_RET
 
 csr_ds:
 	mov	rotate,FALSE
@@ -1084,7 +1084,7 @@ frol1:
 	call	getpoolp1
 	pop	dx
 	call	dumpline
-frol9:	ret
+frol9:	VZ_RET
 fscroll endp
 
 ;--- Roll window ---
@@ -1182,10 +1182,10 @@ _ifn z
   _if z
 	inc	ax
   _endif
-	ret
+	VZ_RET
 _endif
 	dec	ax
-	ret
+	VZ_RET
 flpageln endp
 
 ;--- Set cursor position ---
@@ -1244,7 +1244,7 @@ _endif
 fset2:	mov	al,2
 fset8:	mov	[bp].fl_home,dx
 fset9:	pop	bx
-	ret
+	VZ_RET
 fsetcsr	endp
 
 
@@ -1268,7 +1268,7 @@ fsethome	proc
 	_if l
 		mov	[bp].fl_home,0
 	_endif
-		ret
+		VZ_RET
 fsethome	endp
 
 ;--- Get pool pointer ---
@@ -1284,7 +1284,7 @@ getpoolp1:
 	mov	bx,ax
 	mov	dx,[bp].fl_seg
 	cmp	bx,[bp].fl_poolend
-	ret
+	VZ_RET
 getpoolp endp
 
 ;--- Change drive ---
@@ -1298,14 +1298,14 @@ do_drive proc
 	call	popupmenu
 do_drive1:
 _ifn c
-	mov	dl,PRS_DRV
+	mov	dl,VZ_PRS_DRV
 	call	setdrive
   _ifn c
 	call	newpath0
   _endif
 	clc
 _endif
-	ret
+	VZ_RET
 do_drive endp
 
 draw_drive proc
@@ -1344,10 +1344,10 @@ _endif
 _endif
 	call	putc
 	call	putspc
-	ret
+	VZ_RET
 sel_drive:
 	sub	al,'A'
-	ret
+	VZ_RET
 draw_drive endp
 
 ;--- Change mask ---
@@ -1365,7 +1365,7 @@ _ifn c
 	call	newpath0
 	clc
 _endif
-	ret
+	VZ_RET
 do_mask	endp
 
 selmask proc
@@ -1410,7 +1410,7 @@ _if e
 	je	mask_archive
 	cmp	al,'H'
 	je	mask_hidden
-	ret
+	VZ_RET
 _endif
 	mov	cx,1
 	jmps	dopath1
@@ -1431,10 +1431,10 @@ _endif
 	jmp	setmask2
 mask_hidden:
 	xor	hidden,dx
-	ret
+	VZ_RET
 mask_archive:
 	xor	archive,dx
-	ret
+	VZ_RET
 selmask endp
 
 ;--- Input new path ---
@@ -1456,7 +1456,7 @@ dopath1:
 	jc	dopath9
 	call	setmask
 	call	newpath0
-dopath9:ret
+dopath9:VZ_RET
 do_path	endp
 
 do_vzpath proc
@@ -1502,7 +1502,7 @@ _ifn c
 	call	dopath1
 	clc
 _endif
-	ret
+	VZ_RET
 
 draw_vzpath:
 	tst	ah
@@ -1521,7 +1521,7 @@ _if z
 _else
 	call	sel_number
 _endif
-	ret
+	VZ_RET
 
 scanvzpath:
 	lds	si,vzpathp
@@ -1532,10 +1532,10 @@ _repeat
 	call	skipchar
 	jc	setvp1
 _loop
-setvp9:	ret
+setvp9:	VZ_RET
 setvp1:	not	cx
 	inc	cx
-	ret
+	VZ_RET
 do_vzpath endp
 
 ;--- Sort option ---
@@ -1557,7 +1557,7 @@ _ifn c
 	call	newpath0
 	clc
 _endif
-	ret
+	VZ_RET
 do_sort	endp
 
 ;--- Change view mode ---
@@ -1572,7 +1572,7 @@ _ifn z
 	call	redump
 	pop	bp
 _endif
-	ret
+	VZ_RET
 do_view endp
 
 ;--- Single/dual window ---
@@ -1598,7 +1598,7 @@ _ifn z
 	mov	[bp].fl_which,FALSE
 _endif
 	call	redump
-	ret
+	VZ_RET
 do_dual endp
 
 ;--- Change window ---
@@ -1615,7 +1615,7 @@ dowind1:
 	call	setflwind
 	call	setcurpath
 	call	bcsron
-dowind9:ret
+dowind9:VZ_RET
 do_window endp
 
 chkdual proc
@@ -1625,7 +1625,7 @@ chkdual proc
 	je	chkdu9
 	pop	ax
 	jmp	dowind1
-chkdu9:	ret
+chkdu9:	VZ_RET
 chkdual endp
 
 ;--- To current dir ---
@@ -1660,7 +1660,7 @@ _ifn z
 	call	setflwind
 	call	drawpath
 _endif
-	ret
+	VZ_RET
 do_tocd endp
 
 iscurdir proc				; ##151.13
@@ -1672,7 +1672,7 @@ _if e
 	mov	al,FALSE
 _endif
 	mov	[bp].fl_curf,al
-	ret
+	VZ_RET
 iscurdir endp
 
 ;--- Return to current dir ---
@@ -1698,7 +1698,7 @@ _else
 retcd1:	call	setcurpath
 	call	newpath0
 _endif
-	ret
+	VZ_RET
 do_retcd endp
 
 ;--- Select all ---
@@ -1727,7 +1727,7 @@ doall4:
 	call	setflwind
 	call	dumpfile
 	call	drawdiskinfo
-	ret
+	VZ_RET
 do_all	endp
 
 ;----- Cancel all -----
@@ -1738,7 +1738,7 @@ do_cancel	proc
 _repeat
 		cmp	bx,[bp].fl_poolend
 	_break ae
-		and	[bx].dr_attr,not FA_SEL
+		and	[bx].dr_attr,not byte ptr FA_SEL
 		add	bx,type _dir
 _until
 		clr	cx
@@ -1770,7 +1770,7 @@ docmp8:
 	call	dumpfile
 	call	drawdiskinfo
 	clc
-docmp9:	ret
+docmp9:	VZ_RET
 docmp2:
 	tstb	fldual
 	jz	docmp9
@@ -1837,7 +1837,7 @@ docmp_sel:
 docmp7:	add	bx,type _dir
 	jmp	docmp3
 docmp_x:
-	and	[bx].dr_attr,not FA_SEL
+	and	[bx].dr_attr,not byte ptr FA_SEL
 	jmps	docmp7
 
 do_compare endp
@@ -1855,7 +1855,7 @@ _if z
     _if z
 do_shell:
 	dec	execcmd
-	ret
+	VZ_RET
     _endif
   _endif
 _endif
@@ -1883,7 +1883,7 @@ doexec2:
 	mov	al,TAB
   repne	scasb
 _if e
-	or	dossw,DOS_BOXTTL
+	or	dossw,VZ_DOS_BOXTTL
 	mov	menumsgp,si
 	mov	si,di
 	call	skipspc
@@ -1896,10 +1896,10 @@ _if z
 	clr	ax
 _endif
 	mov	[bp].fl_poolp,ax
-	ret
+	VZ_RET
 doexec_x:
 	stc
-	ret
+	VZ_RET
 do_execmnu endp
 
 do_exec1 proc
@@ -1943,7 +1943,7 @@ _until
 		jc	doattr9
 		call	newpath1
 		clc
-doattr9:	ret
+doattr9:	VZ_RET
 do_attr		endp
 
 do_attr1	proc
@@ -1959,7 +1959,7 @@ do_attr1	proc
 		clr	ch
 		msdos	F_ATTR,1
 		pop	ds
-		ret
+		VZ_RET
 do_attr1	endp
 
 ;----- Delete -----
@@ -1983,7 +1983,7 @@ do_delete	proc
 		call	newpath1
 	  _endif
 	_endif
-		ret
+		VZ_RET
 do_delete	endp
 
 do_delete1	proc
@@ -1997,7 +1997,7 @@ do_delete1	proc
 	_endif
 		int	21h
 		pop	ds
-		ret
+		VZ_RET
 do_delete1	endp
 
 ;----- Rename -----
@@ -2030,7 +2030,7 @@ do_rename	proc
 		msdos	F_RENAME
 		jc	doren9
 		call	newpath1
-doren9:		ret
+doren9:		VZ_RET
 do_rename	endp
 
 copy_pack1	proc
@@ -2040,7 +2040,7 @@ copy_pack1	proc
 		movseg	es,ss
 		call	copyafile
 		pop	dx
-		ret
+		VZ_RET
 copy_pack1	endp
 
 ;----- Make Dir -----
@@ -2102,7 +2102,7 @@ makepath1:
 		pop	ax
 		jnc	makepath1
 donew8:		call	newpath1
-donew9:		ret
+donew9:		VZ_RET
 new_x:		pop	ax
 		jmp	donew8
 do_newfile	endp
@@ -2141,11 +2141,11 @@ _until
 	_endif
 		pop	ds
 		clc
-		ret
+		VZ_RET
 doself_x:	pop	dx
 		pop	ds
 		stc
-		ret
+		VZ_RET
 do_selfiles	endp
 
 ;--- Quick exec for special EXT ---
@@ -2183,14 +2183,14 @@ _endif
 	call	strskip
 _loop
 noext:	pop	es
-	ret
+	VZ_RET
 specext:
 	call	skipchar
 	mov	execcmd,si
 	pop	es
 	pop	ax
 	pop	ax
-	ret
+	VZ_RET
 isspecext endp
 
 ;--- Init dump window ---
@@ -2237,14 +2237,14 @@ iwind3:	mov	word ptr [bp].fl_wpx,dx
 	mov	word ptr [bp].fl_wsx,cx
 	call	setwindow
 	call	initcsrpos
-	ret
+	VZ_RET
 initflwind endp
 
 setflwind proc
 	mov	dx,word ptr [bp].fl_wpx
 	mov	cx,word ptr [bp].fl_wsx
 	call	setwindow
-	ret
+	VZ_RET
 setflwind endp
 
 ;--- Init cursor position ---
@@ -2304,7 +2304,7 @@ ibcsr3:	clr	cx
 ibcsr8:	pop	ds
 	call	fsetcsr
 	pop	es
-	ret	
+	VZ_RET	
 initcsrpos endp
 
 ;--- Draw window frame ---
@@ -2314,7 +2314,7 @@ drawflframe proc
 	call	dispframe
 	call	drawpath
 	call	drawdiskinfo
-	ret
+	VZ_RET
 drawflframe endp
 
 ;--- Draw disk info. ---
@@ -2376,7 +2376,7 @@ drfile3:
 	call	setatr2
 	mov	al,GRC_H
 	call	fillc
-	ret
+	VZ_RET
 drawdiskinfo endp
 
 ;--- Sum select files size ---
@@ -2394,7 +2394,7 @@ _endif
 	dec	cx
 	mov	di,offset cgroup:sumselsize1
 	call	do_selfiles
-	ret
+	VZ_RET
 sumselsize endp
 
 sumselsize1 proc
@@ -2407,7 +2407,7 @@ _ifn c					; ##100.22
 	add	ax,di
 _endif
 	adc	dx,word ptr [bx].dr_size+2
-	ret
+	VZ_RET
 sumselsize1 endp
 
 ;--- Draw path name ---
@@ -2437,7 +2437,7 @@ _endif
 	mov	[bp].fl_ttlsx,dl
 	mov	al,ATR_WTXT
 	call	setatr
-	ret
+	VZ_RET
 drawpath endp
 
 ;--- Draw outer region ---
@@ -2478,7 +2478,7 @@ _endif
 _if g
 	call	putcurwind
 _endif
-	ret
+	VZ_RET
 drawouter endp
 
 ;--- Dump files ---
@@ -2497,7 +2497,7 @@ _ifn z
 	cmp	dh,[bp].fl_wsy
   _while b
 _endif
-	ret
+	VZ_RET
 dumpfile endp
 
 dumpline proc
@@ -2569,7 +2569,7 @@ _endif
 	call	dumpinfo
 dumpl6:	call	putspc
 	add	bx,type _dir
-dumpl9:	ret
+dumpl9:	VZ_RET
 dumpline endp
 
 dumpname proc
@@ -2608,7 +2608,7 @@ _until
 	call	puts
   _endif
 _endif
-	ret
+	VZ_RET
 dumpname endp
 
 dumpinfo proc
@@ -2723,7 +2723,7 @@ _endif
 ENDIF
 	pop	bx
 	popm	<es,dx>
-	ret	
+	VZ_RET	
 dumpinfo endp
 
 ;----- Set filer attribute ------
@@ -2756,7 +2756,7 @@ _loop
 		call	set_attr
 	_endif
 		pop	bp
-		ret
+		VZ_RET
 set_flatr	endp
 
 ;----- Put select marker -----
@@ -2779,7 +2779,7 @@ put_marker	proc
 		call	putc
 		pop	ax
 		call	setatr1
-		ret
+		VZ_RET
 put_marker	endp
 
 ;--- Block cursor on/off ---
@@ -2855,7 +2855,7 @@ _else
 _endif
 	pop	ax
 	popm	<ds,cx,bx>
-	ret
+	VZ_RET
 bcsron	endp
 
 bcsrloc proc
@@ -2866,7 +2866,7 @@ bcsrloc1:
 	div	ss:hfiles
 	shlm	dx,4
 	mov	dh,al
-	ret
+	VZ_RET
 bcsrloc endp
 
 ;--- Init pool ptr ---
@@ -2898,7 +2898,7 @@ _endif
 	mov	bx,di
 	mov	[bp].fl_pooltop,bx
 	mov	[bp].fl_poolp,bx
-	ret
+	VZ_RET
 initpoolp endp
 
 ;--- Read directory ---
@@ -3001,7 +3001,7 @@ _ifn e					; ##100.13
 	mul	bx
 	stl	[bp].fl_free
 _endif
-	ret
+	VZ_RET
 readdir	endp
 
 ;--- Get one dir ---
@@ -3020,7 +3020,7 @@ getdir	proc
 _if ae
 	mov	[bp].fl_overflow,TRUE
 	stc
-getd9:	ret
+getd9:	VZ_RET
 _endif
 	tstw	hidden
 _ifn z
@@ -3035,7 +3035,7 @@ _endif
 	mov	es,[bp].fl_seg
 	push	cx
 	mov	di,bx
-	and	byte ptr [si],not FA_SEL	; ##156.104
+	and	byte ptr [si],not byte ptr FA_SEL	; ##156.104
 	mov	cx,dta_pack-dta_attr
     rep	movsb
 	mov	cx,PACKSZ
@@ -3107,7 +3107,7 @@ getd4:	pop	si
 	jne	getd8
 	inc	ah
 getd8:	clc
-	ret
+	VZ_RET
 getdir	endp
 
 skip_ext proc
@@ -3118,7 +3118,7 @@ _repeat
 	cmp	al,'.'
 _until e
 	tst	al
-	ret
+	VZ_RET
 skip_ext endp
 
 ;--- Sort directory ---
@@ -3177,7 +3177,7 @@ sort4:
 	mov	cx,dx
 	call	memmove
 sort9:	popm	<di,si,dx,cx,ax>
-	ret
+	VZ_RET
 sortdir	endp
 
 ;--- Compare by name ---
@@ -3209,7 +3209,7 @@ _else
 	mov	cx,8
 _endif
    repz cmpsb
-bynam9:	ret	
+bynam9:	VZ_RET	
 byname	endp
 
 ;--- Compare by time/size ---
@@ -3232,7 +3232,7 @@ _ifn z
 	xor	ah,1
 _endif
 	sahf
-	ret
+	VZ_RET
 bytime	endp
 bysize	endp
 
@@ -3271,7 +3271,7 @@ _until e
 	pop	ds
 	jmp	fscroll
 sch_ng:	pop	ds
-	ret
+	VZ_RET
 do_search endp
 
 ;--- Check DIR in pool ---		; ##156.100
@@ -3290,11 +3290,11 @@ _repeat
 _while b
 	pop	ds
 	clc
-	ret
+	VZ_RET
 exist_dir:
 	pop	ds
 	stc
-	ret
+	VZ_RET
 check_dir endp
 
 	endcs
@@ -3317,7 +3317,7 @@ getpool	proc
 	call	mappoolseg
 	call	copyafile
 	popm	<ds,bp>
-	ret
+	VZ_RET
 getpool	endp
 
 copyafile proc
@@ -3333,7 +3333,7 @@ copyafile proc
 	call	strcpy
 ;  _endif
 ;_endif
-	ret
+	VZ_RET
 copyafile endp
 
 	assume	ds:nothing
@@ -3349,7 +3349,7 @@ nextpool proc
 	call	nextpool1
 	mov	[bp].fl_poolp,si
 	popm	<ds,bp>
-	ret
+	VZ_RET
 
 nextpool1:
 	call	mappoolseg
@@ -3367,15 +3367,15 @@ npool2:
  _until
 	cmp	al,SYS_FILER
   _ifn e
-	and	[si].dr_attr,not FA_SEL
+	and	[si].dr_attr,not byte ptr FA_SEL
 	dec	[bp].fl_selcnt
   _endif
 _endif
 	clc
-	ret
+	VZ_RET
 npool3:	clr	si
 	stc
-	ret
+	VZ_RET
 nextpool endp	
 
 mappoolseg proc
@@ -3392,7 +3392,7 @@ _if z
 	mov	[bp].fl_poolp,si
 	stc
 _endif
-	ret
+	VZ_RET
 mappoolseg endp
 
 ;----- Scan first file -----
@@ -3410,7 +3410,7 @@ _repeat
 	_break nz
 		add	bx,type _dir
 _until
-sc1st9:		ret
+sc1st9:		VZ_RET
 scan_1st	endp
 
 ;----- Open from 2nd window -----
@@ -3428,7 +3428,7 @@ chk_fldual	proc
 	  _endif
 	_endif
 		pop	bp
-		ret
+		VZ_RET
 chk_fldual	endp
 
 	assume ds:cgroup
@@ -3447,7 +3447,7 @@ _ifn z
 	add	si,dr_pack
 _endif
 	pop	bp
-	ret
+	VZ_RET
 poolnamep endp
 
 ;--- Copy access directory ---
@@ -3462,11 +3462,11 @@ _if z
 	call	strcpy
 	call	addsep
 	mov	bx,di
-	ret
+	VZ_RET
 _endif
 	call	strcpy
 	call	addsep
-cpyac9:	ret
+cpyac9:	VZ_RET
 cpyaccdir endp
 
 ;--- Select drive ---
@@ -3484,10 +3484,10 @@ _endif
 	cmp	dl,al
 _if b
 	clc
-	ret
+	VZ_RET
 _endif
 	stc
-	ret
+	VZ_RET
 seldrv	endp
 	
 ;--- Change path ---
@@ -3495,7 +3495,7 @@ seldrv	endp
 
 	public	chgpath,chpath
 chgpath:
-	test	dl,PRS_DRV
+	test	dl,VZ_PRS_DRV
 	jnz	chpath
 	jmps	chpath1
 
@@ -3509,7 +3509,7 @@ chpath:
 	call	seldrv
 chpath1:mov	dx,si
 	msdos	F_CHDIR
-	ret
+	VZ_RET
 setcurpath endp
 
 ;--- Set access dir ---
@@ -3521,7 +3521,7 @@ setaccdir proc
 	mov	dl,parsef
 	tst	si
 	jz	setac1
-	test	dl,PRS_DRV+PRS_DIR
+	test	dl,VZ_PRS_DRV+VZ_PRS_DIR
 	jnz	setac2
 setac1:	mov	si,di
 	call	chpath
@@ -3535,7 +3535,7 @@ resetaccdir:
 	mov	[bp].fl_files,0
 	jmps	getaccdir
 setac2:	
-	test	dl,PRS_DRV
+	test	dl,VZ_PRS_DRV
 _if z
 	xchg	si,di
 _endif
@@ -3543,7 +3543,7 @@ _endif
 	inc	si
 	and	al,1Fh			; ##100.01
 	dec	al
-	test	dl,PRS_DRV
+	test	dl,VZ_PRS_DRV
 	jnz	setdrive
 	xchg	si,di
 setdrive:
@@ -3552,7 +3552,7 @@ setdrive:
 	pop	dx
 	jc	setac_x
 	mov	di,pathbuf2
-	test	dl,PRS_DIR
+	test	dl,VZ_PRS_DIR
 	jz	getaccdir
 	mov	dx,di
 	mov	bx,getnamp
@@ -3578,11 +3578,11 @@ getaccdir:
 	mov	[bp].fl_files,0		;; ##16
 	call	strcpy
 setac9:	clc
-	ret
+	VZ_RET
 setac_x1:
 	call	setcurpath
 setac_x:stc
-	ret
+	VZ_RET
 setaccdir endp
 
 ;--- Set mask ---
@@ -3601,7 +3601,7 @@ setmask2:
 	lea	di,[bp].fl_mask
 	mov	cx,MASKSZ-1
 	call	strncpy
-stmsk9:	ret
+stmsk9:	VZ_RET
 setmask endp
 
 ;--- Spread execute command ---
@@ -3661,13 +3661,13 @@ _endif
 _ifn z
 	stc
 _endif
-	ret
+	VZ_RET
 
 spread1:
 	cmp	al,'%'
 _ifn e
 	stosb
-	ret
+	VZ_RET
 _endif
 	mov	ah,al
 	lodsb
@@ -3682,7 +3682,7 @@ _ifn e
 	mov	al,ah
 	stosb
 	dec	si
-	ret
+	VZ_RET
 _endif
 	dec	bx
 	sub	bx,cx
@@ -3700,7 +3700,7 @@ spexe_sd:
 	call	cpyaccdir
 	pop	si
 	or	speflag,SPE_SRCDIR
-spexe91:ret
+spexe91:VZ_RET
 spexe_d:
 	tstb	fldual
 	jz	spexe91
@@ -3722,13 +3722,13 @@ _ifn z
 _endif
 	or	speflag,SPE_DSTDIR
 	popm	<bp,si>
-	ret
+	VZ_RET
 spexe_bslash:
 	cmp	byte ptr es:[di-1],SPC
 _if a
 	call	addsep
 _endif
-	ret
+	VZ_RET
 spexe_ref1:
 	mov	al,[si]
 	call	isdigit
@@ -3747,14 +3747,14 @@ spexe_a:
 	mov	di,dx
 	pop	si
 	movhl	dx,TRUE,0
-	ret
+	VZ_RET
 spexesdir:
 	push	si
 ;	mov	bp,actwkp
 	mov	al,FALSE
 	call	cpyaccdir
 	pop	si
-	ret
+	VZ_RET
 spexesfile:
 ;	mov	bp,actwkp
 	cmp	[bp].fl_selcnt,1
@@ -3766,20 +3766,20 @@ _else
 	call	spe_copyfile
 	mov	dh,TRUE
 _endif
-	ret
+	VZ_RET
 spexe_go:
-	or	dossw,DOS_GO
-	ret
+	or	dossw,VZ_DOS_GO
+	VZ_RET
 spexe_ret:
-	or	dossw,DOS_RETURN
-	ret
+	or	dossw,VZ_DOS_RETURN
+	VZ_RET
 spe_copyfile:
 	pushm	<si,ds>
 	call	scan_1st
 	mov	si,bx
 	call	copyafile
 	popm	<ds,si>
-	ret
+	VZ_RET
 spreadexec endp
 
 ;----- Write @filelist -----
@@ -3824,7 +3824,7 @@ spexe_ref	proc
 		msdos	F_ATTR,1
 spref9:		popm	<di,si>
 		movhl	dx,TRUE,0
-		ret
+		VZ_RET
 spexe_ref	endp
 
 echo_all	proc
@@ -3837,7 +3837,7 @@ echo_all	proc
 		stosb
 		mov	dx,di
 echoall9:	pop	ax
-		ret
+		VZ_RET
 echo_all	endp
 
 echo_ref	proc
@@ -3850,7 +3850,7 @@ echo_ref	proc
 		stosw
 		mov	dx,di
 echoref9:	pop	ax
-		ret
+		VZ_RET
 echo_ref	endp
 
 echo_pool	proc
@@ -3865,7 +3865,7 @@ echo_pool	proc
 		pop	bx
 		mov	si,bx
 		call	copyafile
-		ret
+		VZ_RET
 echo_pool	endp
 
 ;----- Get string -----
@@ -3894,7 +3894,7 @@ spexe_getsf:	test	speflag,SPE_DSTFILE
 		jmps	egets8
 egets_c:	or	speflag,SPE_CANCEL
 egets8:		popm	<si,dx>
-egets9:		ret
+egets9:		VZ_RET
 spexe_gets	endp
 
 ;----- if include directory -----
@@ -3928,7 +3928,7 @@ _repeat
 		stosb
 	_endif
 _until
-		ret
+		VZ_RET
 spexe_opt	endp
 
 ;----- Check DOS_GO flag -----
@@ -3937,7 +3937,7 @@ spexe_opt	endp
 
 		public	dos_go
 dos_go		proc
-		test	dossw,DOS_GO
+		test	dossw,VZ_DOS_GO
 		jz	dosgo9
 		push	si
 		mov	di,tmpbuf
@@ -3953,7 +3953,7 @@ dos_go		proc
 		call	histcpy
 		pop	si
 		stc
-dosgo9:		ret
+dosgo9:		VZ_RET
 dos_go		endp
 
 	endes
@@ -3964,4 +3964,3 @@ ENDIF
 ;	End of 'filer.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

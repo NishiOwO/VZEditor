@@ -21,23 +21,23 @@ _FN		equ	10000000b		; file name char
 isupper:	cmp	al,'A'
 		jb	isnot
 		cmp	al,'Z'+1
-		ret
+		VZ_RET
 
 isalpha:	call	isupper
 		jc	isal9
 islower:	cmp	al,'a'
 		jb	isnot
 		cmp	al,'z'+1
-isal9:		ret
+isal9:		VZ_RET
 
 isdigit:	cmp	al,'0'
 		jb	isnot
 		cmp	al,'9'+1
-		ret
+		VZ_RET
 
 iskanji:	ifkanji yes
 isnot:		clc
-		ret
+		VZ_RET
 
 ;----- Is file name? -----
 ;--> AL :char (20h<=AL<80h)
@@ -58,7 +58,7 @@ isfilename	proc
 		popm	<cx,bx>
 		jz	isfl9
 yes:		stc
-isfl9:		ret
+isfl9:		VZ_RET
 isfilename	endp
 
 fnbittbl	db	01011111b,11000100b,11111111b,11000000b

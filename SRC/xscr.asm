@@ -105,7 +105,7 @@ _ifn z
 	mov	puttop,si
 	mov	putp,si
 _endif
-	ret
+	VZ_RET
 initcon endp
 
 	endis
@@ -150,7 +150,7 @@ _ifn z
 _endif
 	movseg	ds,ss
 _endif
-	ret
+	VZ_RET
 opencon endp
 
 ;--- Pre/Post DOS ---
@@ -175,7 +175,7 @@ _if z
 	mov	xpause,al		; ##152.17
 	pop	bp
 _endif
-	ret
+	VZ_RET
 preconfile endp
 
 	public	postconfile
@@ -188,7 +188,7 @@ _ifn z
 	jnz	pstcon1
   _endif
 _endif
-	ret
+	VZ_RET
 pstcon1:
 	mov	di,putp
 	call	flushcontmp
@@ -257,7 +257,7 @@ _endif
 	inc	dx
 	mov	[bp].lnumb,dx
 	popm	<ds,bp>
-	ret
+	VZ_RET
 postconfile endp
 
 	endcs
@@ -299,7 +299,7 @@ slash1:
 	clr	ax
 	mov	es,ax
 	mov	byte ptr es:[grafflag],0
-	mov	al,BACKSLASH
+	mov	al,VZ_BACKSLASH
 	pushf
 	call	cs:vct29
 	mov	byte ptr es:[grafflag],1
@@ -323,20 +323,20 @@ _ifn z
   _endif
 	call	isalpha
 	jc	skipesc9
-	ret
+	VZ_RET
 pausectrl:
 	xor	al,'1'
 	mov	xpause,al
 skipesc9:
 	mov	skipescf,FALSE
-	ret
+	VZ_RET
 _endif
 	cmp	al,ESCP
 	jne	puttmp2
 	test	syssw,SW_SKIPESC
 	jz	puttmp2
 	mov	skipescf,TRUE
-	ret
+	VZ_RET
 puttmp2:
 	tst	al
 	jz	puttmp9
@@ -379,7 +379,7 @@ _endif
 	mov	di,puttop
 puttmp7:popm	<si,dx,cx,bx>
 puttmp8:mov	putp,di
-puttmp9:ret
+puttmp9:VZ_RET
 putcontmp endp
 
 ;--- Flush console tmp buffer ---
@@ -435,7 +435,7 @@ _ifn cxz
 _endif
 flcon9:	pop	di
 	pop	es
-	ret
+	VZ_RET
 flushcontmp endp
 
 	endbs
@@ -453,7 +453,7 @@ copyxptrs proc
 	mov	ax,es:conend
 	mov	conend,ax
 	pop	es
-	ret
+	VZ_RET
 copyxptrs endp
 
 ;--- Set/reset INT29h ---
@@ -463,7 +463,7 @@ setint29 proc
 	mov	di,29h*4
 	mov	ax,offset cgroup:int29in
 	call	setint
-	ret
+	VZ_RET
 setint29 endp
 
 	public	resetint29
@@ -471,7 +471,7 @@ resetint29 proc
 	mov	bx,offset cgroup:vct29
 	mov	di,29h*4
 	call	resetint
-	ret
+	VZ_RET
 resetint29 endp
 
 	endes
@@ -490,7 +490,7 @@ chkint29 proc
 	call	setint29
 	jmps	chkcon9
 chkcon1:call	resetint29
-chkcon9:ret
+chkcon9:VZ_RET
 chkint29 endp
 
 	endcs
@@ -501,4 +501,3 @@ ENDIF
 ;	End of 'xscr.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

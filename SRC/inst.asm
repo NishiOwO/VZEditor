@@ -18,12 +18,12 @@ PKEYCNT		equ	6
 ELSECNT		equ	13
 HISTCNT		equ	7
 
-DF_IF		equ	2
-DF_IFN		equ	3
-DF_ELSE		equ	4
-DF_ENDIF	equ	5
-DF_ELSEIF	equ	6
-DF_ELSEIFN	equ	7
+VZ_DF_IF	equ	2
+VZ_DF_IFN	equ	3
+VZ_DF_ELSE	equ	4
+VZ_DF_ENDIF	equ	5
+VZ_DF_ELSEIF	equ	6
+VZ_DF_ELSEIFN	equ	7
 
 ;--- External symbols ---
 
@@ -175,7 +175,7 @@ _endif
 	mov	di,temptop
 	call	readclass
 	tstb	errcnt
-	ret
+	VZ_RET
 customize endp
 
 ;--- Syntax error ---
@@ -216,7 +216,7 @@ _repeat
 _until
 	mov	si,bx
 opte8:	call	cputcrlf
-	ret
+	VZ_RET
 synerr	endp
 
 ;--- Insert converted data ---
@@ -246,7 +246,7 @@ _endif
 	pop	cx
 	call	memmove
 	popm	<di,si,cx>
-	ret	
+	VZ_RET	
 insertcvt endp
 
 ;--- Move customize area ---
@@ -281,7 +281,7 @@ _repeat
 	cmp	bx,offset cgroup:custm_end - 2	; ##155.70
 _while b
 	pop	bx
-	ret	
+	VZ_RET	
 movearea endp
 
 ;--- Is next class ? ---
@@ -298,7 +298,7 @@ _ifn z
 	pop	si
   _endif
 _endif
-	ret
+	VZ_RET
 nextclass1 endp
 
 ;--- Command key ---
@@ -340,7 +340,7 @@ pkey1:
 	mov	[bx],ah
 	jmp	ckey2
 ckey_x:	stc
-	ret
+	VZ_RET
 ckeymsg1:
 	mov	al,dl
 ckmsg1:	stosb
@@ -373,7 +373,7 @@ _until c
 tbox_x:
 fkey_x:	pop	di
 	stc
-	ret
+	VZ_RET
 df_fnckey endp
 
 ;--- Text box ---
@@ -457,7 +457,7 @@ _until be
 opt_x:
 hist_x:
 else_x:	stc
-	ret
+	VZ_RET
 df_history endp
 
 	public	get_histsym
@@ -474,10 +474,10 @@ get_histsym proc
 	shl	bx,1
 	add	bx,offset cgroup:hist_top
 	clc
-	ret
+	VZ_RET
 histsym_x:
 	stc
-	ret
+	VZ_RET
 get_histsym endp
 
 ;--- Else ---
@@ -576,7 +576,7 @@ _else
 stkey3:	mov	es:[bx+1],al
 _endif
 	clc
-stkey9:	ret
+stkey9:	VZ_RET
 storekey endp
 
 ;--- Macro key ---
@@ -655,7 +655,7 @@ _ifn z
 mac_x:
 	pop	di
 	stc
-	ret
+	VZ_RET
   _endif
 _endif
 	cmp	si,enddefp
@@ -854,7 +854,7 @@ menu_x1:pop	di
 	dec	di
 	dec	di
 menu_x:	stc
-	ret
+	VZ_RET
 df_menu endp
 
 ;--- Alias ---
@@ -884,7 +884,7 @@ cpeol2:	lodsb
 	jne	cpeol1
 	clr	al
 	stosb
-	ret
+	VZ_RET
 copytoeol endp
 
 ;--- Skip space,tab ---
@@ -896,7 +896,7 @@ skpsp1:	cmp	al,SPC
 	ja	skps9
 	cmp	al,LF
 	jne	skpsp
-skps9:	ret
+skps9:	VZ_RET
 skpsp	endp
 
 ;--- Skip to next line ---
@@ -912,7 +912,7 @@ skipline proc
   repne	scasb
 	mov	si,di
 	popm	<es,di,cx>
-	ret
+	VZ_RET
 skipline endp
 
 ;--- Scan connma & numerics ---
@@ -926,7 +926,7 @@ scannumc proc
 _if e
 	call	skipline
 	stc
-	ret
+	VZ_RET
 _endif
 	cmp	al,','
 _if e
@@ -935,11 +935,11 @@ _if e
 	mov	ax,dx
 	dec	si
 	clc
-	ret
+	VZ_RET
 _endif
 	dec	si
 	stc
-	ret
+	VZ_RET
 scannumc endp
 
 ;--- Scan string ---
@@ -959,7 +959,7 @@ scanstr proc
 	cmp	al,'"'
 	je	scanstr1
 scstr_x:stc	
-	ret
+	VZ_RET
 scans1:
 	stosb
 scanstr1:
@@ -987,7 +987,7 @@ scans2:	cmp	al,'"'
 	jmp	scanstr1
 scans8:	clr	al
 	stosb
-	ret
+	VZ_RET
 scancode:
 	mov	al,'$'
 	call	scannum
@@ -1126,7 +1126,7 @@ scank_o:
 scank_x:
 	stc
 scank9:	popm	<di,dx,bx>
-	ret
+	VZ_RET
 scankey	endp
 
 ;--- Check prefix key ---
@@ -1147,7 +1147,7 @@ _if e
 	stc
 _endif
 	popm	<es,di,cx>
-	ret	
+	VZ_RET	
 isprekey endp
 
 ;--- Scan follow key ---
@@ -1173,11 +1173,11 @@ scanpkey proc
 	add	al,ah
 	clr	ah
 	clc
-	ret
+	VZ_RET
 pkey_x:	stc
-	ret
+	VZ_RET
 pkeyn:	mov	al,INVALID
-	ret
+	VZ_RET
 scanpkey endp
 
 ;--- Re-customize ---
@@ -1205,7 +1205,7 @@ _endif
 	pushf
 	call	dspscr	
 	popf
-	ret
+	VZ_RET
 se_recust endp
 
 	public	re_cust,re_cust1
@@ -1235,7 +1235,7 @@ _ifn c
 	call	set_readmac
 	clc
 _endif
-	ret
+	VZ_RET
 re_cust endp
 
 ;--- Check next class ---
@@ -1271,7 +1271,7 @@ _endif
 	inc	sp
 	inc	sp
 	clc
-nclas9:	ret
+nclas9:	VZ_RET
 nextclass endp
 
 ;--- Copy to buffer ---
@@ -1319,13 +1319,13 @@ _endif
 	jc	re_ovflow
 	mov	storep,ax
 recust8:pop	di
-recust9:ret
+recust9:VZ_RET
 
 re_ovflow:
 	popm	<ax,ax,si,ax,ax,ax,ax>	; !!!
 	mov	dl,E_NOBUFFER
 	stc
-	ret
+	VZ_RET
 recust	endp
 
 rec_alias proc
@@ -1340,9 +1340,9 @@ _endif
 	call	memmove
 	dec	ax
 	clc
-	ret
+	VZ_RET
 reals_x:stc
-	ret
+	VZ_RET
 rec_alias endp
 
 ;--- Read class symbol ---
@@ -1390,7 +1390,7 @@ class2:
 	tstb	inedit
 	jnz	class0
 	stc
-	ret
+	VZ_RET
 class3:
 	push	bx
 	call	cs:[bx+1]
@@ -1412,9 +1412,9 @@ _ifn z
 	mov	dl,E_NOLINE
 _endif
 	stc
-	ret
+	VZ_RET
 class8:	clc
-class9:	ret
+class9:	VZ_RET
 readclass endp
 
 ;----- Read Module Header -----
@@ -1485,7 +1485,7 @@ readh1:		call	skipline
 	_else
 		mov	headerp,di
 	_endif
-rmdlh9:		ret
+rmdlh9:		VZ_RET
 read_mdlhead	endp
 
 read_mdlopt	proc
@@ -1509,7 +1509,7 @@ _repeat
 	_endif
 		call	skipchar
 _until
-mdlopt9:	ret
+mdlopt9:	VZ_RET
 read_mdlopt	endp
 
 read_mdlttl	proc
@@ -1543,7 +1543,7 @@ _until e
 	_endif
 	rep	movsb
 		pop	cx
-		ret
+		VZ_RET
 read_mdlttl	endp
 
 		endcs
@@ -1558,7 +1558,7 @@ set_mhttllen	proc
 		mov	al,[si].mn_wd
 		mov	byte ptr mhttllen,al
 	_endif
-		ret
+		VZ_RET
 set_mhttllen	endp
 
 ;----- #if .. #else .. #endif -----
@@ -1570,7 +1570,7 @@ if_state	proc
 		call	if_state1
 		popm	<di,dx,cx,bx>
 	_endif
-		ret
+		VZ_RET
 if_state	endp
 
 
@@ -1600,7 +1600,7 @@ cond_x2:	inc	sp
 cond_x:		pop	si
 		pop	ax
 		stc
-		ret
+		VZ_RET
 if_state1	endp
 
 tb_cond:
@@ -1623,7 +1623,7 @@ condif8:	mov	ifbit,dx
 		pop	ax
 		lodsb
 		clc
-		ret
+		VZ_RET
 cond_ifn:
 		shl	dx,1
 cond_elseifn:
@@ -1645,7 +1645,7 @@ cond_comp:
 		movseg	es,cs
 		call	strstr
 		movseg	es,ss
-		ret
+		VZ_RET
 
 cond_else:
 		call	skipline
@@ -1680,4 +1680,3 @@ _until e
 ;	End of 'inst.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

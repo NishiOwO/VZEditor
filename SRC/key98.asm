@@ -104,7 +104,7 @@ ENDIF
 vje_on:
 	mov	ah,1
 	int	INT_VJEB
-	ret
+	VZ_RET
 vje_off:
 	mov	ah,0
 	int	INT_VJEB
@@ -114,12 +114,12 @@ vje_off:
 	pop	ax
 vje_act:
 vje_mask:
-	ret
+	VZ_RET
 
 mttk_on:
 	mov	ah,0
 	int	INT_MTTK
-	ret
+	VZ_RET
 mttk_off:
 	push	es
 	mov	ah,21
@@ -132,7 +132,7 @@ mttk_off:
 	pop	es
 mttk_act:
 mttk_mask:
-	ret
+	VZ_RET
 
 atok_on:
 	tst	al
@@ -141,7 +141,7 @@ _if z
 _endif
 	mov	ah,al
 	int	INT_ATOK
-	ret
+	VZ_RET
 atok_off:
 	mov	ah,66h
 	int	INT_ATOK
@@ -151,12 +151,12 @@ atok_off:
 	pop	ax
 atok_act:
 atok_mask:
-	ret
+	VZ_RET
 
 wxp_on:					; ##155.78
 	mov	ah,0
 	int	INT_WXP
-	ret
+	VZ_RET
 wxp_off:
 	mov	ah,4Ch
 	int	INT_WXP
@@ -166,7 +166,7 @@ wxp_off:
 	pop	ax
 wxp_act:
 wxp_mask:
-	ret
+	VZ_RET
 
 ;--- Control ATOK7 by junk.35 ---
 
@@ -184,21 +184,21 @@ _ifn z
 _else
 	call	atok7_force_off
 _endif
-	ret
+	VZ_RET
 atok7_off:
 	call	init_a7
 	call	atok7_getmode
 	call	atok7_force_off
 atok7_act:
 atok7_mask:
-	ret
+	VZ_RET
 
 atok7_getmode:
 	mov	ax,3
 	mov	cs:packet,-1
-	call	atok7
+	call	vz_atok7
 	mov	ax,cs:packet
-	ret
+	VZ_RET
 
 atok7_change_mode:
 	push	ax
@@ -213,16 +213,17 @@ atok7_force_off:
 	push	ax
 	mov	ax,2
 call_atok7:
-	call	atok7
+	call	vz_atok7
 	pop	ax
-	ret
+	VZ_RET
 
-atok7:	pushm	<es,cs>
+vz_atok7:
+	pushm	<es,cs>
 	pop	es
 	mov	bx,offset cs:packet
 	call	cs:call_a7
 	pop	es
-	ret
+	VZ_RET
 
 init_a7:
 	tstw	cs:call_a7
@@ -234,7 +235,7 @@ _if z
 	mov	word ptr cs:call_a7+2,es
 	popm	<bx,ax,es>
 _endif
-	ret
+	VZ_RET
 ENDIF
 
 ;--- MS-KANJI API ---			; ##156.90
@@ -242,7 +243,7 @@ ENDIF
 msk_on:
 	mov	ah,80h
 	call	mskanji
-	ret
+	VZ_RET
 
 msk_off:
 	mov	ax,0
@@ -253,7 +254,7 @@ msk_off:
 	pop	ax
 msk_act:
 msk_mask:
-	ret
+	VZ_RET
 
 mskanji	proc
 	push	bp
@@ -268,7 +269,7 @@ mskanji	proc
 	mov	sp,bx
 	pop	bx
 	pop	bp
-	ret
+	VZ_RET
 mskanji	endp
 
 	endhs
@@ -310,7 +311,7 @@ _endif
 	mov	tblsize,ax
 	mov	tblmode,dx
 	mov	fkeycnt,cl
-	ret
+	VZ_RET
 initkeytbl endp
 
 ;--- Init VZ key table ---
@@ -335,7 +336,7 @@ _if e
 	mov	dh,60h			; ctrl+
 	call	initfnckey
 _endif
-	ret
+	VZ_RET
 initvzkey endp
 
 initxkey proc
@@ -355,7 +356,7 @@ _repeat
 	inc	dl
   _endif
 _loop
-	ret	
+	VZ_RET	
 initxkey endp
 
 initfnckey proc
@@ -399,7 +400,7 @@ _until e
 _if e
 	dec	si
 _endif
-	ret
+	VZ_RET
 initfnckey endp
 
 	endis
@@ -418,7 +419,7 @@ getkeytbl1:
 	mov	ax,tblmode
 	int	0DCh
 	pop	ds
-	ret
+	VZ_RET
 getkeytbl endp
 
 ;	public	setkey
@@ -450,7 +451,7 @@ _ifn e
 	call	swapktbl
 _endif
 	popm	<es,ds>
-	ret
+	VZ_RET
 setfnckey endp
 
 swapktbl proc
@@ -466,7 +467,7 @@ swapk1:	mov	ax,[di]
 	xchg	[di+bx],ax
 	stosw
 	loop	swapk1
-	ret
+	VZ_RET
 swapktbl endp
 
 ;--- Get keycode ---
@@ -556,7 +557,7 @@ _endif
 gctrl1:
 	call	cvtctrl
 gcode8:	mov	ah,TRUE
-gcode9:	ret
+gcode9:	VZ_RET
 getkeycode endp
 
 get_ringp	proc
@@ -565,7 +566,7 @@ get_ringp	proc
 		movseg	es,ax
 		mov	ax,es:[ringp]
 		pop	es
-		ret
+		VZ_RET
 get_ringp 	endp
 
 ;--- Convert ctrl code ---
@@ -594,7 +595,7 @@ _endif
 	cmp	al,XKEY_ESC
 	jb	cvtshift
 cvctr_x:stc
-	ret
+	VZ_RET
 cvctr2:
 	cmp	al,SCAN_CTR_F01
 _if ae
@@ -652,7 +653,7 @@ cvctr7:
 	jz	cvctr9
 	or	al,00100000b
 cvctr9:	clc
-	ret
+	VZ_RET
 cvtctrl	endp
 
 ;--- Test Key bit ---
@@ -673,7 +674,7 @@ testkey proc
 	shl	al,cl
 	test	es:[bx],al
 	pop	es
-	ret
+	VZ_RET
 testkey endp
 
 ;--- Get [CTRL]/[ALT]+tenkey ---
@@ -708,7 +709,7 @@ tenk2:	mov	di,offset cgroup:tb_tenkey
 	jmps	tenk9
 tenk_x:	stc
 tenk9:	popm	<si,ax>
-	ret
+	VZ_RET
 ctrltenkey endp
 
 ;--- BIOS key function ---
@@ -731,7 +732,7 @@ _while z
 IFDEF CVTKANA
 	call	cvtkanakey
 ENDIF
-	ret
+	VZ_RET
 wait_key endp
 
 	public	sense_key
@@ -740,7 +741,7 @@ sense_key proc
 	bios	01h
 	tst	bh
 	pop	bx
-	ret
+	VZ_RET
 sense_key endp
 
 	public	read_key
@@ -749,7 +750,7 @@ read_key proc
 	bios	05h
 	tst	bh
 	pop	bx
-	ret
+	VZ_RET
 read_key endp
 
 	public	flush_key
@@ -765,7 +766,7 @@ _repeat
 	bios	00h
 _until
 	popm	<bx,ax>
-	ret
+	VZ_RET
 flush_key endp
 
 	public	shift_key
@@ -776,19 +777,19 @@ shift_key proc
 	mov	al,es:[keysft]
 	mov	ah,al
 	pop	es
-	ret
+	VZ_RET
 shift_key endp
 
 	public	beep_on
 beep_on proc
 	outi	37h,6
-	ret
+	VZ_RET
 beep_on endp
 
 	public	beep_off
 beep_off proc
 	outi	37h,7
-	ret
+	VZ_RET
 beep_off endp
 
 ;****************************
@@ -824,7 +825,7 @@ _endif
 	mov	latch,al
 	mov	trgc,0
 	pop	ds
-	ret
+	VZ_RET
 sm_gettrgkey endp
 
 ;--- Sense key ---
@@ -869,7 +870,7 @@ sens4:
 sens5:	mov	latch,ah
 sens8:	mov	trgc,al
 	pop	ds
-	ret
+	VZ_RET
 sm_sensekey endp
 
 	assume	ds:nothing
@@ -907,9 +908,9 @@ chkk3:	sub	al,'0'
 	mov	rolc,al
 	call	initrolc
 chkk0:	clc
-	ret
+	VZ_RET
 chkk9:	stc
-	ret
+	VZ_RET
 sm_chkkey endp
 
 ;--- Check [SHIFT] key ---
@@ -941,11 +942,11 @@ chks1:
 	call	initrolc
 _endif
 	clc
-	ret
+	VZ_RET
 sm_chksft endp
 
 isDBCS	proc				; ##156.132
-	ret
+	VZ_RET
 isDBCS	endp
 
 	endhs
@@ -954,4 +955,3 @@ isDBCS	endp
 ;	End of 'key98.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

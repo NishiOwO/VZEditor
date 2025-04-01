@@ -42,7 +42,7 @@ ENDIF
 	extrn	rends		:word
 	extrn	syssw		:word
 	extrn	tbsize		:word
-	extrn	tmpnamep	:word
+;	extrn	tmpnamep	:word
 	extrn	w_busy		:word
 	extrn	w_free		:word
 	extrn	tmpslot		:word
@@ -70,7 +70,7 @@ ENDIF
 	extrn	initblk		:near
 	extrn	isviewmode	:near
 	extrn	jumpnum		:near
-	extrn	killmemtmp	:near
+;	extrn	killmemtmp	:near
 	extrn	ld_wact		:near
 	extrn	makefulpath	:near
 	extrn	maptext		:near
@@ -79,7 +79,7 @@ ENDIF
 	extrn	ofs2seg		:near
 	extrn	parsepath	:near
 	extrn	ptradj		:near
-	extrn	readmemtmp	:near
+;	extrn	readmemtmp	:near
 	extrn	restcp		:near
 	extrn	scannum		:near
 	extrn	searchfile	:near
@@ -109,7 +109,7 @@ ENDIF
 	extrn	wndsel		:near
 	extrn	wrdcpy		:near
 	extrn	wrdicmp		:near
-	extrn	writememtmp	:near
+;	extrn	writememtmp	:near
 	extrn	xmem_alloc	:near
 	extrn	xmem_free	:near
 	extrn	xmem_read	:near
@@ -162,7 +162,7 @@ _if z
 	mov	fh_r,ax
 _endif
 opnr_x:	pop	ds
-	ret
+	VZ_RET
 open_r	endp
 
 ;--- Open for write ---
@@ -192,7 +192,7 @@ _ifn c
 	mov	fh_w,ax
 _endif
 	pop	ds
-	ret
+	VZ_RET
 open_w	endp
 
 ;--- Open for append ---
@@ -222,7 +222,7 @@ opna1:	clr	cx
 	not	cx
 	mov	dx,cx
 	msdos	F_SEEK,2
-opna9:	ret
+opna9:	VZ_RET
 open_a	endp
 
 	assume	ds:nothing
@@ -236,7 +236,7 @@ close_r	proc
 _ifn z
 	msdos	F_CLOSE
 _endif
-	ret
+	VZ_RET
 close_r	endp
 	
 close_w proc
@@ -251,7 +251,7 @@ _ifn z
   _endif
 	msdos	F_CLOSE
 _endif
-	ret
+	VZ_RET
 close_w endp
 
 	assume	ds:cgroup
@@ -311,7 +311,7 @@ _endif
 	pop	dx
 	msdos	F_RENAME		;ren 'TXT' as 'BAK'
 	stc				; ##100.20
-	ret
+	VZ_RET
 makebak endp
 ENDIF
 
@@ -358,9 +358,9 @@ _repeat
 read3:	cmp	byte ptr [si-1],LF
 _until e
 	clz
-	ret
+	VZ_RET
 read9:	stz
-read_x:	ret
+read_x:	VZ_RET
 fread	endp
 
 ;--- Write file ---
@@ -379,9 +379,9 @@ fwrite	proc
 	jne	writ_x
 	add	dx,ax
 	clc
-	ret
+	VZ_RET
 writ_x:	stc
-	ret
+	VZ_RET
 fwrite	endp
 
 ;--- Seek to head/end of file ---
@@ -395,14 +395,14 @@ seekend	proc
 	clr	dx
 	msdos	F_SEEK,2
 	pop	cx
-	ret
+	VZ_RET
 seekend	endp
 
 seekhead proc
 	mov	dx,word ptr [bp].headp
 	mov	cx,word ptr [bp].headp+2
 	msdos	F_SEEK,0
-	ret
+	VZ_RET
 seekhead endp
 
 ;--- Set text ID ---
@@ -417,7 +417,7 @@ _if e
 _endif
 	mov	idcount,ax
 	mov	[bp].textid,ax
-	ret
+	VZ_RET
 settextid endp
 
 	assume	ds:cgroup
@@ -492,7 +492,7 @@ qwrit1:
 qwrit8:
 	popm	<es,ds,si>
 	pop	[di]
-	ret
+	VZ_RET
 qwrite	endp
 
 ;--- Read temp ---
@@ -549,7 +549,7 @@ qread1:
 	pop	es:[di]
 	clc
 qread8:	popm	<es,ds,di,si>
-	ret
+	VZ_RET
 qread	endp
 
 ;--- Close temp ---
@@ -561,7 +561,7 @@ qclose	proc
 	call	close_r
 	popm	<si,bx,ax>
 	popf
-	ret
+	VZ_RET
 qclose	endp
 
 ;--- Kill temp ---
@@ -582,7 +582,7 @@ _repeat
 	cmp	di,tmpslot+2
 _until e
 	popm	<ds,di>
-	ret
+	VZ_RET
 qkill	endp
 
 ;--- Init temp slot ---
@@ -596,7 +596,7 @@ inittmpslot proc
 	sub	cx,di
 	call	memclear
 	pop	es
-	ret
+	VZ_RET
 inittmpslot endp
 
 	assume	ds:nothing
@@ -761,7 +761,7 @@ topen8:	cbw
 topen9:	pushf
 	call	close_r
 	popf
-	ret
+	VZ_RET
 
 addeof:
 	clrl	[bp].readp
@@ -778,7 +778,7 @@ addeof1:
 	mov	byte ptr [si],LF
 	inc	si
 	mov	[bp].tend,si
-	ret
+	VZ_RET
 topen	endp
 
 copypath proc
@@ -786,7 +786,7 @@ copypath proc
 	lea	di,[bp].path
 	movseg	es,ss
 	call	strcpy
-	ret
+	VZ_RET
 copypath endp
 
 	public	initlnumb
@@ -796,7 +796,7 @@ initlnumb proc
 	mov	[bp].lnumb0,ax
 	mov	[bp].dnumb,ax
 	mov	[bp].dnumb0,ax
-	ret
+	VZ_RET
 initlnumb endp
 
 ;--- Read Top of file ---
@@ -821,7 +821,7 @@ _endif
 	mov	word ptr [bp].readp,dx
 	or	[bp].largf,FL_TAIL+FL_TAILX
 rtop8:	clc
-rtop9:	ret
+rtop9:	VZ_RET
 readtop	endp
 
 ;----- Read start -----
@@ -867,7 +867,7 @@ read_end	proc
 		mov	si,dx
 		call	addeof
 		clc
-		ret
+		VZ_RET
 read_end	endp
 
 ;----- Read Backword -----
@@ -893,7 +893,7 @@ read_bwd	proc
 		tst	si
 	  _endif
 		mov	[bp].ttop,si
-		ret
+		VZ_RET
 read_bwd	endp
 
 ;----- Init log file -----		; ##16
@@ -947,7 +947,7 @@ init_log	proc
 		mov	[bp].lnumb0,ax
 		or	[bp].nodnumb,2
 		pop	ds
-inilog9:	ret
+inilog9:	VZ_RET
 init_log	endp
 
 ;----- Check Log table -----
@@ -972,7 +972,7 @@ chk_logtbl	proc
 		mov	di,si
 		movseg	es,ss
 		call	set_logtbl
-chklog9:	ret
+chklog9:	VZ_RET
 chk_logtbl	endp
 
 ;----- Scan paramater -----
@@ -1041,7 +1041,7 @@ scjmp1:		mov	pathp,si
 	_endif
 		call	set_opnopt
 		jnc	scanpar1
-scanpar9:	ret
+scanpar9:	VZ_RET
 scan_parm	endp
 
 jump_lnumb	proc
@@ -1059,7 +1059,7 @@ jump_lnumb	proc
 		call	se_textend
 	_endif
 		popm	<ds,si>
-		ret
+		VZ_RET
 jump_lnumb	endp
 
 jump_cp		proc
@@ -1074,7 +1074,7 @@ jump_cp		proc
 		call	restcp
 		call	putnum
 		popm	<ds,si>
-		ret
+		VZ_RET
 jump_cp		endp
 
 scan_mark	proc
@@ -1085,7 +1085,7 @@ scan_mark	proc
 		pop	di
 		shlm	di,2
 		stl	[bp+di].tretp
-		ret
+		VZ_RET
 scan_mark	endp
 
 ;--- Close text ---
@@ -1098,21 +1098,21 @@ tclose	proc
 	call	close1
 	call	wndcls
 	call	setwnum
-clos9:	ret
+clos9:	VZ_RET
 
 tclose2:
 	movseg	ds,ss
 	call	ld_wact
 	call	close1
 	call	wndchg
-	ret
+	VZ_RET
 
 close1:
 	call	fclose
 	mov	si,[bp].tends
 	mov	di,[bp].ttops
 	call	sgmove2
-	ret
+	VZ_RET
 
 fclose:
 	movseg	ds,ss
@@ -1132,7 +1132,7 @@ _ifn z
 	call	qkill
   _endif
 _endif
-	ret
+	VZ_RET
 tclose	endp
 
 ;--- Save/Append text ---
@@ -1296,7 +1296,7 @@ _ifn z
 _else
 	call	newline
 _endif
-	ret
+	VZ_RET
 tsave	endp
 
 ;--- Init open ---
@@ -1369,10 +1369,10 @@ _endif
 setttop:
 	mov	[bp].ttop,TEXTTOP
 	clc
-	ret
+	VZ_RET
 iopn_x:	mov	dl,E_NOMEM
 	stc
-	ret
+	VZ_RET
 iniopn	endp
 
 ;--- Memory open ---
@@ -1397,7 +1397,7 @@ mopn1:
 	mov	[bp].tends,di
 	pop	[bp].ttops
 _endif
-	ret
+	VZ_RET
 memopn	endp
 
 	assume	ds:cgroup
@@ -1432,7 +1432,7 @@ _until
 isex8:	clc
 	pop	bp
 isex9:	pop	ds
-	ret
+	VZ_RET
 isexist endp
 
 ;****************************
@@ -1528,7 +1528,7 @@ nreadeof:
 nxtb8:	clc
 nxtb9:	mov	si,[bp].w2		; si=old tend
 	popm	<di,dx,cx,bx,ax>
-	ret
+	VZ_RET
 nexttext endp
 
 ;--- Read previous text ---
@@ -1543,6 +1543,7 @@ pretext	proc
 	mov	[bp].w2,si
 	test	[bp].largf,FL_HEAD
 	jmpl	z,preb_c
+	nop
 	call	csroff
 	mov	ax,[bp].headsz		; ##16
 	tst	ax
@@ -1630,7 +1631,7 @@ _endif
 	clc
 preb9:	mov	si,[bp].w2
 	popm	<di,dx,cx,bx,ax>
-	ret
+	VZ_RET
 pretext	endp
 
 readsize proc
@@ -1640,7 +1641,7 @@ _if z
 	jbe	rsize9
 _endif
 	mov	ax,[bp].tbalt
-rsize9:	ret
+rsize9:	VZ_RET
 readsize endp
 
 ;--- Is top/end of file ? ---
@@ -1664,7 +1665,7 @@ _else
 	clz
 _endif
 	pop	ax
-istop9:	ret
+istop9:	VZ_RET
 istop	endp
 
 ;--- To top of file ---
@@ -1698,7 +1699,7 @@ retract:
 	call	initlnumb
 toptxt8:call	qclose
 	mov	si,[bp].ttop
-	ret
+	VZ_RET
 toptext endp
 
 ;----- To head of file -----		; ##16
@@ -1794,7 +1795,7 @@ _repeat
 _until c
 endtxt8:	call	qclose
 		mov	si,[bp].tend
-		ret
+		VZ_RET
 endtext		endp
 
 ;--- Seek text ---
@@ -1855,7 +1856,7 @@ _endif
 	popf
 	call	qclose
 	popm	<di,si,cx,bx>
-	ret
+	VZ_RET
 seektext endp
 
 ;--- Buffer overflow ---
@@ -1904,7 +1905,7 @@ fulb2:
 fulb_o:	clc
 fulb9:	call	qclose
 	popm	<dx,cx,bx>
-	ret
+	VZ_RET
 
 fulb_x:	mov	dl,E_TEMP
 	call	disperr
@@ -1926,7 +1927,7 @@ fulbh1:	mov	[bp].w2,si
 	sub	si,cx
 	sub	di,cx
 	clc
-fulbh9:	ret
+fulbh9:	VZ_RET
 fulltext endp
 
 ;--- Overflow 64KB ---
@@ -1953,7 +1954,7 @@ _endif
 ovfbx:	stc
 ovfb9:	call	qclose
 	popm	<dx,bx>
-	ret
+	VZ_RET
 ovftext	endp
 
 ;--- Write head ---
@@ -2000,7 +2001,7 @@ _endif
 	or	[bp].largf,FL_HEAD
 	clc
 whead9:	pop	si
-	ret
+	VZ_RET
 writhead endp
 
 ;--- Write tail ---
@@ -2039,7 +2040,7 @@ wtail8:	pop	si
 	clc
 _endif
 	pop	si
-	ret
+	VZ_RET
 writtail endp
 
 ;--- Set top line number ---
@@ -2054,7 +2055,7 @@ _ifn z
 _else
 	or	[bp].nodnumb,2
 _endif
-	ret
+	VZ_RET
 setnum0 endp
 
 	public	isdnumb
@@ -2072,7 +2073,7 @@ _ifn z
   _endif
 _endif
 	pop	ax
-	ret
+	VZ_RET
 isdnumb	endp
 
 ;----- Open Ext-File -----
@@ -2095,7 +2096,7 @@ open_ext	proc
 	_if c
 		mov	ss:opnpath,ax
 	_endif
-		ret
+		VZ_RET
 open_ext 	endp
 
 ;----- Close Ext-File -----
@@ -2104,7 +2105,7 @@ open_ext 	endp
 close_ext	proc
 		movseg	ds,ss
 		call	close1
-		ret
+		VZ_RET
 close_ext	endp
 
 	endcs
@@ -2114,4 +2115,3 @@ close_ext	endp
 ;	End of 'text.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

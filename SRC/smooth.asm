@@ -103,7 +103,7 @@ _repeat
 _until c
 rlup8: 	call	rlend
 rlup9:	clc
-	ret
+	VZ_RET
 se_smoothdn endp
 
 ;--- Smooth scroll Up ---
@@ -154,7 +154,7 @@ _endif
 	jnc	rldn2
 rldn8: 	call	rlend
 rldn9:	clc
-	ret
+	VZ_RET
 se_smoothup endp
 
 ;--- Smooth scroll init ---
@@ -180,7 +180,7 @@ _if s
 	clr	dx
 	call	undercsr
 _endif
-	ret
+	VZ_RET
 initrol endp
 	
 initrol1 proc
@@ -195,7 +195,7 @@ irol2:	mov	defatr,ATR_TXT
 	mov	cx,word ptr [bp].tw_sx
 	call	clsatr
 _endif
-	ret
+	VZ_RET
 initrol1 endp
 
 ;--- Common sub ---
@@ -203,7 +203,7 @@ initrol1 endp
 bpact	proc
 	mov	bp,w_act
 	mov	ds,[bp].ttops
-	ret
+	VZ_RET
 bpact	endp
 
 bpback	proc
@@ -212,7 +212,7 @@ _ifn b
 	mov	bp,w_back
 	mov	ds,[bp].ttops
 _endif
-	ret
+	VZ_RET
 bpback	endp
 
 rlend	proc
@@ -229,7 +229,7 @@ disp4:	mov	al,[bp].wy		; ##101.23
 	mov	[bp].wys,al
 	call	scrout_fx
 	call	flush_key		; ##151.09
-	ret
+	VZ_RET
 rlend	endp
 
 dsppole	proc
@@ -239,7 +239,7 @@ _if ae
 	mov	ch,1
 	call	disppole
 _endif
-	ret
+	VZ_RET
 dsppole	endp
 
 ;--- Scroll up sub ---
@@ -251,7 +251,7 @@ inisup	proc
 	call	setbtmnumb
 	mov	[bp].w3,dx
 	clz
-isup9:	ret
+isup9:	VZ_RET
 inisup	endp
 
 nxtsup	proc
@@ -260,7 +260,7 @@ nxtsup	proc
 	mov	[bp].tnow,si
 	mov	[bp].tnxt,si
 	mov	[bp].tcp,si
-	ret
+	VZ_RET
 nxtsup	endp
 
 dspsup	proc
@@ -271,7 +271,7 @@ dspsup	proc
 	call	tout
 	mov	[bp].tbtm,si
 	mov	[bp].w3,dx
-	ret
+	VZ_RET
 dspsup	endp
 
 ;--- Scroll down sub ---
@@ -284,7 +284,7 @@ inisdn	proc
 	call	sethomnumb
 	mov	[bp].w3,dx
 	clz
-isdn9:	ret
+isdn9:	VZ_RET
 inisdn	endp
 
 nxtsdn	proc
@@ -302,7 +302,7 @@ nsdn1:	dec	[bp].w3
 _endif
 	call	prefld
 	mov	[bp].thom,si
-	ret
+	VZ_RET
 nxtsdn	endp
 
 dspsdn	proc

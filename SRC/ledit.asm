@@ -77,7 +77,7 @@ initcbuf proc
 	mov	cmax,cx
 	sub	cx,ax
 	mov	cbufsz,cx
-	ret
+	VZ_RET
 initcbuf endp
 
 	endis
@@ -121,7 +121,7 @@ _endif
 	pop	ax
 	popm	<es,ds>
 le_nop:
-	ret
+	VZ_RET
 lineedit endp
 
 ;--- Command table ---
@@ -178,7 +178,7 @@ chkd1:
 	test	al,ah
 chkd8:
 	popm	<bx,ax>
-	ret
+	VZ_RET
 
 isdelim	endp
 
@@ -232,7 +232,7 @@ wlvl8:	tst	dl
 	jz	wlvl9
 	cmp	dh,dl
 wlvl9:	mov	dl,dh
-	ret
+	VZ_RET
 wordlevel endp
 
 ;--- Decriment si ---
@@ -256,7 +256,7 @@ decs3:
 	pop	si
 	and	cx,1
 	sub	si,cx
-	ret
+	VZ_RET
 decsi	endp
 
 ;--- Shift buffer ---
@@ -281,7 +281,7 @@ sftbuf	proc
 	dec	di
 	mov	[bp].bend,di
 	clc
-	ret
+	VZ_RET
 shftr:
 	mov	si,[bp].bend
 	mov	di,si
@@ -295,7 +295,7 @@ shftr:
     rep	movsb
 	cld
 shft0:	clc
-	ret
+	VZ_RET
 shft_x:
 	tstb	[bp].inbuf
 _ifn s
@@ -305,7 +305,7 @@ _ifn s
 	pop	si
 _endif
 	stc
-	ret
+	VZ_RET
 sftbuf	endp
 
 ;--- Store char to buffer ---
@@ -360,7 +360,7 @@ _endif
 	mov	cend,di
 	popm	<es,ds,di,si,ax>
 _endif
-	ret
+	VZ_RET
 
 	assume	ds:cgroup
 cutold:
@@ -384,7 +384,7 @@ _while a
 	mov	di,cbuf
     rep movsb
 	popm	<es,ds,si,dx,cx>
-	ret
+	VZ_RET
 storchr	endp
 
 	assume	ds:nothing
@@ -428,7 +428,7 @@ _endif
 sttyp8:	mov	word ptr [bp].ctype,dx
 	mov	[bp].ccode,ax
 	popm	<si,ax>
-	ret
+	VZ_RET
 settype endp
 
 ;--- Char right ---
@@ -437,14 +437,14 @@ le_charr proc
 	cmp	si,[bp].bend
 _if e
 	inc	ah
-	ret
+	VZ_RET
 _endif
 	tstb	[bp].ckanj
 _ifn z
 	inc	si
 _endif
 	inc	si
-	ret
+	VZ_RET
 le_charr endp
 
 ;--- Char left ---
@@ -453,10 +453,10 @@ le_charl proc
 	cmp	si,[bp].btop
 _ifn e
 	dec	si
-	ret
+	VZ_RET
 _endif
 	dec	ah
-	ret
+	VZ_RET
 le_charl endp
 
 ;--- Word right ---
@@ -465,7 +465,7 @@ le_wordr proc
 	cmp	si,[bp].bend
 _if e
 	inc	ah
-	ret
+	VZ_RET
 _endif
 	clr	dl
 _repeat
@@ -475,9 +475,9 @@ _repeat
 	ja	wrdr8
 	cmp	si,[bp].bend
 _until e
-	ret
+	VZ_RET
 wrdr8:	dec	si
-	ret
+	VZ_RET
 le_wordr endp
 
 ;--- Word left ---
@@ -486,7 +486,7 @@ le_wordl proc
 	cmp	si,[bp].btop
 _if e
 	dec	ah
-	ret
+	VZ_RET
 _endif
 	clr	dl
 _repeat
@@ -504,19 +504,19 @@ _until e
 	jmps	wrdl9
 wrdl8:	mov	si,ax
 wrdl9:	clr	ah
-	ret
+	VZ_RET
 le_wordl endp
 
 ;--- Line top/end ---
 
 le_top	proc
 	mov	si,[bp].btop
-	ret
+	VZ_RET
 le_top	endp
 
 le_end	proc
 	mov	si,[bp].bend
-	ret
+	VZ_RET
 le_end	endp
 
 ;--- Insert mode ---
@@ -535,7 +535,7 @@ set_insm:
   _endif
 _endif
 	mov	insm,al
-	ret
+	VZ_RET
 le_insmode endp
 
 ;--- Back char ---
@@ -556,10 +556,10 @@ bspc9:	call	storchr
 	call	sftbuf
 	pop	si
 	clr	ah
-	ret
+	VZ_RET
 bscr:	
 	mov	ah,2
-	ret
+	VZ_RET
 le_bakchar endp
 
 ;--- Delete char ---
@@ -578,7 +578,7 @@ delc8:	mov	bl,80h
 	jmp	bspc9
 
 delcr:	mov	ah,3
-	ret
+	VZ_RET
 le_delchar endp
 
 ;--- Back word ---
@@ -652,7 +652,7 @@ le_delend proc
 	mov	ax,[bx]
 	mov	[si],ax
 dlin9:	clr	ah
-	ret
+	VZ_RET
 le_delend endp
 
 ;--- Space-Tab ---
@@ -668,7 +668,7 @@ _repeat
 	call	outchr
 	pop	cx
 _loop
-	ret
+	VZ_RET
 
 ;--- Overwrite Tab ---
 
@@ -676,7 +676,7 @@ ovwtab:
 	cmp	si,[bp].bend
 _if ae
 	inc	ah
-	ret
+	VZ_RET
 _endif
 	mov	cl,[bp].lx
 	tstb	[bp].ckanj
@@ -688,7 +688,7 @@ _endif
 	mov	si,[bp].tfld
 	call	xtocp2
 	clr	ah
-	ret
+	VZ_RET
 
 ;--- Output char ---
 
@@ -744,7 +744,7 @@ _endif
 	mov	[si],dl
 	inc	si
 over9:	clr	ah
-	ret
+	VZ_RET
 
 ;----- Column Overwrite mode -----
 
@@ -804,7 +804,7 @@ column_ovw	proc
 		inc	si
 	_endif
 		clr	ah
-		ret
+		VZ_RET
 column_ovw	endp
 
 ;--- String copy ---
@@ -840,7 +840,7 @@ _repeat
 	mov	dl,al
 	call	outchr
 _until
-copy9:	ret
+copy9:	VZ_RET
 le_copystr endp
 
 ;--- Char undo ---
@@ -883,7 +883,7 @@ _loop
 	jns	undo9
 	mov	si,bx
 undo9:	clr	ah
-	ret
+	VZ_RET
 undocr:
 	pop	ax
 	pop	si
@@ -891,7 +891,7 @@ undocr:
 	rol	ax,1
 	add	al,4
 	mov	ah,al		; if al=00 then ah=4, if al=80h then ah=5
-	ret
+	VZ_RET
 le_undo endp
 
 ;--- Word To upper/lower ---
@@ -938,7 +938,7 @@ case6:
 case9:
 	pop	si
 	clr	ah
-	ret	
+	VZ_RET	
 le_case endp
 
 ;--- #? ---
@@ -946,7 +946,7 @@ le_case endp
 le_redraw proc
 	call	off_silent
 	clr	ah
-	ret
+	VZ_RET
 le_redraw endp
 
 	endes

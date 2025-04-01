@@ -7,6 +7,7 @@
 ;NOSWAP		equ	TRUE
 REXP		equ	TRUE		; VWX support by wing
 NEWEXPR		equ	TRUE		; new pointer handler by Sakakibara
+VZ_RET		equ	retn
 
 
 IFNDEF PC98
@@ -205,13 +206,13 @@ SYS_GETC	equ	4
 
 ;--- Parse path result ---
 
-PRS_WILD	equ	00000001b
-PRS_EXT		equ	00000010b
-PRS_NAME	equ	00000100b
-PRS_DIR		equ	00001000b
-PRS_DRV		equ	00010000b
-PRS_ROOT	equ	00100000b
-PRS_ENDDIR	equ	10000000b
+VZ_PRS_WILD	equ	00000001b
+VZ_PRS_EXT	equ	00000010b
+VZ_PRS_NAME	equ	00000100b
+VZ_PRS_DIR	equ	00001000b
+VZ_PRS_DRV	equ	00010000b
+VZ_PRS_ROOT	equ	00100000b
+VZ_PRS_ENDDIR	equ	10000000b
 
 ;--- Char attribute ---
 
@@ -341,10 +342,10 @@ CMF_VAL		equ	10000000b
 
 ;----- DOS Command exec switch -----
 
-DOS_TBOX	equ	0001b
-DOS_GO		equ	0010b
-DOS_RETURN	equ	0100b
-DOS_BOXTTL	equ	1000b
+VZ_DOS_TBOX	equ	0001b
+VZ_DOS_GO	equ	0010b
+VZ_DOS_RETURN	equ	0100b
+VZ_DOS_BOXTTL	equ	1000b
 
 ;--- Macro extra char ---
 
@@ -475,7 +476,7 @@ TTLSTRSZ	equ	64
 TMPSZ		equ	256
 PATHSZ		equ	64
 MASKSZ		equ	32
-BACKSLASH	equ	0FCh
+VZ_BACKSLASH	equ	0FCh
 SYMCHR		equ	27h
 MARKCNT		equ	4
 ONEMS		equ	0FFFh
@@ -484,7 +485,7 @@ PACKSZ		equ	13
 TEXTTOP		equ	2
 TMPSLOTCNT	equ	512
 BMPSIZE		equ	128
-DOSLEN		equ	128
+VZ_DOSLEN	equ	128
 PAGEMAX		equ	BMPSIZE*8
 EMSMASK		equ	0F0h
 EMSMASKW	equ	0F000h
@@ -904,4 +905,3 @@ _text		ends
 
 	.list
 	assume	cs:cgroup, ss:cgroup
-

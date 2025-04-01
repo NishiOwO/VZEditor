@@ -287,7 +287,7 @@ _if a
 	add	al,'A'-'9'-1
 _endif
 	add	al,'0'
-	ret
+	VZ_RET
 
 ;--- TAB ---
 
@@ -418,7 +418,7 @@ _endif
 lend4:	pop	cx
 	cmp	cl,ch			; set Carry
 	popm	<es,bp>
-	ret
+	VZ_RET
 
 rightspc:
 	pushm	<cx,di>
@@ -429,7 +429,7 @@ rightspc:
 	popm	<di,cx>
 	mov	ax,SPC
     rep stosw
-	ret
+	VZ_RET
 
 ctrlatr:
 	tstb	[bp].blkf
@@ -444,7 +444,7 @@ _ifn s
 	mov	dl,al
 	pop	ax
 _endif
-	ret
+	VZ_RET
 
 disptext endp
 
@@ -481,7 +481,7 @@ lineh0:	movhl	ax,19,15		; ##16
 _endif
 	mov	lineh,al
 	popm	<es,ax>
-	ret
+	VZ_RET
 dosheight endp
 
 check_20 proc
@@ -490,7 +490,7 @@ check_20 proc
 	mov	es,ax
 	tstb	es:[dosscrn_25]
 	popm	<es,ax>
-	ret
+	VZ_RET
 check_20 endp
 
 ;--- Get dos location ---
@@ -500,7 +500,7 @@ check_20 endp
 getdosloc proc
 	call	getdosloc1
 	mov	dosloc,dx
-	ret
+	VZ_RET
 getdosloc1:
 	call	getdosloc2
 setrefloc:
@@ -508,7 +508,7 @@ setrefloc:
 	clr	dl
 	mov	refloc,dx
 	pop	dx
-	ret
+	VZ_RET
 getdosloc2:
 	push	es
 	clr	dx
@@ -516,7 +516,7 @@ getdosloc2:
 	mov	dh,es:[dosloc_y]
 	mov	dl,es:[dosloc_x]
 	pop	es
-	ret
+	VZ_RET
 getdosloc endp
 
 ;--- Make screen pointer from x,y ---
@@ -543,7 +543,7 @@ mkscrnp1:
 	shl	ax,1
 	add	di,ax
 	pop	ax
-	ret
+	VZ_RET
 mkscrnp	endp
 
 ;--- Set attribute ---
@@ -553,7 +553,7 @@ mkscrnp	endp
 setatr	proc	
 	call	getatr
 setatr1:mov	dspatr,al
-	ret
+	VZ_RET
 setatr2:
 	call	getatr
 	test	al,ATTR_REV
@@ -594,12 +594,12 @@ getatr2:
 	or	al,1
 	or	al,bl
 	pop	bx
-	ret
+	VZ_RET
 cvtatr:	push	bx
 	jmps	getatr2
 getatr1:
 	mov	al,dspatr
-	ret
+	VZ_RET
 getatr	endp
 
 ;--- Reverse attribute ---
@@ -614,12 +614,12 @@ ELSE
 	ror	dspatr,cl
 	pop	cx
 ENDIF
-	ret
+	VZ_RET
 revatr	endp
 
 undatr	proc
 	xor	dspatr,ATTR_UL
-	ret
+	VZ_RET
 undatr	endp
 
 ;--- Fill attribute ---
@@ -638,7 +638,7 @@ fillatr proc
 	clr	ah
     rep	stosw
 	popm	<es,di,cx>
-	ret
+	VZ_RET
 fillatr endp
 
 ;--- Display char ---
@@ -649,11 +649,11 @@ putvram	proc
 	tstb	silent
 _if z
 	stovram	k
-	ret
+	VZ_RET
 _endif
 	inc	di
 	inc	di
-	ret
+	VZ_RET
 putvram	endp
 
 	public	putc,putcw,putspc,gputc
@@ -674,7 +674,7 @@ putc1:	pushm	<dx,di,es>
 	mov	dsp.@off,di
 	inc	loc.x
 putc8:	popm	<es,di,dx>
-	ret
+	VZ_RET
 bslashc:
 	bslash	putc1
 putcw:	
@@ -714,7 +714,7 @@ abputc	proc
 	mov	es,dsp.@seg
 	stovram
 	pop	es
-	ret
+	VZ_RET
 abputc	endp
 
 ;--- Display string ---
@@ -838,7 +838,7 @@ puts8:
 	mov	dsp.@off,di
 	mov	loc.x,cl
 	popm	<es,di,dx,cx>
-	ret
+	VZ_RET
 puts	endp
 
 ;--- Fill space/char ---
@@ -854,14 +854,14 @@ _repeat
   _break be
 	call	putc
 _until
-	ret
+	VZ_RET
 fillspc	endp
 
 	public	fillset
 fillset	proc
 	mov	al,loc.x
 	xchg	al,locx0
-	ret
+	VZ_RET
 fillset	endp
 
 ;--- Display vertical line ---
@@ -890,7 +890,7 @@ _repeat
 _until z
 	mov	dsp.@off,di
 	popm	<es,di,dx,cx>
-vline9:	ret
+vline9:	VZ_RET
 vlinec	endp
 
 	public	vputc
@@ -904,7 +904,7 @@ vputc	proc
 	mov	dsp.@off,di
 	inc	loc.x
 	popm	<es,di,dx>
-	ret
+	VZ_RET
 vputc	endp
 
 putck	proc
@@ -919,12 +919,12 @@ putck	proc
 putck1:
 	mov	word ptr es:[di+2],0
 putck2:	call	putvram
-	ret
+	VZ_RET
 putck	endp
 
 getgrctbl proc				; ##156.DOSV
 	mov	bx,offset cgroup:grctbl
-	ret
+	VZ_RET
 getgrctbl endp
 
 IFNDEF NO_JIS83
@@ -954,10 +954,10 @@ yes83:		inc	sp
 		mov	ax,cs:[bx]
 		xchg	al,ah
 		pop	bx
-		ret
+		VZ_RET
 not83:		pop	ax
 	_endif
-		ret
+		VZ_RET
 cvtjis83	endp
 
 cvtjis1		proc
@@ -1017,7 +1017,7 @@ _repeat
 _until z
 	popm	<es,di,dx,cx>
 cls8:	pop	bx
-cls9:	ret
+cls9:	VZ_RET
 
 clr1:
 	call	issilent
@@ -1034,7 +1034,7 @@ clsatr1:
 	clr	ah
     rep stosw
 	popm	<di,cx>
-	ret
+	VZ_RET
 
 cls	endp
 
@@ -1084,7 +1084,7 @@ _endif
 	call	movescr
 	cld
 	popm	<es,ds>
-	ret
+	VZ_RET
 rollwind endp
 
 movescr proc
@@ -1095,7 +1095,7 @@ movescr proc
 	add	di,bx
 	dec	dx
 	jnz	movescr
-	ret
+	VZ_RET
 movescr endp
 
 ;--- Get dos/current screen ---
@@ -1109,7 +1109,7 @@ getdosscrn proc
 	call	getscrn
 	mov	si,OFF_ATR
 	call	getscrn
-	ret
+	VZ_RET
 getdosscrn endp
 
 IFNDEF NOFILER
@@ -1122,7 +1122,7 @@ getcurscrn proc
 	mov	si,OFF_ATR
 	call	getscrn
 	call	chkline
-	ret
+	VZ_RET
 getcurscrn endp
 ENDIF
 
@@ -1146,7 +1146,7 @@ cpyscrn:
 	add	di,ax
 	pop	ax
 	popm	<es,ds>
-	ret
+	VZ_RET
 getscrn endp
 
 ;--- Put dos/current screen ---
@@ -1164,7 +1164,7 @@ putdosscrn proc
 	call	putscrn
 	mov	di,OFF_ATR
 	call	putscrn
-	ret
+	VZ_RET
 putdosscrn endp
 
 IFNDEF NOFILER
@@ -1217,7 +1217,7 @@ _repeat
 	dec	dx
 _until z
 	popm	<es,ds>
-	ret
+	VZ_RET
 putcurwind endp
 ENDIF
 
@@ -1252,7 +1252,7 @@ _until z
 	mov	es:[di],ax
 	call	ems_loadmap
 	popm	<es,ds,di,si,dx,cx>
-	ret
+	VZ_RET
 pushwindow endp
 
 	public	popwindow
@@ -1282,7 +1282,7 @@ _repeat
 _until z
 popw8:	call	ems_loadmap
 	popm	<es,ds,di,si,dx,cx>
-	ret
+	VZ_RET
 popwindow endp
 
 initpwind proc
@@ -1305,7 +1305,7 @@ initw3:	call	mkwindp
 	mov	al,ch
 	clr	ch
 	clr	ah
-	ret
+	VZ_RET
 initpwind endp
 
 ;--- Cursor ON/OFF ---			; ##153.41
@@ -1319,7 +1319,7 @@ csron	proc
 _if s
 	bios	12h
 csroff1:mov	precsr,CSR_OFF
-csroff2:ret
+csroff2:VZ_RET
 _endif
 	pushm	<cx,dx,es>
 	clr	dx
@@ -1396,7 +1396,7 @@ _else
 _endif
 	bios	11h
 csron8:	popm	<es,dx,cx>
-	ret
+	VZ_RET
 csron	endp
 
 ;--- Under line cursor ---
@@ -1448,7 +1448,7 @@ _else
 _endif
 	pop	cx
 	pop	es
-ucsr9:	ret
+ucsr9:	VZ_RET
 undercsr endp
 
 ;--- Check 20/25 line ---
@@ -1481,7 +1481,7 @@ chkline proc
     _endif
   _endif
 _endif
-	ret
+	VZ_RET
 chkline endp
 
 ;--- Change 20/25 line ---		; ##156.105
@@ -1519,7 +1519,7 @@ _until
 	movseg	ds,ss
 	call	resetscrnh
 	pop	ds
- 	ret
+ 	VZ_RET
 chgline endp
  
 	public	resetscrnh
@@ -1548,7 +1548,7 @@ _if b
 _endif
 	mov	hsplit,al
 	pop	ax
-splt9:	ret
+splt9:	VZ_RET
 resetscrnh endp
 
 ;--- Wait CRTV ---
@@ -1562,7 +1562,7 @@ vwait1:
 vwait2:	in	al,60h
 	and  	al,20h
 	je	vwait2
-	ret
+	VZ_RET
 waitcrtv endp
 
 ;****************************
@@ -1586,7 +1586,7 @@ _repeat
 _loop
 	pop	cx
 	call	sm_sensekey
-	ret
+	VZ_RET
 vwait	endp
 
 	public	smoothdown
@@ -1603,7 +1603,7 @@ _repeat
 _while b
 	clr	al
 	out	76h,al
-	ret
+	VZ_RET
 smoothdown endp
 
 	public	smoothup1
@@ -1617,7 +1617,7 @@ _if b
 	clr	al
 _endif
 	out	76h,al
-	ret
+	VZ_RET
 smoothup1 endp
 
 vwaith	proc
@@ -1629,7 +1629,7 @@ vwaith	proc
 _repeat
 	call	vwait
 _loop
-	ret
+	VZ_RET
 vwaith	endp
 
 	public	smoothup2
@@ -1651,7 +1651,7 @@ _if z
     _until z
   _endif
 _endif
-	ret
+	VZ_RET
 smoothup2 endp
 
 	public	smootharea
@@ -1668,7 +1668,7 @@ smootharea proc
 	call	clrline
 	mov	al,[bp].tw_cy
 	dec	al
-	ret
+	VZ_RET
 smootharea endp
 
 	public	initrolc
@@ -1696,12 +1696,12 @@ _if z
 	shr	al,cl
 _endif
 	mov	rolc1,al
-	ret
+	VZ_RET
 initrolc endp
 
 ishireso proc
 	test	ss:hardware,ID_PC98Hi
-	ret
+	VZ_RET
 ishireso endp
 
 ;--- Roll up/down for smooth scroll ---
@@ -1725,7 +1725,7 @@ _ifn z
 	call	move_vram
 _endif
 	popm	<es,ds>
-	ret
+	VZ_RET
 rollup	endp
 
 	public	rolldwn
@@ -1780,7 +1780,7 @@ _if s
 	call	rdown
 _endif
 	popm	<es,ds>
-	ret
+	VZ_RET
 rolldwn	endp
 
 rdown	proc
@@ -1799,7 +1799,7 @@ _ifn z
     rep	movsw
 	cld
 _endif
-	ret
+	VZ_RET
 rdown	endp
 
 move_vram	proc
@@ -1812,14 +1812,14 @@ move_vram	proc
 		add	di,OFF_ATR
 	_endif
 	rep	movsw
-		ret
+		VZ_RET
 move_vram	endp
 
 ;--- Reset CRT ---			; ##152.27
 
 	public	resetcrt
 resetcrt proc
-	ret
+	VZ_RET
 resetcrt endp
 
 ;--- Get Indicator Char --- 		; ##16
@@ -1831,7 +1831,7 @@ _ifn e
 	mov	al,87h
 	add	al,cl
 _endif
-	ret
+	VZ_RET
 get_indichar endp
 
 	endhs
@@ -1913,7 +1913,7 @@ _ifn z
   _endif
 _endif
 ENDIF
-	ret	
+	VZ_RET	
 initvram endp
 
 ;--- Check hardware ---
@@ -1931,7 +1931,7 @@ _if e
 	stc
 _endif
 	pop	es
-	ret
+	VZ_RET
 checkhard endp
 
 	endis

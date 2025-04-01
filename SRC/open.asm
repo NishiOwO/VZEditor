@@ -200,16 +200,16 @@ IFNDEF NOFILER
 ENDIF
 	call	wnd_reset
 	clc
-open9:	ret
+open9:	VZ_RET
 open_x:
 	cmp	dl,E_PATH
 	je	open1
 	stc
-	ret
+	VZ_RET
 toomany:
 	mov	dl,E_OPEN
 	call	disperr
-	ret
+	VZ_RET
 se_open endp
 
 ;--- Load file ---
@@ -240,7 +240,7 @@ _endif
 	call	ld_wact
 	call	topen1			; ##16
 	jmp	open2
-load9:	ret
+load9:	VZ_RET
 se_load	endp
 
 ;--- Close file ---
@@ -261,7 +261,7 @@ _endif
 	jz	close1
 	call	dspscr
 	clc
-close9:	ret
+close9:	VZ_RET
 close1:
 	call	putdosscrn
 	call	getdosscrn
@@ -300,12 +300,12 @@ save2:	call	tsave
 	pushf
 	call	dspscr
 	popf
-save9:	ret
+save9:	VZ_RET
 save_x:
 	mov	dl,M_RDONLY
 	call	dispmsg
 	stc
-	ret
+	VZ_RET
 se_save endp
 
 ;--- Append file ---
@@ -326,7 +326,7 @@ apnd1:	mov	dl,W_APPEND
 apnd8:	pushf				; ##153.45
 	call	dspscr
 	popf
-apnd9:	ret
+apnd9:	VZ_RET
 se_append endp
 
 ;--- Quit ---
@@ -349,7 +349,7 @@ _until z
 	mov	retval,ax
 	tst	ax
 	pop	bp
-	ret
+	VZ_RET
 ismodify endp
 
 	public	se_quit,se_exit,closeall
@@ -408,7 +408,7 @@ quit6:
 	mov	w_act,0
 	jmp	quit_vz
 quit9:	stc
-	ret
+	VZ_RET
 se_quit endp
 
 se_exit	proc
@@ -449,7 +449,7 @@ _ifn c
 	call	checkpath
 	popf
 _endif
-	ret
+	VZ_RET
 se_rename endp
 
 rename	proc
@@ -477,7 +477,7 @@ _ifn c
 	clc
 _endif
 	pop	ds
-	ret
+	VZ_RET
 rename	endp
 
 	public	setnewname
@@ -495,7 +495,7 @@ setnewname proc
 	call	cutpath
 	call	settab			; ##151.07, ##156.116
 	pop	ds
-	ret
+	VZ_RET
 setnewname endp
 
 ;--- Input file name ---
@@ -508,7 +508,7 @@ infile	proc
 	mov	si,fbuf
 	mov	cx,PATHSZ
 	call	windgets
-	ret
+	VZ_RET
 infile	endp
 
 ;--- Pre-Close ---
@@ -531,7 +531,7 @@ precls1:
   _endif
 	popf
 _endif
-	ret
+	VZ_RET
 preclose endp
 
 ;--- Check path name ---
@@ -576,7 +576,7 @@ chkp8:	cbw
 	mov	retval,ax
 	pop	ds
 	clc
-	ret
+	VZ_RET
 checkpath endp
 
 ;--- Select file ---
@@ -623,7 +623,7 @@ ELSE
 	stc
 ENDIF
 sfile8:	mov	frompool,al
-sfile9:	ret
+sfile9:	VZ_RET
 sfile_e:
 	inc	sp
 	inc	sp
@@ -651,7 +651,7 @@ IFNDEF NOFILER
 _endif
 ENDIF
 	pop	ds
-	ret
+	VZ_RET
 nextfile endp
 
 	endcs
@@ -663,7 +663,7 @@ nextfile endp
 ; DS:SI :input string
 ;<--
 ; CY :end of line
-; DL :result bit (PRS_xxx)
+; DL :result bit (VZ_PRS_xxx)
 ; BX :file name ptr
 ; CX :file ext ptr
 ; SI :next ptr
@@ -697,24 +697,24 @@ _endif
 	je	prs_wld
 	cmp	al,'?'
 	je	prs_wld
-pars2:	test	dl,PRS_EXT
+pars2:	test	dl,VZ_PRS_EXT
 _if z
-	or	dl,PRS_NAME
+	or	dl,VZ_PRS_NAME
 _endif
-	test	dl,PRS_ENDDIR
+	test	dl,VZ_PRS_ENDDIR
 	jz	pars1
-	and	dl,not PRS_ENDDIR
+	and	dl,not byte ptr VZ_PRS_ENDDIR
 	mov	bx,di			; ##153.31
 	jmp	pars1
-prs_drv:or	dl,PRS_DRV+PRS_ENDDIR+PRS_ROOT
+prs_drv:or	dl,VZ_PRS_DRV+VZ_PRS_ENDDIR+VZ_PRS_ROOT
 	jmps	prsdir2
 prs_dir:
 	tst	dl
 _if z
-	or	dl,PRS_ROOT
+	or	dl,VZ_PRS_ROOT
 _endif
-prsdir1:or	dl,PRS_DIR+PRS_ENDDIR
-prsdir2:and	dl,not (PRS_NAME+PRS_EXT)
+prsdir1:or	dl,VZ_PRS_DIR+VZ_PRS_ENDDIR
+prsdir2:and	dl,not (VZ_PRS_NAME+VZ_PRS_EXT)
 	jmp	pars1
 prs_ext:
 	cmp	byte ptr [si],'.'
@@ -722,27 +722,27 @@ _if e
 	lodsb
 	jmp	prsdir1
 _endif
-	or	dl,PRS_EXT
+	or	dl,VZ_PRS_EXT
 	mov	cx,di			; ##153.31
-	test	dl,PRS_ENDDIR
+	test	dl,VZ_PRS_ENDDIR
 	jz	pars1
-prs_wld:or	dl,PRS_WILD
+prs_wld:or	dl,VZ_PRS_WILD
 	jmp	pars2
 pars5:
 	pop	di
-	test	dl,PRS_EXT		; ##156.114
+	test	dl,VZ_PRS_EXT		; ##156.114
 _if z
 	mov	cx,si
 _endif
-	test	dl,PRS_ENDDIR
+	test	dl,VZ_PRS_ENDDIR
 	jz	pars8
 	mov	bx,si
 parsedir:
-	and	dl,PRS_DRV+PRS_DIR+PRS_ROOT
+	and	dl,VZ_PRS_DRV+VZ_PRS_DIR+VZ_PRS_ROOT
 	dec	bx
 	mov	cx,bx
 pars8:	mov	parsef,dl
-	ret
+	VZ_RET
 parsepath endp
 
 	endes
@@ -812,7 +812,7 @@ mkful1:	stosb
 _until be
 mkful2:	dec	di
 	mov	byte ptr es:[di],0
-	ret
+	VZ_RET
 makefulpath endp
 
 ;--- Set path case ---
@@ -830,7 +830,7 @@ _else
 	call	strlwr
 _endif
 	pop	ds
-	ret
+	VZ_RET
 casepath endp
 
 ;--- Cut path name ---
@@ -885,7 +885,7 @@ cutp3:	lodsb
 cutp4:	dec	si
 cutp5:	mov	[bp].labelp,si
 	pop	ds
-	ret
+	VZ_RET
 cutpath endp
 
 	assume	ds:cgroup
@@ -929,7 +929,7 @@ ENDIF
 	push	di
 	call	casepath
 	pop	di
-	ret
+	VZ_RET
 setpath endp
 
 ;--- Search File ---
@@ -949,13 +949,13 @@ searchfile proc
 	jmpln	z,findfile
 	mov	si,pathp
 	call	parsepath
-	test	dl,PRS_EXT
+	test	dl,VZ_PRS_EXT
 _if z
 	call	skipstr
 	dec	di
 	mov	putextp,di
 _endif
-	test	dl,PRS_ROOT
+	test	dl,VZ_PRS_ROOT
 _ifn z
 	mov	getdirp,0
 _endif
@@ -1017,7 +1017,7 @@ findfile:
 	mov	si,di
 	call	casepath
 	clc
-	ret
+	VZ_RET
 
 noext:	stosb
 	jmps	findfile
@@ -1043,7 +1043,7 @@ _endif
 nofile:
 	pop	di
 	stc
-	ret
+	VZ_RET
 searchfile endp
 
 	assume	ds:nothing
@@ -1064,7 +1064,7 @@ finddir	proc
 	int	21h
 	cld
 	popm	<dx,cx,ax>
-	ret
+	VZ_RET
 finddir	endp
 
 ;--- Set TAB size by .EXT ---
@@ -1079,7 +1079,7 @@ settab	proc
 	mov	cl,ntab
 	clr	ch
 	mov	[bp].extword,0
-	test	dl,PRS_EXT
+	test	dl,VZ_PRS_EXT
 	jz	stab8
 	inc	si
 	mov	ax,[si]
@@ -1113,7 +1113,7 @@ _endif
 stab8:	mov	[bp].exttyp,ch
 ;	mov	[bp].tabr,cl		; ##156.116
 	pop	ds
-	ret
+	VZ_RET
 settab	endp
 
 ;--- Search EXT ---
@@ -1154,7 +1154,7 @@ _endif
 	jmps	schext9
 schext0:clr	ch
 schext9:popm	<si,bx>
-	ret
+	VZ_RET
 searchext endp
 
 	public	isbinary
@@ -1166,7 +1166,7 @@ _ifn z
 	call	searchext1
 _endif
 	popm	<es,di,dx,ax>
-	ret
+	VZ_RET
 isbinary endp
 
 	endcs
@@ -1195,7 +1195,7 @@ _while c
 	jz	addsp9
 addsep1:mov	al,dirchr
 	stosb
-addsp9:	ret
+addsp9:	VZ_RET
 addsep	endp
 
 ;--- Is slash ? ---
@@ -1205,7 +1205,7 @@ isslash	proc
 	cmp	al,'\'
 	je	islsh9
 	cmp	al,'/'
-islsh9:	ret
+islsh9:	VZ_RET
 isslash	endp
 
 ;--- After parse path ---
@@ -1229,12 +1229,12 @@ _if z
 _endif
 	mov	parsef,dl
 	mov	getnamp,bx
-	test	dl,PRS_EXT
+	test	dl,VZ_PRS_EXT
 _if z
 	clr	cx
 _endif
 	mov	getextp,cx
-	ret
+	VZ_RET
 parsepath1 endp
 
 parsepath2 proc
@@ -1242,13 +1242,13 @@ parsepath2 proc
 	call	parsepath
 	mov	di,si
 	pop	si
-	test	dl,PRS_NAME
+	test	dl,VZ_PRS_NAME
 _ifn z
-	test	dl,PRS_WILD
+	test	dl,VZ_PRS_WILD
 	jz	isdir
 _endif
 	stc
-	ret
+	VZ_RET
 parsepath2 endp
 
 ;--- Is directory ---
@@ -1266,15 +1266,15 @@ _ifn c
   _ifn z
 	pop	cx
 	mov	bx,di
-	or	dl,PRS_DIR
+	or	dl,VZ_PRS_DIR
 	call	parsedir
 	stc
-	ret
+	VZ_RET
   _endif
 _endif
 	pop	cx
 	clc
-	ret
+	VZ_RET
 isdir	endp
 
 	assume	ds:cgroup
@@ -1306,7 +1306,7 @@ _endif
 	call	cpycurdir
 	pop	ax
 	pop	ds
-	ret
+	VZ_RET
 getcurdir endp
 
 	assume	ds:nothing
@@ -1320,7 +1320,7 @@ _ifn z
 _endif
 	mov	ah,':'
 	stosw
-	ret
+	VZ_RET
 getcurdrv endp
 
 cpycurdir proc
@@ -1353,7 +1353,7 @@ _until z
 	mov	di,si
 	clc
 cpycd9:	pop	ds
-	ret
+	VZ_RET
 cpycurdir endp
 
 	endes
@@ -1377,7 +1377,7 @@ readref		proc
 	_ifn e
 		dec	si
 		clc
-		ret
+		VZ_RET
 	_endif
 		push	si
 		call	chkline1		;;
@@ -1390,14 +1390,14 @@ readref		proc
 		pushm	<ax,si>
 		call	parsepath
 		popm	<si,ax>
-		cmp	dl,PRS_EXT
+		cmp	dl,VZ_PRS_EXT
 	_if e
-		mov	dl,PRS_DIR
+		mov	dl,VZ_PRS_DIR
 		mov	bx,cx
 	_endif
 		mov	di,pathbuf
 		push	di
-		test	dl,PRS_DIR
+		test	dl,VZ_PRS_DIR
 	_ifn z
 IFNDEF NOFILER
 		push	[bx-1]
@@ -1412,7 +1412,7 @@ ENDIF
 	_endif
 		cmp	al,'@'
 		je	rref0
-		test	dl,PRS_NAME
+		test	dl,VZ_PRS_NAME
 	_if z
 		mov	si,reffile
 	_endif
@@ -1430,7 +1430,7 @@ rref0:		mov	si,defpath
 		call	addsep
 rref1:
 		mov	si,bx
-		test	dl,PRS_NAME
+		test	dl,VZ_PRS_NAME
 	_if z
 		mov	si,reffile
 	_endif
@@ -1463,7 +1463,7 @@ rref_x:
 		jnc	rref3
 		msdos	F_CLOSE
 		stc
-		ret
+		VZ_RET
 	_endif
 		inc	dx
 		inc	dx
@@ -1502,7 +1502,7 @@ _until
 		mov	fromref,TRUE
 rref9:
 		mov	pathp,si
-		ret
+		VZ_RET
 readref		endp
 
 read_curdir	proc
@@ -1521,7 +1521,7 @@ read_curdir	proc
 		pop	si
 		call	skipchar
 		mov	pathp,si
-		ret
+		VZ_RET
 read_curdir	endp
 
 ;----- Write profile -----
@@ -1561,7 +1561,7 @@ writeref:
 		msdos	F_CLOSE
 		mov	tchdir,TRUE		; ##155.76
 wref9:		mov	fullpath,FALSE
-		ret
+		VZ_RET
 se_writeref	endp
 
 ;----- Write editfile -----
@@ -1588,7 +1588,7 @@ _repeat
 		mov	bp,[bp].w_next
 		tst	bp
 _until z
-		ret
+		VZ_RET
 write_editfile	endp
 
 pf_name		db	"%s",0
@@ -1622,7 +1622,7 @@ w_name_cp	proc
 		popm	<ax,ax>
 	_endif
 		movseg	ds,ss
-		ret
+		VZ_RET
 w_name_cp	endp
 
 w_act_back	proc
@@ -1647,7 +1647,7 @@ w_act_back	proc
 		mov	al,wys
 		call	w_option
 	_endif
-		ret
+		VZ_RET
 w_act_back	endp
 
 w_option	proc
@@ -1667,7 +1667,7 @@ w_option1:	movseg	ds,cs
 		dec	di
 		add	sp,4
 		movseg	ds,ss
-		ret
+		VZ_RET
 w_option	endp
 
 w_text_opt	proc
@@ -1686,7 +1686,7 @@ w_text_opt	proc
 		call	w_option
 	_endif
 ;		call	w_mark
-;		ret
+;		VZ_RET
 w_text_opt	endp
 
 w_mark		proc
@@ -1714,7 +1714,7 @@ _repeat
 		cmp	cx,MARKCNT
 _until a
 		movseg	ds,ss
-		ret
+		VZ_RET
 w_mark		endp
 
 ;----- Save closing file info -----
@@ -1745,7 +1745,7 @@ prof_close	proc
 		mov	bx,fbuf
 		call	histcpy_w
 prcls9:		pop	ds
-		ret
+		VZ_RET
 prof_close	endp
 
 ;----- Write grobal option -----
@@ -1773,7 +1773,7 @@ _repeat
 		inc	dx
 		inc	dx
 _loop
-		ret
+		VZ_RET
 write_gopt	endp
 
 ;----- Write current dir -----
@@ -1793,7 +1793,7 @@ write_curdir	proc
 		pop	dx
 		sub	cx,dx
 		msdos	F_WRITE
-		ret
+		VZ_RET
 write_curdir	endp
 
 ;----- Write history -----
@@ -1811,7 +1811,7 @@ write_history	proc
 		mov	di,xbuf
 		call	w_history
 	_endif
-		ret
+		VZ_RET
 write_history	endp
 
 w_history	proc
@@ -1833,7 +1833,7 @@ _until z
 		mov	di,dx
 		pop	[di]
 		call	write_crlf
-		ret
+		VZ_RET
 w_history	endp
 
 write_crlf	proc
@@ -1842,7 +1842,7 @@ write_crlf	proc
 		mov	dx,offset cgroup:pro_crlf
 		msdos	F_WRITE
 		popm	<dx,cx>
-		ret
+		VZ_RET
 write_crlf	endp
 
 ;----- Read history -----
@@ -1880,7 +1880,7 @@ _repeat
 		jz	r_hist_x
 		cmp	readbuf,LF
 _until e
-		ret
+		VZ_RET
 r_hist1:
 		dec	cx		; CRLF
 		dec	cx
@@ -1894,10 +1894,10 @@ r_hist1:
 		mov	cx,-1
 		msdos	F_SEEK,1
 	_endif
-		ret
+		VZ_RET
 r_hist_x:
 		stc
-		ret
+		VZ_RET
 read_history	endp
 
 ;------------------------------------------------
@@ -1920,7 +1920,7 @@ _ifn z
 		msdos	F_CLOSE
 	_endif
 _endif
-		ret
+		VZ_RET
 read_logtbl	endp
 
 		public	write_logtbl
@@ -1941,11 +1941,11 @@ write_logtbl	proc
 		sub	cx,dx
 		msdos	F_WRITE
 		msdos	F_CLOSE
-		ret
+		VZ_RET
 	    _endif
 	  _endif
 	_endif
-		ret
+		VZ_RET
 write_logtbl	endp
 
 		public	open_file
@@ -1958,7 +1958,7 @@ open_file	proc
 	_ifn c
 		mov	bx,ax
 	_endif
-		ret
+		VZ_RET
 open_file	endp
 
 ;----- Set "VZ.ENV" -----
@@ -1977,7 +1977,7 @@ setvzenv	proc
 		mov	si,offset cgroup:nm_env
 		call	strcpy
 		pop	dx
-		ret
+		VZ_RET
 setvzenv	endp
 
 ;----- Check log file -----
@@ -2011,7 +2011,7 @@ chk_logfile	proc
 	_endif
 		clc
 chklog9:	popm	<es,ds>
-		ret
+		VZ_RET
 chk_logfile	endp
 
 ;----- Scan Log file table -----
@@ -2038,7 +2038,7 @@ _repeat
 _until
 		stc
 sclog9:		popm	<es,ds>
-		ret
+		VZ_RET
 scan_logtbl	endp
 
 ;----- Add Log file table -----
@@ -2096,7 +2096,7 @@ _until a
 		clr	al
 		stosb
 addlog9:	popm	<es,ds>
-		ret
+		VZ_RET
 add_logtbl	endp
 
 		public	set_logtbl
@@ -2114,7 +2114,7 @@ set_logtbl	proc
 		mov	al,LF
 		stosb
 tch_logtbl:	mov	ss:addlogf,TRUE
-		ret
+		VZ_RET
 set_logtbl	endp
 
 endlogtbl	proc
@@ -2125,7 +2125,7 @@ _repeat
 		call	skipstr
 		add	di,type _logtbl
 _until
-		ret
+		VZ_RET
 endlogtbl	endp
 
 	endcs
@@ -2135,4 +2135,3 @@ endlogtbl	endp
 ;	End of 'open.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

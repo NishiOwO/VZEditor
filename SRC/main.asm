@@ -22,7 +22,6 @@ refp	macro	label
 	endm
 
 ;--- External symbols ---
-
 	extrn	cmdsymtbl	:byte
 	extrn	scrnparm	:byte
 	extrn	flparm		:byte
@@ -140,7 +139,7 @@ refp	macro	label
 	extrn	write_logtbl	:near
 	extrn	set_insm	:near
 	extrn	init_maclink	:near
-	extrn	init_module	:near
+;	extrn	init_module	:near
 	extrn	set_opnopt	:near
 	extrn	set_blktgt	:near
 	extrn	check_vwx	:near
@@ -204,7 +203,11 @@ entry:		jmps	entry1
 vzversion:	db	"VZ1.60 ",0,EOF
 entry1:		jmp	init
 		dw	0
+IFDEF WASM
+nm_vz		db	<'VZ',0,0,0,0,0,0,0>
+ELSE
 GDATA nm_vz,	db,	<'VZ',0,0,0,0,0,0,0>
+ENDIF
 GDATA hardware,	db,	0
 
 		org	120h
@@ -352,7 +355,6 @@ GDATA breakf,	db,	-1		; break flag	;##155.83, ##156.129
 GDATA dossw,	db,	0		; dos command switch  ##16
 GDATA doslen,	dw,	0		; dos command box len ##16
 GDATA tmppath,	db,	<TMPPATHSZ dup(?)> ; temporary path
-
 	endws
 
 	dseg
@@ -420,8 +422,13 @@ GDATA tmpbuf3,	dw,	WD*2		; DTA,smooth,&?()
 GDATA pathbuf,	dw,	PATHSZ
 GDATA pathbuf2,	dw,	PATHSZ
 IFNDEF NOFILER
+IFDEF WASM
+flwork		dw	<type _filer>	; 1st filer work
+flwork2		dw	<type _filer>	; 2nd filer work
+ELSE
 GDATA flwork,	dw,	<type _filer>	; 1st filer work
 GDATA flwork2,	dw,	<type _filer>	; 2nd filer work
+ENDIF
 ENDIF
 GDATA inioptbuf,dw,	INIOPTSZ1+INIOPTSZ2+INIOPTSZ3
 GDATA save_end,	label,	word
@@ -681,7 +688,7 @@ _ifn z
 	jmp	icst5
 _endif
 	call	readopt
-	ret
+	VZ_RET
 config	endp
 
 ;--- Read DEF file ---
@@ -692,7 +699,7 @@ readdef	proc
 	cmp	byte ptr [si],SPC
 _if be
 	clr	si
-	ret
+	VZ_RET
 _endif
 	call	adddefpath
 	lodsb
@@ -739,7 +746,7 @@ rdef_x:
 	clc
 _endif
 	pop	si
-	ret
+	VZ_RET
 readdef	endp
 
 ;--- Read option ---
@@ -760,7 +767,7 @@ ropt1:	lodsb
 	je	ropt4
 	dec	si
 	mov	pathp,si
-ropt9:	ret
+ropt9:	VZ_RET
 ropt2:
 	lodsb
 	push	dx
@@ -793,7 +800,7 @@ _if c
 	push	si
 	mov	ds,ax
 	call	parsepath
-	test	dl,PRS_ROOT
+	test	dl,VZ_PRS_ROOT
   _if z
 	call	getcurdir1
 	call	addsep
@@ -818,7 +825,7 @@ inscvt:
 	inc	di
 	mov	tempend,di
 	call	insertcvt
-	ret
+	VZ_RET
 getcompath endp
 
 ;--- Get DEFfile path ---
@@ -835,7 +842,7 @@ _if c
 	call	parsepath
 	pop	si
 _endif
-	test	dl,PRS_ROOT
+	test	dl,VZ_PRS_ROOT
 _ifn z
 	mov	cx,bx
 	sub	cx,si
@@ -850,7 +857,7 @@ _endif
 	mov	si,bx
 	inc	di
 	mov	bx,di
-	test	dl,PRS_NAME
+	test	dl,VZ_PRS_NAME
 _ifn z
 	call	strcpy
 _else
@@ -889,7 +896,7 @@ _endif
 	movseg	es,cs
 	call	strcpy
 	pop	es
-	ret
+	VZ_RET
 gettmppath endp
 
 ;--- Get FILES.$$$ path ---
@@ -908,7 +915,7 @@ get_refpath	proc
 		call	addsep
 		mov	si,offset cgroup:nm_files
 		call	strcpy
-		ret
+		VZ_RET
 get_refpath	endp
 
 ;--- Init work ---
@@ -1001,7 +1008,7 @@ _endif
 	mov	ss_stack,cx
 	sub	cx,di
 	call	memclear
-	ret
+	VZ_RET
 initwork endp
 
 initsize proc
@@ -1022,7 +1029,7 @@ _else
 	shl	ax,cl
 _endif
 	mov	frees,ax
-	ret
+	VZ_RET
 initsize endp
 
 ;--- Init far work ---
@@ -1086,7 +1093,7 @@ ENDIF
 	mov	cx,farbss_clr
 	call	memclear
 	pop	es
-	ret
+	VZ_RET
 initfarwork endp
 
 put_exmsmsg proc
@@ -1099,7 +1106,7 @@ put_exmsmsg proc
 	movseg	ds,ss
 	movseg	es,ss
 	call	cputmg
-	ret
+	VZ_RET
 put_exmsmsg endp
 
 ;--- Allocate far memory ---
@@ -1119,7 +1126,7 @@ _if c
 	mov	nears,cx
 	mov	usefar,TRUE
 _endif
-	ret
+	VZ_RET
 allocfar endp
 
 ;--- Set size ptr ---
@@ -1131,7 +1138,7 @@ _repeat
 	add	ax,dx
 	call	chkmem
 _loop
-	ret
+	VZ_RET
 setsizep endp
 ;
 ;
@@ -1182,7 +1189,7 @@ _loop
 	mov	es,ax
 	msdos	F_FREE
 	pop	es
-	ret
+	VZ_RET
 free_env endp
 
 ;--- Set root env seg ---
@@ -1204,7 +1211,7 @@ _if z
 _endif
 	mov	envseg,ax
 	pop	es
-	ret
+	VZ_RET
 getrootenvs endp
 
 	endis		;
@@ -1268,7 +1275,7 @@ ENDIF
 	public	cputc,cputs,cputmg,cputcrlf,cputstr
 cputc:
 	msdos	F_DSPCHR
-	ret
+	VZ_RET
 cputcrlf:
 	mov	dx,offset cgroup:mg_crlf
 cputmg:
@@ -1276,10 +1283,10 @@ cputmg:
         movseg  ds,cs
         call    cputs
 	pop	ds
-	ret
+	VZ_RET
 cputs:
 	msdos	F_DSPSTR
-cputs9:	ret
+cputs9:	VZ_RET
 
 cputstr:
 	lodsb
@@ -1301,7 +1308,7 @@ _if z
 	mov	ah,F_FREE
 _endif
 	int	21h
-	ret
+	VZ_RET
 
 ;--- Set environment path/name ---
 ;-->
@@ -1324,7 +1331,7 @@ setenvvar proc
 	push	si
 	call	scanenv1
 	pop	di
-	ret
+	VZ_RET
 setenvvar endp
 
 ;--- Scan environment strings ---
@@ -1363,7 +1370,7 @@ env_f:
 	pop	si
 	stc
 	popm	<si,cx>
-	ret
+	VZ_RET
 env_x:	
 	popm	<si,cx>
 	tst	si
@@ -1373,7 +1380,7 @@ env_x:
 	clc
 	jne	env9
 	stc
-env9:	ret
+env9:	VZ_RET
 scanenv endp
 
 scanenv1 proc
@@ -1381,7 +1388,7 @@ scanenv1 proc
 	mov	si,di
 	mov	ax,es
 	movseg	es,ss
-	ret
+	VZ_RET
 scanenv1 endp
 
 ;--- Add DEF path ---
@@ -1406,7 +1413,7 @@ addpath2:
 	push	bx
 	push	si
 	call	parsepath
-	test	dl,PRS_ROOT
+	test	dl,VZ_PRS_ROOT
 _if z
 	mov	si,defpath
 	tstb	[si]			; ##100.02
@@ -1425,13 +1432,13 @@ addp1:	lodsb
 addp2:	dec	si
 	dec	di	
 	mov	byte ptr [di],0
-	test	dl,PRS_NAME
+	test	dl,VZ_PRS_NAME
 _if z
 	mov	si,offset cgroup:nm_vz
 	call	strcpy
 _endif
 	pop	bx
-	test	dl,PRS_EXT
+	test	dl,VZ_PRS_EXT
 _if z
 	tst	bx
   _ifn z
@@ -1445,7 +1452,7 @@ _if z
 _endif
 	pop	di
 	mov	dx,di
-	ret
+	VZ_RET
 adddefpath endp
 
 ;--- Offset to segment ---
@@ -1460,10 +1467,10 @@ ofs2seg1:
 	mov	cl,4
 	shr	ax,cl
 	pop	cx
-	ret
+	VZ_RET
 _endif
 	mov	ax,1000h
-	ret
+	VZ_RET
 ofs2seg endp
 
 ;--- Segment to offset ---
@@ -1474,13 +1481,13 @@ seg2ofs proc
 	cmp	ax,1000h
 _ifn b
 	mov	ax,0FFFFh
-	ret
+	VZ_RET
 _endif
 	push	cx
 	mov	cl,4
 	shl	ax,cl
 	pop	cx
-	ret
+	VZ_RET
 seg2ofs endp
 
 	endes
@@ -1505,7 +1512,7 @@ enter_vz proc
 	call	setint24
 	call	getcurdir
 ;	call	setgbank
-	mov	ax,gtops		; ##152.26
+	mov	ax,ss:gtops		; ##152.26
 	tst	ax
 _if z
 	call	initfar
@@ -1524,7 +1531,7 @@ _else
 _endif
 	mov	ax,gtops
 	mov	gtops0,ax
-entvz9:	ret
+entvz9:	VZ_RET
 enter_vz endp
 
 IF 0
@@ -1542,7 +1549,7 @@ stack_cs:
 	mov	ss,cs:code_seg
 sppul:	sti
 	pushm	<di,si,dx,cx,bx>
-	ret
+	VZ_RET
 stack_gs endp
 ENDIF
 
@@ -1587,7 +1594,7 @@ chkmem:
 	jc	memerr
 	cmp	ax,ssmax
 	jae	memerr
-	ret
+	VZ_RET
 memerr:
 	mov	dx,offset cgroup:mg_nospc
 cfgerr:	call	cputmg
@@ -1616,7 +1623,7 @@ _endif
 	call	ld_wact
 	jz	readini2
 todsp1:	call	dspscr
-	ret
+	VZ_RET
 _endif
 toedit0:
 	call	ld_wact
@@ -1748,7 +1755,7 @@ _endif
 ;_ifn z
 ;	call	resetscr
 ;_endif
-;	ret
+;	VZ_RET
 sedit	endp
 
 ;--- Init text screen ---
@@ -1780,7 +1787,7 @@ _if z
 _endif
 	mov	[bp].fsiz,al
 	mov	[bp].fsiz0,al
-	ret
+	VZ_RET
 iniscr	endp
 
 	public	editloc
@@ -1795,7 +1802,7 @@ editloc proc
 	mov	dl,[bp].tw_px
 	mov	cl,[bp].tw_sx
 	call	undercsr
-	ret
+	VZ_RET
 editloc endp
 
 ;--- Map text segment ---
@@ -1835,7 +1842,7 @@ maptxt1:
      _endif
    _endif
 _endif
-	ret
+	VZ_RET
 maptext	endp
 
 ;--- Blach by code ---
@@ -1915,7 +1922,7 @@ blan8:
 	sbb	ax,ax
 	mov	retval,ax
 se_dummy:
-blan9:	ret
+blan9:	VZ_RET
 blanch	endp
 
 	public	touch
@@ -1928,7 +1935,7 @@ touch	proc
 	jne	touch9
 touch1:	xor	[bp].tchf,1
 touch9:	pop	ax
-	ret
+	VZ_RET
 touch	endp
 
 ;--- Command table ---
@@ -2026,7 +2033,7 @@ _ifn z
 	popall	<es,ds>
 _endif
 	pop	ax
-	ret
+	VZ_RET
 redraw	endp
 
 ;----- Initilal option manager -----
@@ -2046,7 +2053,7 @@ save_iniopt	proc
 		mov	si,offset cgroup:hist_top
 		mov	cx,INIOPTSZ3/2
 	rep	movsw
-		ret
+		VZ_RET
 save_iniopt	endp
 
 		public	load_iniopt
@@ -2065,7 +2072,7 @@ load_iniopt	proc
 		mov	cx,INIOPTSZ2/2
 	rep	movsw
 		pop	si
-		ret
+		VZ_RET
 load_iniopt	endp
 
 		public	write_goption
@@ -2079,7 +2086,7 @@ write_goption	proc
 		mov	cx,INIOPTSZ25/2
 		mov	dx,offset cgroup:tb_opt_atr
 		call	write_gopt
-		ret
+		VZ_RET
 write_goption	endp
 
 		public	reset_histp
@@ -2090,7 +2097,7 @@ reset_histp	proc
 		mov	di,offset cgroup:hist_top
 		mov	cx,INIOPTSZ3/2
 	rep	movsw
-		ret
+		VZ_RET
 reset_histp	endp
 
 	endes
@@ -2101,4 +2108,3 @@ reset_histp	endp
 ;	End of 'main.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

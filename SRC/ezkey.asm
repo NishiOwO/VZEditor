@@ -390,7 +390,7 @@ int9in	endp
 
 ishireso proc
 	tstb	hireso
-	ret
+	VZ_RET
 ishireso endp
 
 ;--- INT18h entry ---
@@ -438,33 +438,33 @@ isrv1:
 	je	set_stt
 	cmp	ah,4			; AH=4 :Set ext function ptr
 	je	set_ext
-	ret
+	VZ_RET
 
 srvfunc:
 	pushm	<bx,cx,dx,si,di,es>
 	mov	bx,offset opttbl
 	call	do_function
 	popm	<es,di,si,dx,cx,bx>
-	ret
+	VZ_RET
 
 get_stt:
 	mov	al,status
-	ret
+	VZ_RET
 
 set_stt:
 	mov	status,al
-	ret
+	VZ_RET
 
 set_ext:
 	xchg	bx,vcthook.@off		; ES:BX :function ptr
 	push	vcthook.@seg
 	mov	vcthook.@seg,es
 	pop	es
-	ret
+	VZ_RET
 intsrvin endp
 
 dummy	proc	far
-	ret
+	VZ_RET
 dummy	endp
 
 ;--- Function ---
@@ -532,7 +532,7 @@ func2:	push	ax
 	shl	di,1
 	call	cs:[di+offset funcjmptbl]
 	pop	ax
-func9:	ret	
+func9:	VZ_RET	
 do_function endp
 
 ;--- Function jump table ---
@@ -562,7 +562,7 @@ scrnsize proc
 	mov	di,ax
 	shl	di,1
 	tstb	es:dosfkey
-	ret
+	VZ_RET
 scrnsize endp
 
 ;--- Clear graphic screen ---
@@ -600,7 +600,7 @@ _ifn z
 	clr	di
 	mov	es:[di],dx
 _endif
-	ret
+	VZ_RET
 gclsplane:
 	mov	es,ax
 	clr	ax
@@ -609,12 +609,12 @@ gclsplane:
     rep	stosw	
 	mov	ax,es
 	add	ax,0800h
-	ret
+	VZ_RET
 do_grafcls endp
 
 gvdraw0 proc
 	outi	0A6h,0
-	ret
+	VZ_RET
 gvdraw0 endp
 
 ;--- Clear text screen ---
@@ -634,7 +634,7 @@ do_textcls proc
 	mov	di,2000h
 	pop	ax
     rep	stosw
-	ret
+	VZ_RET
 do_textcls endp
 
 ;--- Save text screen ---
@@ -650,7 +650,7 @@ scrnsize30 proc
 _if b
 	mov	ax,800h
 _endif
-	ret
+	VZ_RET
 scrnsize30 endp
 
 do_textsave proc
@@ -678,7 +678,7 @@ _repeat
 	inc	di
 _loop
 _endif
-	ret
+	VZ_RET
 do_textsave endp
 
 ;--- Swap text VRAM ---
@@ -688,14 +688,14 @@ do_textswap proc
 _if z
 	clr	dx
 	bios	0Eh
-	ret
+	VZ_RET
 _endif
 	call	scrnsize30
 	cmp	ax,800h
 _if e
 	mov	dx,1000h
 	bios	0Eh
-	ret
+	VZ_RET
 _endif
 	shl	ax,1
 	mov	bx,offset splittbl
@@ -713,7 +713,7 @@ _endif
 	mov	bx,cs
 	mov	dx,2
 	bios	0Fh
-	ret
+	VZ_RET
 IF 0
 	mov	bx,offset splittbl
 	mov	[bx],ax
@@ -730,7 +730,7 @@ IF 0
 	mov	bx,cs
 	mov	dx,2
 	bios	0Fh
-	ret
+	VZ_RET
 ENDIF
 do_textswap endp
 
@@ -740,14 +740,14 @@ do_keylock proc
 	not	locked
 	mov	ch,WAIT_LOCK
 	call	beep
-	ret
+	VZ_RET
 do_keylock endp
 
 ;--- Reset CRTV interrupt ---
 
 do_resetcrtv proc
 	out	64h,al
-	ret
+	VZ_RET
 do_resetcrtv endp
 
 ;--- Reset CPU ---
@@ -788,7 +788,7 @@ _ifn z
 	mov	ah,41h
 _endif
 	int	18h
-	ret
+	VZ_RET
 do_grafon endp
 
 ;--- Analog/Digital mode ---
@@ -800,7 +800,7 @@ _if le
 _endif
 	and	al,1
 	out	6Ah,al
-	ret
+	VZ_RET
 do_analog endp
 
 ;--- Display blue back ---
@@ -844,7 +844,7 @@ _ifn z
 _endif
 ;	out	6Ah,al
 	mov	opttbl.analog,al
-	ret
+	VZ_RET
 do_blueback endp
 
 ;--- Click sound ---
@@ -858,7 +858,7 @@ beep	proc
 	loop	$
 	outi	37h,7
 	popf
-	ret
+	VZ_RET
 beep	endp
 
 ;--- Convert [GRPH]+[A] ---
@@ -883,7 +883,7 @@ cvtgr1:	sub	al,80h
 	xlat
 	mov	es:[di],al
 	pop	bx
-cvtgr9:	ret
+cvtgr9:	VZ_RET
 do_cvtgrph endp
 
 do_cvtgrph_hi proc
@@ -898,7 +898,7 @@ do_cvtgrph_hi proc
 cvtgh1:	and	al,not K_GRPH
 	or	al,K_CTRL
 	mov	es:[di],al
-cvtgh9:	ret
+cvtgh9:	VZ_RET
 do_cvtgrph_hi endp
 
 ;--- Display [CAPS],[¶Å] mode ---
@@ -938,7 +938,7 @@ _else
   _endif
 _endif
 	call	putcn
-dspcap9:ret
+dspcap9:VZ_RET
 do_keycaps endp
 
 ;--- Display [SHIFT]+[f¥n] ---
@@ -966,7 +966,7 @@ _endif
 	call	dspfkey5
 	call	dspfkey5
 dspfky8:pop	ds
-dspfky9:ret
+dspfky9:VZ_RET
 
 dspfkey5:
 	add	di,6
@@ -980,7 +980,7 @@ _repeat
 	popm	<si,cx>
 	add	si,16
 _loop
-	ret	
+	VZ_RET	
 dispfkey endp
 
 ;--- Is f-key white ? ---
@@ -994,7 +994,7 @@ _ifn z
 	and	al,11100000b
 	cmp	al,11100000b
 _endif
-	ret
+	VZ_RET
 is_white endp
 
 ;--- Put char to VRAM ---
@@ -1016,7 +1016,7 @@ kanj1:	mov	ah,al
 normal:	stosw	
 	jcxz	putcn9
 _loop
-putcn9:	ret
+putcn9:	VZ_RET
 putcn	endp
 
 		assume	ds:cgroup
@@ -1042,7 +1042,7 @@ _if ae
   _endif
 _endif
 	pop	ax
-sfunc9:	ret
+sfunc9:	VZ_RET
 do_subfunction endp
 
 ;--- Snapshot ---
@@ -1062,7 +1062,7 @@ do_snapshot proc
 	mov	ax,es
 	add	ax,TVSIZE/16
 snap8:	mov	snapseg,ax
-	ret
+	VZ_RET
 do_snapshot endp
 
 do_snapnext proc
@@ -1088,7 +1088,7 @@ _ifn e
 	sub	ax,TVSIZE/16
 _endif
 	call	dispsnap
-	ret
+	VZ_RET
 do_snapprev endp
 
 dispsnap proc
@@ -1103,7 +1103,7 @@ snap1:	push	ds
 	mov	cx,TVSIZE/4
     rep movsw
 	pop	ds
-	ret
+	VZ_RET
 dispsnap endp
 
 ;--- Startup ---
@@ -1249,7 +1249,7 @@ free_env proc
     rep movsb
 	mov	es,envseg
 	msdos	F_FREE
-	ret
+	VZ_RET
 free_env endp
 
 ;--- Read option ---
@@ -1267,7 +1267,7 @@ ropt1:	lodsb
 	cmp	al,SPC
 	jbe	ropt1
 ropt_x:	stc
-ropt9:	ret
+ropt9:	VZ_RET
 
 ropt2:
 	lodsb

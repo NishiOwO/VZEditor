@@ -63,7 +63,7 @@ w_save		dw	0
 ld_wact proc
 	mov	bp,ss:w_act
 	tst	bp
-	ret
+	VZ_RET
 ld_wact endp
 
 	endes
@@ -101,7 +101,7 @@ _loop
 	stosw				; w_busy
 	mov	ax,bp
 	stosw				; w_ext
-	ret
+	VZ_RET
 winit	endp
 
 	public	windcount
@@ -117,7 +117,7 @@ _ifn z
 	inc	cx
 _endif
 	inc	cx			; ##16
-	ret
+	VZ_RET
 windcount endp
 
 ;--- Window open ---
@@ -147,7 +147,7 @@ _else
 	call	cpyfmt
 _endif
 	mov	w_act,bp
-	ret
+	VZ_RET
 wndopn	endp
 
 ;--- Window close ---
@@ -195,7 +195,7 @@ _else
 	call	cpyfmt
 _endif
 wcls8:	mov	w_act,bp
-	ret
+	VZ_RET
 wndcls	endp
 
 ;--- Window change ---
@@ -213,7 +213,7 @@ _else
 _endif
 	mov	bp,ax
 	mov	[bp].w_next,0
-	ret
+	VZ_RET
 wndrmv:
 	mov	ax,w_act
 	mov	bp,ax
@@ -221,10 +221,10 @@ wndrmv:
 	call	wlast
 _ifn c
 	mov	[bp].w_next,bx
-	ret
+	VZ_RET
 _endif
 	mov	w_busy,bx
-	ret
+	VZ_RET
 wndchg	endp
 
 ;--- Set window number ---
@@ -247,7 +247,7 @@ _repeat
 _until
 	mov	textc,ax
 	pop	bp
-	ret
+	VZ_RET
 setwnum endp
 
 ;--- Set w_record pointer ---
@@ -264,9 +264,9 @@ _repeat
 	mov	bp,[bp].w_next
 _until
 	clc
-	ret
+	VZ_RET
 wlast3:	stc
-	ret
+	VZ_RET
 wlast	endp
 
 ;--- Set window format ---
@@ -289,7 +289,7 @@ _endif
 _if b
 	mov	[bp].wys,al
 _endif
-	ret
+	VZ_RET
 settextw endp
 
 	public	inifmt
@@ -300,7 +300,7 @@ inifmt	proc
 	mov	al,SPLIT_A
 	call	settextw
 	mov	[bp].fofs,0
-	ret
+	VZ_RET
 inifmt	endp
 
 cpyfmt	proc
@@ -315,7 +315,7 @@ cpyfmt	proc
     rep movsb
 	popm	<es,ds>
 	call	check_wy
-	ret
+	VZ_RET
 cpyfmt	endp
 
 	assume	ds:nothing
@@ -338,7 +338,7 @@ _ifn z
   _endif
 _endif
 	clc
-	ret
+	VZ_RET
 se_chgwind endp
 
 	assume	ds:cgroup
@@ -357,7 +357,7 @@ _ifn z
 	call	dspscr
 _endif
 	clc
-	ret
+	VZ_RET
 splitmode:
 	tst	al
 	jns	splitwd1
@@ -373,7 +373,7 @@ _ifn z
 	xchg	bp,bx
 	call	inifmt
 _endif
-	ret
+	VZ_RET
 
 splitwd:
 	mov	al,[bp].wsplit
@@ -396,7 +396,7 @@ yokowd:
 	sub	ch,dh
 	mov	al,SPLIT_D
 	call	settextw
-	ret
+	VZ_RET
 tatewd:
 	call	doswindow
 	add	dh,2
@@ -413,7 +413,7 @@ tatewd:
 	sub	cl,dl
 	mov	al,SPLIT_R
 	call	settextw
-	ret
+	VZ_RET
 se_splitmode endp
 
 ;--- Split position ---
@@ -432,7 +432,7 @@ wpos1:	mov	al,CSR_OFF
 	jnz	wpos2
 	call	newline
 wpos9:	clc
-	ret
+	VZ_RET
 wpos2:
 	movseg	ds,ss
 	push	ax
@@ -507,7 +507,7 @@ resetscr:
 	call	dspscr
 	popm	<es,ds>
 	clc
-	ret
+	VZ_RET
 resetwind:
 	push	bp
 	movseg	ds,ss
@@ -519,7 +519,7 @@ _ifn z
 _endif
 	call	splitwd
 	pop	bp
-	ret
+	VZ_RET
 se_xline endp
 
 ;--- Change active text ---		; ##153.37
@@ -553,7 +553,7 @@ chgtext:
 	call	seekbp
 chgt1:	call	wndsel
 	call	dspscr
-chgt9:	ret
+chgt9:	VZ_RET
 
 mc_chgtext:
 	movseg	ds,ss
@@ -573,7 +573,7 @@ _repeat
 	mov	bp,[bp].w_next
 _until
 	stc
-	ret
+	VZ_RET
 
 wndsel:
 	mov	bx,w_act
@@ -623,7 +623,7 @@ wcons2:
 	jne	chgcon1
 	call	wndcls1
 	call	dspscr
-	ret
+	VZ_RET
 se_console endp
 
 	public	chgt_cons
@@ -640,10 +640,10 @@ chgt_cons proc
 	mov	w_back,ax
 chgcon1:call	wndsel
 	call	dspscr
-	ret
+	VZ_RET
 chgcon_x:
 	stc
-	ret
+	VZ_RET
 chgt_cons endp
 
 ;--- Dump text name ---
@@ -665,9 +665,9 @@ sel_number:
 	sub	al,'A'-'1'-9
 seltx1:	sub	al,'1'
 	clc
-	ret
+	VZ_RET
 seltx_x:stc
-	ret	
+	VZ_RET	
 _endif
 	push	bp
 	call	seekbp
@@ -679,7 +679,7 @@ _endif
 	call	printf
 	popm	<ax,ax>
 	pop	bp
-	ret
+	VZ_RET
 dumptext endp
 
 seekbp	proc
@@ -696,7 +696,7 @@ _repeat
 	tst	bp
 	jz	skbp1
 _until
-	ret
+	VZ_RET
 seekbp	endp
 
 ;----- Reset active/back window -----
@@ -731,7 +731,7 @@ wnd_reset	proc
 	  _endif
 	_endif
 		popm	<ds,bp,bx>
-		ret
+		VZ_RET
 wnd_reset	endp
 
 	endcs
@@ -741,4 +741,3 @@ wnd_reset	endp
 ;	End of 'wind.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

@@ -160,7 +160,7 @@ eopen1:		mov	ax,PAGEMAX
 		jmps	eopen9
 eopen_x:	stc
 eopen9:		pop	es
-		ret
+		VZ_RET
 ems_open	endp
 
 ;----- Open XMS -----
@@ -220,7 +220,7 @@ xopen1:		mov	dx,cx
 		jmps	xopen9
 xopen_x:	stc
 xopen9:		pop	es
-		ret
+		VZ_RET
 xms_open	endp
 
 		endis
@@ -248,7 +248,7 @@ xmem_close	proc
 		mov	dx,offset cgroup:tmppath
 		msdos	F_DELETE
 	_endif
-		ret
+		VZ_RET
 xmem_close	endp
 
 ;----- Allocate EMS pages -----
@@ -270,7 +270,7 @@ ems_alloc:
 		clr	ch
 		call	ems_alloc1
 		popm	<ds,si,cx>
-ealc9:		ret	
+ealc9:		VZ_RET	
 
 ems_alloc1	proc
 		call	ems_check
@@ -284,7 +284,7 @@ ems_alloc1	proc
 		clc
 	  _endif
 	_endif
-		ret
+		VZ_RET
 ems_alloc1	endp
 
 ems_salloc	endp
@@ -294,13 +294,13 @@ size2pc		proc
 	_if z
 		inc	sp
 		inc	sp
-		ret
+		VZ_RET
 	_endif
 		dec	ax
 		rolm	ax,2
 		and	ax,3
 		inc	ax
-		ret
+		VZ_RET
 size2pc		endp
 
 ;----- Allocate XMEM pages -----
@@ -331,7 +331,7 @@ xmem_alloc	proc
 		call	bmp_alloc
 	_endif
 xmalc8:		popm	<ds,di,si,dx,cx,bx>
-		ret
+		VZ_RET
 xmem_alloc	endp
 
 ;----- Free XMEM pages -----
@@ -352,7 +352,7 @@ xmem_free	proc
 	  _endif
 		popm	<ds,si,dx,cx,ax>
 	_endif
-		ret
+		VZ_RET
 xmem_free	endp
 
 
@@ -373,7 +373,7 @@ ex_emsmap	proc
 		call	ems_map2
 	_endif
 exmap9:		mov	retval,ax
-		ret
+		VZ_RET
 ex_emsmap	endp
 
 		endes
@@ -391,7 +391,7 @@ ems_save	proc
 		emm	EM_SAVE
 	  _endif
 	_endif
-		ret
+		VZ_RET
 ems_save	 endp
 
 ems_restore	proc
@@ -402,7 +402,7 @@ ems_restore	proc
 		emm	EM_RESTORE
 	  _endif
 	_endif
-		ret
+		VZ_RET
 ems_restore	endp
 
 ;----- Get handle -----
@@ -410,13 +410,13 @@ ems_restore	endp
 get_h_ems	proc
 		mov	dx,cs:h_ems
 		tst	dx
-		ret
+		VZ_RET
 get_h_ems	endp
 
 get_h_tmp	proc
 		mov	bx,cs:h_tmp
 		tst	bx
-		ret
+		VZ_RET
 get_h_tmp	endp
 
 ;----- Map EMS pages -----
@@ -482,7 +482,7 @@ _loop
 		tst	cx
 		popm	<ds,di,cx,bx>
 emap9:		pop	dx
-		ret
+		VZ_RET
 ems_map		endp
 
 ;----- Reset EMS page map  -----
@@ -496,7 +496,7 @@ ems_resetmap	proc
 		clr	ax
 	rep	stosw
 		popm	<es,di,cx>
-		ret
+		VZ_RET
 ems_resetmap	endp
 
 ;----- Check EMS/XMS -----
@@ -505,13 +505,13 @@ ems_resetmap	endp
 		public	ems_check
 ems_check	proc
 		tstw	cs:h_ems
-		ret
+		VZ_RET
 ems_check	endp
 
 		public	xms_check
 xms_check	proc
 		tstw	cs:h_xms
-		ret
+		VZ_RET
 xms_check	endp
 
 ;----- Save map -----
@@ -527,7 +527,7 @@ _repeat
 		mov	[si+MAX_PAGE*2-2],ax
 _loop
 		popm	<ds,si,cx,ax>
-		ret
+		VZ_RET
 ems_savemap	endp
 
 ;----- Load map -----
@@ -559,7 +559,7 @@ ems_loadmap	proc
 	  _until e	
 	_endif
 		popm	<ds,si,dx,bx,ax>
-		ret
+		VZ_RET
 ems_loadmap	endp
 
 		endbs
@@ -630,7 +630,7 @@ _endif
 	_endif
 trunc8:		call	tmp_close
 		pop	ds
-		ret
+		VZ_RET
 xmem_trunc	endp
 
 ;------------------------------------------------
@@ -689,7 +689,7 @@ scanbmp:
 		mov	ah,1
 	_endif
 		test	al,ah
-scbmp9:		ret
+scbmp9:		VZ_RET
 scanend:
 		tst	di
 		jnz	scbmp9
@@ -698,7 +698,7 @@ scanend:
 		stc
 bmaloc9:
 		popm	<di,dx,cx,bx>
-		ret
+		VZ_RET
 bmp_alloc	endp
 
 ;----- Truncate BMP -----
@@ -738,7 +738,7 @@ _repeat
 bmptr7:		tst	dx
 _until z		
 bmptr8:		mov	ax,dx
-bmptr9:		ret
+bmptr9:		VZ_RET
 bmp_trunc	endp
 
 		endes
@@ -786,7 +786,7 @@ _repeat
 _loop		
 		pop	cx
 		popm	<bx,ax>
-		ret		
+		VZ_RET		
 bmp_free	endp
 
 ;----- Unpack BMP handle -----
@@ -802,7 +802,7 @@ bmp_unpack	proc
 		and	cx,3
 		inc	cx
 		and	ah,00000011b
-		ret
+		VZ_RET
 bmp_unpack	endp
 
 		endbs
@@ -838,7 +838,7 @@ init_bmp	proc
 		mov	ax,PAGEMAX
 		sub	ax,dx
 		mov	[si].bm_max,ax
-		ret
+		VZ_RET
 
 initbmp1	proc
 		mov	[si].bm_max,ax
@@ -851,7 +851,7 @@ initbmp1	proc
 		add	dx,ax
 		shrm	ax,3
 		add	bx,ax
-		ret
+		VZ_RET
 initbmp1	endp
 
 init_bmp	endp
@@ -885,7 +885,7 @@ ishandle	proc
 		mov	si,offset cgroup:r_tmp
 ishdl8:		pop	ax
 		sub	ax,[si].bm_base
-		ret
+		VZ_RET
 ishandle	endp
 
 ;----- XMEM block read/write -----
@@ -974,7 +974,7 @@ xms_rw1:
 		mov	es:[di+bx],dl
 	_endif
 xmemrw9:	popm	<es,ds,si,dx,cx,bx>
-		ret
+		VZ_RET
 xmem_read	endp
 
 ;----- TMPfile read/write -----
@@ -997,7 +997,7 @@ tmp_write	proc
 		jmps	tmp_rw
 tmpw_x:		pop	ax
 		stc
-		ret
+		VZ_RET
 tmp_write	endp
 
 tmp_read	proc
@@ -1029,7 +1029,7 @@ tmp_rw:
 	_endif
 		pop	ds
 tmpr9:
-		ret
+		VZ_RET
 tmp_read	endp
 
 tmp_open	proc
@@ -1040,7 +1040,7 @@ tmp_open	proc
 		jc	tmpop9
 		mov	bx,ax
 	_endif
-tmpop9:		ret
+tmpop9:		VZ_RET
 tmp_open	endp
 
 		public	tmp_close
@@ -1050,7 +1050,7 @@ tmp_close	proc
 		msdos	F_CLOSE
 		mov	cs:h_tmp,INVALID
 	_endif
-		ret
+		VZ_RET
 tmp_close	endp
 
 		endbs

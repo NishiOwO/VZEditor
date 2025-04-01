@@ -125,13 +125,13 @@ _endif
 	cmp	ah,5
 	je	undo_del
 ledit9:	stc
-	ret
+	VZ_RET
 movpre:
 	mov	dl,255
 	call	declin
 	mov	al,[bp].lx
 	mov	[bp].lxs,al
-	ret
+	VZ_RET
 edtfld:
 	mov	dh,ch			;CH :location y
 	sub	dh,[bp].ly
@@ -143,7 +143,7 @@ _if ae
 _endif
 	call	vscroll
 	clc
-	ret
+	VZ_RET
 ledit	endp
 
 ;--- Undo CR ---
@@ -159,7 +159,7 @@ _ifn c
 	call	scrout_cp
 _endif
 	clc
-	ret
+	VZ_RET
 undo1:
 	mov	di,[bp].tcp
 	jmp	ins_crlf
@@ -192,9 +192,9 @@ _ifn s
 _endif
 	call	scrout_cp
 	clc
-	ret
+	VZ_RET
 bscr9:	stc
-	ret
+	VZ_RET
 bs_cr	endp
 
 ;--- Delete CR ---
@@ -220,7 +220,7 @@ _endif
 	mov	si,[bp].tcp
 	call	scrout_cp
 	popf
-	ret
+	VZ_RET
 del_cr	endp
 
 ;--- Cursor up/down ---
@@ -244,7 +244,7 @@ mdwn1:	call	xtocp
 	mov	dx,0100h
 	call	vscroll
 	clc
-	ret
+	VZ_RET
 se_csrdn endp
 
 	public	se_csrup
@@ -267,10 +267,10 @@ mup1:	dec	dh
 	mov	dx,0FF00h
 	call	vscroll
 	clc
-	ret
+	VZ_RET
 cantmove:
 	stc
-	ret
+	VZ_RET
 se_csrup endp
 
 ;--- Return ---
@@ -306,7 +306,7 @@ _if b
 _endif
 	call	scrout_cp
 	popf
-retn9:	ret
+retn9:	VZ_RET
 se_return endp
 
 ;--- Insert blank line ---
@@ -327,7 +327,7 @@ _ifn c
 	call	scrout_cp
 	clc
 _endif
-	ret
+	VZ_RET
 se_blank endp
 
 ;--- Auto indent ---
@@ -385,7 +385,7 @@ indt2:	inc	cx
     rep movsb
 	mov	si,di
 	clc
-indt9:	ret
+indt9:	VZ_RET
 indent	endp
 
 ;--- Line number handle ---
@@ -397,7 +397,7 @@ getnum	proc
 	call	setabsp
 	stl	[bp].toldp
 	pop	ax
-	ret
+	VZ_RET
 getnum	endp
 
 	public	putnum,putnum1
@@ -458,17 +458,17 @@ _ifn z
   _endif
 	mov	[bp].wys,al	
 _endif
-	ret
+	VZ_RET
 
 putdnum:
 	call	isdnumb
 _ifn z
 	call	setdnum
 	stc
-	ret
+	VZ_RET
 _endif
 	or	[bp].nodnumb,1
-	ret
+	VZ_RET
 putnum	endp
 
 ;--- Return to last position ---
@@ -480,7 +480,7 @@ mc_lastpos:
 	and	ax,[bp+di+2]
 	inc	ax
 	jnz	last1
-	ret
+	VZ_RET
 
 se_lastpos proc
 	mov	di,tretp
@@ -497,7 +497,7 @@ jumpto:
 	mov	si,[bp].tcp
 	call	scrout_cp
 pret9:	clc
-	ret
+	VZ_RET
 se_lastpos endp
 
 markp	proc
@@ -506,12 +506,12 @@ markp	proc
 	shlm	ax,2
 	add	ax,tretp
 	mov	di,ax
-	ret
+	VZ_RET
 mark_x:
 	inc	sp
 	inc	sp
 	stc
-	ret
+	VZ_RET
 markp	endp
 
 ;--- Mark cursor position ---
@@ -525,7 +525,7 @@ setretp:
 	call	setabsp
 	stl	[bp].tretp
 	clc
-	ret
+	VZ_RET
 se_markpos endp
 
 mc_markpos proc
@@ -534,7 +534,7 @@ mc_markpos proc
 	call	setabsp
 	stl	[bp+di]
 	clc
-	ret
+	VZ_RET
 mc_markpos endp
 
 ;--- Top/bottom of window ---
@@ -585,7 +585,7 @@ sbtm3:	call	istop
 	call	prefldl
 sbtm4:	call	scrout_fx
 sbtm9:	clc
-	ret
+	VZ_RET
 
 do_smooth:
 	test	edtsw,EDT_SCROLL
@@ -593,7 +593,7 @@ _ifn z
 	call	bx
 _endif
 	stc
-	ret
+	VZ_RET
 se_windtop endp
 
 ;--- Text Top/End ---
@@ -606,7 +606,7 @@ se_texttop proc
 	call	initlnumb
 	mov	[bp].wys,0
 	call	scrout_fx
-	ret
+	VZ_RET
 se_texttop endp
 
 	public	se_textend
@@ -627,7 +627,7 @@ _if e
 	mov	[bp].lnumb9,ax
 _endif
 	clc
-	ret
+	VZ_RET
 se_textend endp
 
 ;--- Change paging mode ---
@@ -655,7 +655,7 @@ _if e
 	call	dispstr
 _endif
 	clc
-	ret
+	VZ_RET
 se_pagemode endp
 
 ;--- Page Up ---
@@ -717,7 +717,7 @@ postjmp:
 	call	putnum
 	call	scrout
 	popf
-	ret
+	VZ_RET
 se_pageup endp
 
 ;--- Page Down ---
@@ -766,7 +766,7 @@ postrol:
 	jcxz	roll1
 prol1:	call	scrout_fx
 	popf
-	ret
+	VZ_RET
 roll1:
 	cmp	dl,1
 	jne	prol1
@@ -777,7 +777,7 @@ _if s
 _endif
 	call	vscroll2
 	popf
-	ret
+	VZ_RET
 
 pagelines:
 	mov	cl,[bp].tw_sy
@@ -788,9 +788,9 @@ pagelines:
 _if z
 	inc	cx
 _endif
-	ret
+	VZ_RET
 pglin1:	dec	cx
-	ret
+	VZ_RET
 
 cmtdwn:
 	cmp	al,PG_STRSCH
@@ -833,7 +833,7 @@ _endif
 	call	getnum
 	mov	si,[bp].tnow
 	stc
-chkts9:	ret
+chkts9:	VZ_RET
 chk_ts	endp
 
 cmtchk	proc
@@ -869,9 +869,9 @@ _until e
 	pop	si
 	jne	cmtcx
 cmtco:	stc
-	ret
+	VZ_RET
 cmtcx:	clc
-	ret
+	VZ_RET
 cmtchk	endp
 
 skpst	proc
@@ -889,7 +889,7 @@ _if c
 	lodsb
 _endif
 	cmp	al,LF
-	ret
+	VZ_RET
 skpst	endp
 
 ;--- Cancel line edit ---
@@ -902,7 +902,7 @@ _ifn z
 	call	scrout_lx
 _endif
 	clc
-	ret
+	VZ_RET
 se_cancel endp
 
 ;--- Jump by line number ---
@@ -924,7 +924,7 @@ mc_jumpnum:
 	call	viewpoint1
 	call	scrout_fx
 	clc
-jmpn9:	ret
+jmpn9:	VZ_RET
 se_jumpnum endp
 	
 jumpnum proc
@@ -967,9 +967,9 @@ jmpf3:	sub	[bp].lnumb,cx
 _endif
 	mov	[bp].tnow,si
 	clc
-	ret
+	VZ_RET
 jmpn_x:	stc
-	ret
+	VZ_RET
 jumpdnum:
 	mov	si,[bp].tfld
 	mov	cx,[bp].dnumb
@@ -1002,7 +1002,7 @@ djmpf2:	call	prefld
   _endif
 _endif
 	clc
-	ret
+	VZ_RET
 jumpnum endp
 
 ;--- Set line numbler ---
@@ -1039,7 +1039,7 @@ _until z
 	jz	slnum8
 	neg	dx
 slnum8:	popm	<es,di,cx,ax>
-	ret
+	VZ_RET
 setnum	endp
 
 ;--- Set display line numbler ---
@@ -1082,7 +1082,7 @@ _ifn z
 	neg	dx
 _endif
 sdnum8:	popm	<di,si,cx,bx,ax>
-	ret
+	VZ_RET
 setdnum	endp
 
 ;--- Init display line numbler ---
@@ -1122,7 +1122,7 @@ _endif
 	add	dx,[bp].dnumb0
 	mov	[bp].dnumb,dx
 	mov	[bp].nodnumb,0
-idnum9:	ret
+idnum9:	VZ_RET
 initdnumb endp
 
 ;--- Text locate x ---
@@ -1140,7 +1140,7 @@ textloc_x proc
 _if c
 	call	scrout1
 _endif
-	ret
+	VZ_RET
 textloc_x endp
 
 ;--- Text locate y ---
@@ -1158,14 +1158,14 @@ _repeat
 	call	se_csrdn
 	pop	cx
 _loop
-	ret
+	VZ_RET
 tlocy2:	neg	cx
 _repeat
 	push	cx
 	call	se_csrup
 	pop	cx
 _loop
-tlocy9:	ret
+tlocy9:	VZ_RET
 textloc_y endp
 
 ;--- Set view point ---
@@ -1180,7 +1180,7 @@ viewpoint proc
 	mov	al,[bp].tw_sy
 	shr	al,1
 	mov	[bp].wys,al
-viewp9:	ret
+viewp9:	VZ_RET
 viewpoint endp
 
 	endcs

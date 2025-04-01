@@ -19,27 +19,27 @@ KEY_SHIFT	equ	00000011b
 KEY_CTRL	equ	00000100b
 KEY_ALT		equ	00001000b
 
-@F		equ	10000000b
-S@F		equ	10100000b
-C@F		equ	11000000b
-A@F		equ	11100000b
-@SFT		equ	00100000b
-@CTR		equ	01000000b
-@ALT		equ	01100000b
-@PGUP		equ	10010000b
-@PGDN		equ	10010001b
-@INS		equ	10010010b
-@DEL		equ	10010011b
-@UP		equ	10010100b
-@LEFT		equ	10010101b
-@RIGHT		equ	10010110b
-@DOWN		equ	10010111b
-@HOME		equ	10011000b
-@END		equ	10011001b
-@ESC		equ	10011010b
-@TAB		equ	10011011b
-@BS		equ	10011100b
-@CR		equ	10011101b
+_AT_F		equ	10000000b
+S_AT_F		equ	10100000b
+C_AT_F		equ	11000000b
+A_AT_F		equ	11100000b
+_AT_SFT		equ	00100000b
+_AT_CTR		equ	01000000b
+_AT_ALT		equ	01100000b
+_AT_PGUP	equ	10010000b
+_AT_PGDN	equ	10010001b
+_AT_INS		equ	10010010b
+_AT_DEL		equ	10010011b
+_AT_UP		equ	10010100b
+_AT_LEFT	equ	10010101b
+_AT_RIGHT	equ	10010110b
+_AT_DOWN	equ	10010111b
+_AT_HOME	equ	10011000b
+_AT_END		equ	10011001b
+_AT_ESC		equ	10011010b
+_AT_TAB		equ	10011011b
+_AT_BS		equ	10011100b
+_AT_CR		equ	10011101b
 
 IFDEF J31
 INT_ATOK	equ	6Fh
@@ -97,32 +97,32 @@ tb_nkeycode	db	1Bh,09h,08h,0Dh
 tb_fkeyspc10	db	10,6,1,1,1,1,4,1,1,1,1,4
 tb_fkeyspc12	db	12,5,1,1,1,2,1,1,1,2,1,1,1,3
 
-tb_xkeycvt	db	@SFT+@TAB
+tb_xkeycvt	db	_AT_SFT+_AT_TAB
 		db	"QWERTYUIOP[]",0,0,"AS"			; ##156.87
 		db	"DFGHJKL",0,0,"@",0,"\ZXCV"		; ##156.87
-		db	"BNM",0,0,0,0,0,0,0,0,@F+1,@F+2,@F+3,@F+4,@F+5
-		db	@F+6,@F+7,@F+8,@F+9,@F+10,0,0,@HOME
-		db	@UP,@PGUP,0,@LEFT,0,@RIGHT,0,@END
-		db	@DOWN,@PGDN,@INS,@DEL,S@F+1,S@F+2,S@F+3,S@F+4
-		db	S@F+5,S@F+6,S@F+7,S@F+8,S@F+9,S@F+10,C@F+1,C@F+2
-		db	C@F+3,C@F+4,C@F+5,C@F+6,C@F+7,C@F+8,C@F+9,C@F+10
-		db	A@F+1,A@F+2,A@F+3,A@F+4,A@F+5,A@F+6,A@F+7,A@F+8
-		db	A@F+9,A@F+10,0,@CTR+@LEFT,@CTR+@RIGHT,@CTR+@END
+		db	"BNM",0,0,0,0,0,0,0,0,_AT_F+1,_AT_F+2,_AT_F+3,_AT_F+4,_AT_F+5
+		db	_AT_F+6,_AT_F+7,_AT_F+8,_AT_F+9,_AT_F+10,0,0,_AT_HOME
+		db	_AT_UP,_AT_PGUP,0,_AT_LEFT,0,_AT_RIGHT,0,_AT_END
+		db	_AT_DOWN,_AT_PGDN,_AT_INS,_AT_DEL,S_AT_F+1,S_AT_F+2,S_AT_F+3,S_AT_F+4
+		db	S_AT_F+5,S_AT_F+6,S_AT_F+7,S_AT_F+8,S_AT_F+9,S_AT_F+10,C_AT_F+1,C_AT_F+2
+		db	C_AT_F+3,C_AT_F+4,C_AT_F+5,C_AT_F+6,C_AT_F+7,C_AT_F+8,C_AT_F+9,C_AT_F+10
+		db	A_AT_F+1,A_AT_F+2,A_AT_F+3,A_AT_F+4,A_AT_F+5,A_AT_F+6,A_AT_F+7,A_AT_F+8
+		db	A_AT_F+9,A_AT_F+10,0,_AT_CTR+_AT_LEFT,_AT_CTR+_AT_RIGHT,_AT_CTR+_AT_END
 IFDEF JBM
-		db	@CTR+@PGDN,@CTR+@HOME,"1234567890-^",@CTR+@PGUP
+		db	_AT_CTR+_AT_PGDN,_AT_CTR+_AT_HOME,"1234567890-^",_AT_CTR+_AT_PGUP
 ELSE
-		db	@CTR+@PGDN,@CTR+@HOME,@F+1,@F+2,@F+3,@F+4,@F+5,@F+6
-		db	@F+7,@F+8,@F+9,@F+10
-		db	@F+11,@F+12,@CTR+@PGUP,@F+11,@F+12,S@F+11
-		db	S@F+12,C@F+11,C@F+12,A@F+11,A@F+12
+		db	_AT_CTR+_AT_PGDN,_AT_CTR+_AT_HOME,_AT_F+1,_AT_F+2,_AT_F+3,_AT_F+4,_AT_F+5,_AT_F+6
+		db	_AT_F+7,_AT_F+8,_AT_F+9,_AT_F+10
+		db	_AT_F+11,_AT_F+12,_AT_CTR+_AT_PGUP,_AT_F+11,_AT_F+12,S_AT_F+11
+		db	S_AT_F+12,C_AT_F+11,C_AT_F+12,A_AT_F+11,A_AT_F+12
 ;---------------------------- ##156.87
-		db	@CTR+@UP,0,0,0,@CTR+@DOWN,@CTR+@INS,@CTR+@DEL
-		db	@CTR+@TAB,0,0,@ALT+@HOME,@ALT+@UP,@ALT+@PGUP,0
-		db	@ALT+@LEFT,0,@ALT+@RIGHT,0,@ALT+@END,@ALT+@DOWN
-		db	@ALT+@PGDN,@ALT+@INS,@ALT+@DEL,0,@ALT+@TAB
+		db	_AT_CTR+_AT_UP,0,0,0,_AT_CTR+_AT_DOWN,_AT_CTR+_AT_INS,_AT_CTR+_AT_DEL
+		db	_AT_CTR+_AT_TAB,0,0,_AT_ALT+_AT_HOME,_AT_ALT+_AT_UP,_AT_ALT+_AT_PGUP,0
+		db	_AT_ALT+_AT_LEFT,0,_AT_ALT+_AT_RIGHT,0,_AT_ALT+_AT_END,_AT_ALT+_AT_DOWN
+		db	_AT_ALT+_AT_PGDN,_AT_ALT+_AT_INS,_AT_ALT+_AT_DEL,0,_AT_ALT+_AT_TAB
 
 tb_xkeyscan	dw	0300h,1C0Ah,1C00h,0E00Ah,0A600h,007Fh,0E7Fh,0E00h,0100h
-tb_xkeycode	db	0,@CTR+@CR,@ALT+@CR,@CTR+@CR,@ALT+@CR,@CTR+@BS,@CTR+@BS,@ALT+@BS,@ALT+@ESC
+tb_xkeycode	db	0,_AT_CTR+_AT_CR,_AT_ALT+_AT_CR,_AT_CTR+_AT_CR,_AT_ALT+_AT_CR,_AT_CTR+_AT_BS,_AT_CTR+_AT_BS,_AT_ALT+_AT_BS,_AT_ALT+_AT_ESC
 ;----------------------------
 ENDIF
 
@@ -188,7 +188,7 @@ _if z
 _endif
 	mov	ah,al
 	int	INT_ATOK
-	ret
+	VZ_RET
 atok_off:
 atok7_off:
 	mov	ah,66h
@@ -197,21 +197,21 @@ atok7_off:
 	mov	ah,0Bh
 	int	INT_ATOK
 	pop	ax
-	ret
+	VZ_RET
 
 atok_act:
 	mov	ah,20h
 	int	INT_ATOK
-	ret
+	VZ_RET
 atok_mask:
 	mov	ah,1Fh
 	int	INT_ATOK
-	ret
+	VZ_RET
 
 wxp_on:					; ##155.78
 	mov	ah,0
 	int	INT_WXP
-	ret
+	VZ_RET
 wxp_off:
 	mov	ah,4Ch
 	int	INT_WXP
@@ -219,15 +219,15 @@ wxp_off:
 	mov	ax,0
 	int	INT_WXP
 	pop	ax
-	ret
+	VZ_RET
 wxp_act:
 	mov	ax,5300h
 	int	INT_WXP
-	ret
+	VZ_RET
 wxp_mask:
 	mov	ax,5301h
 	int	INT_WXP
-	ret
+	VZ_RET
 ENDIF
 
 ;--- FEP control for DOS/V ---
@@ -244,14 +244,14 @@ ias_on:
 	pop	ax
 	mov	dl,al
 	bios_k	13h,0
-	ret
+	VZ_RET
 ias_off:
 	bios_k	13h,1
 	push	dx
 	and	dl,01000000b		; ##157.152
 	bios_k	13h,0
 	pop	ax
-	ret
+	VZ_RET
 ENDIF
 
 ;--- FEP control for PS/55 ---
@@ -270,7 +270,7 @@ _if z
 _endif
 	mov	ah,al
 	int	INT_ATOK
-	ret
+	VZ_RET
 atok_off:
 atok7_off:
 	mov	ah,66h
@@ -279,15 +279,15 @@ atok7_off:
 	mov	ah,0Bh
 	int	INT_ATOK
 	pop	ax
-	ret
+	VZ_RET
 atok_act:
 	mov	ah,20h
 	int	INT_ATOK
-	ret
+	VZ_RET
 atok_mask:
 	mov	ah,1Fh
 	int	INT_ATOK
-	ret
+	VZ_RET
 atok7_mask:
 	mov	ah,66h
 	int	INT_ATOK
@@ -314,13 +314,13 @@ vje_mask:
 fep_mask2:
 	clr	ax
 	mov	cs:vct16.@seg,ax
-	ret
+	VZ_RET
 ;; VJEβは、call sense_key ; original int 16 に変更 ; call wait_key の
 ;; 動作を行なうと正しく sense したコードが得られないので注意
 vje_on:
 	mov	ah,1
 	int	INT_VJEB
-	ret
+	VZ_RET
 vje_off:
 	mov	ah,0
 	int	INT_VJEB
@@ -328,7 +328,7 @@ vje_off:
 	movhl	ax,1,0
 	int	INT_VJEB
 	pop	ax
-	ret
+	VZ_RET
 
 ibm_mode:
 	bios_k	02h
@@ -348,26 +348,26 @@ ibm_mode:
 	or	al, 40h
   _endif
 	or	al, 30h
-	ret	   
+	VZ_RET	   
 ibm_act:
 	mov	al,cs:mask_act
 ibm_on:
 	or	al, 30h
 	bios_k	05h
-	ret
+	VZ_RET
 ibm_off:
 	call	ibm_mode
 	push	ax
 	mov	al,30h
 	bios_k	05h
 	pop	ax
-	ret
+	VZ_RET
 ibm_mask:
 	call	ibm_mode
 	mov	cs:mask_act,al
 	mov	al,30h
 	bios_k	05h
-	ret
+	VZ_RET
 ENDIF
 
 ;--- MS-KANJI API ---
@@ -375,7 +375,7 @@ ENDIF
 msk_on:
 	mov	ah,80h
 	call	mskanji
-	ret
+	VZ_RET
 
 msk_off:
 	mov	ax,0
@@ -384,7 +384,7 @@ msk_off:
 	mov	ax,8001h
 	call	mskanji
 	pop	ax
-	ret
+	VZ_RET
 
 mskanji	proc
 	push	bp
@@ -399,7 +399,7 @@ mskanji	proc
 	mov	sp,bx
 	pop	bx
 	pop	bp
-	ret
+	VZ_RET
 mskanji	endp
 
 ;--- Mask FEP for IBM ---
@@ -458,7 +458,7 @@ ibmm1:	clr	di
 	mov	es:[16h*4],ax
 	mov	es:[16h*4+2],dx
 	sti
-ibmm9:	ret
+ibmm9:	VZ_RET
 
 ENDIF
 
@@ -481,14 +481,14 @@ setfnckey:
 ENDIF
 initvzkey:
 IFDEF IBM
-	ret
+	VZ_RET
 getkeytbl:
 	extrn	checkVM		:near
 	call	is_dossilent
 	jmp	checkVM
 ELSE
 getkeytbl:
-	ret
+	VZ_RET
 ENDIF
 
 	public	initkeytbl
@@ -496,7 +496,7 @@ initkeytbl proc
 	clr	ax
 	stosw
 	stosw
-	ret
+	VZ_RET
 initkeytbl endp
 
 ;--- Get keycode ---
@@ -646,14 +646,14 @@ gspec1:
 	jmps	gcode8
 IFDEF JBM
 ctrl_bs:
-	mov	al,@CTR+@BS
+	mov	al,_AT_CTR+_AT_BS
 	jmps	gcode8
 ENDIF
 gctrl1:
 	call	cvtctrl
 gcode8:	mov	ah,TRUE
 	clc
-gcode9:	ret
+gcode9:	VZ_RET
 getkeycode endp
 
 IFDEF DOSV_BLINK
@@ -669,7 +669,7 @@ _else
 	msdos	F_CONIO
   _while z
 _endif
-	ret
+	VZ_RET
 doswaitkey endp
 ENDIF
 
@@ -679,7 +679,7 @@ get_ringp	proc
 		movseg	es,ax
 		mov	ax,es:[ringp]
 		pop	es
-		ret
+		VZ_RET
 get_ringp 	endp
 
 ;--- Convert ctrl code ---
@@ -703,7 +703,7 @@ IFDEF J31				; ##151.10
 _ifn z
 	cmp	dx,0E08h		; ##155.80
   _if e
-	mov	al,@CTR+@BS
+	mov	al,_AT_CTR+_AT_BS
   _endif
 	jmps	cvctr9
 _endif
@@ -714,10 +714,10 @@ ENDIF
 	add	al,10011010b		; [ESC]
 	test	ah,KEY_SHIFT
 _ifn z
-	or	al,@SFT
+	or	al,_AT_SFT
 _endif
 cvctr9:	clc
-	ret
+	VZ_RET
 cvtctrl	endp
 
 ;--- Convert special key ---
@@ -744,15 +744,15 @@ ENDIF
 	stc
 	jz	cvspc9
 _if s
-	test	al,@ALT
+	test	al,_AT_ALT
   _if z
 	test	ah,KEY_CTRL
     _ifn z
-	or	al,@CTR
+	or	al,_AT_CTR
     _else
 	test	ah,KEY_SHIFT
       _ifn z
-	or	al,@SFT
+	or	al,_AT_SFT
       _endif
     _endif
   _endif
@@ -760,70 +760,70 @@ _else
 	sub	al,20h
 _endif
 	clc
-cvspc9:	ret	
+cvspc9:	VZ_RET	
 cvtspec	endp
 
 IFDEF JBM
 
 ; @F11, @F12, S@F11, S@F12, C@F11, C@F12, @ALT+@UP, @ALT+@DOWN を判別
 cvtspec_func	proc
-	cmp	al,S@F+1
+	cmp	al,S_AT_F+1
 _if z
 	test	ah,KEY_SHIFT
   _if z
-	mov	al,@F+11
+	mov	al,_AT_F+11
   _endif
 _endif
-	cmp	al,S@F+2
+	cmp	al,S_AT_F+2
 _if z
 	test	ah,KEY_SHIFT
   _if z
-	mov	al,@F+12
+	mov	al,_AT_F+12
   _endif
 _endif
-	cmp	al,C@F+1
+	cmp	al,C_AT_F+1
 _if z
 	test	ah,KEY_CTRL
   _if z
-	mov	al,S@F+11
+	mov	al,S_AT_F+11
   _endif
 _endif
-	cmp	al,C@F+2
+	cmp	al,C_AT_F+2
 _if z
 	test	ah,KEY_CTRL
   _if z
-	mov	al,S@F+12
+	mov	al,S_AT_F+12
   _endif
 _endif
-	cmp	al,A@F+1
+	cmp	al,A_AT_F+1
 _if z
 	test	ah,KEY_ALT
   _if z
-	mov	al,C@F+11
+	mov	al,C_AT_F+11
   _endif
 _endif
-	cmp	al,A@F+2
+	cmp	al,A_AT_F+2
 _if z
 	test	ah,KEY_ALT
   _if z
-	mov	al,C@F+12
+	mov	al,C_AT_F+12
   _endif
 _endif
-	cmp	al,@PGUP
+	cmp	al,_AT_PGUP
 _if z
 	test	ah,KEY_ALT
   _ifn z
-	mov	al,@ALT+@UP
+	mov	al,_AT_ALT+_AT_UP
   _endif
 _endif
-	cmp	al,@PGDN
+	cmp	al,_AT_PGDN
 _if z
 	test	ah,KEY_ALT
   _ifn z
-	mov	al,@ALT+@DOWN
+	mov	al,_AT_ALT+_AT_DOWN
   _endif
 _endif
-	ret
+	VZ_RET
 cvtspec_func	endp
 
 ELSE
@@ -852,7 +852,7 @@ _if e
 	stc
 _endif
 	pop	es
-	ret
+	VZ_RET
 cvtspec2 endp
 
 ENDIF
@@ -880,7 +880,7 @@ _if e
 _endif
 	popf
 _endif
-	ret
+	VZ_RET
 bioskey	endp
 ENDIF
 
@@ -924,13 +924,13 @@ ENDIF
 IFDEF CVTKANA
 	call	cvtkanakey
 ENDIF
-	ret
+	VZ_RET
 wait_key endp
 
 	public	sense_key
 sense_key proc
 	bios_k2	01h
-	ret
+	VZ_RET
 sense_key endp
 
 	public	read_key
@@ -941,7 +941,7 @@ _ifn z
 	call	waitkey1
 	tst	ax
 _endif
-	ret
+	VZ_RET
 read_key endp
 
 	public	flush_key
@@ -957,7 +957,7 @@ _repeat
 	bios_k2	00h
 _until
 	pop	ax
-	ret
+	VZ_RET
 flush_key endp
 
 	public	shift_key
@@ -968,7 +968,7 @@ _ifn z
 	or	al,KEY_SHIFT
 _endif
 	mov	ah,al
-	ret
+	VZ_RET
 shift_key endp
 
 	public	beep_on
@@ -976,7 +976,7 @@ beep_on proc
 	in	al,61h
 	or	al,03h
 	out	61h,al
-	ret
+	VZ_RET
 beep_on endp
 
 	public	beep_off
@@ -984,7 +984,7 @@ beep_off proc
 	in	al,61h
 	and	al,not 03h
 	out	61h,al
-	ret
+	VZ_RET
 beep_off endp
 
 ;--- Check Function key ---
@@ -1012,7 +1012,7 @@ ENDIF
 	jnz	chkfk1
 	mov	al,1
 chkfk1:	call	dispfkey
-chkfk9:	ret
+chkfk9:	VZ_RET
 checkfkey endp
 
 ;--- Display function key ---
@@ -1060,7 +1060,7 @@ _endif
 	call	dispfkey1
 dspf8:	pop	ax
 	popm	<di,si,dx,cx,bx>
-dspf9:	ret
+dspf9:	VZ_RET
 
 ;
 dispfkey1:
@@ -1141,7 +1141,7 @@ _until z
 IFDEF DOSV
 	call	vrefresh
 ENDIF
-	ret
+	VZ_RET
 
 putspces:
 	xchg	dh,dl
@@ -1150,7 +1150,7 @@ putspces:
 	call	abputc1
   _loop
 	xchg	dh,dl
-	ret
+	VZ_RET
 
 dispfkey endp
 
@@ -1158,7 +1158,7 @@ dispfkey endp
 
 	public	sm_gettrgkey
 sm_gettrgkey:
-	ret
+	VZ_RET
 
 	assume	ds:nothing
 
@@ -1185,9 +1185,9 @@ chkk3:	sub	al,'0'
 	mov	rolc,al
 	call	initrolc
 chkk0:	clc
-	ret
+	VZ_RET
 chkk9:	stc
-	ret
+	VZ_RET
 sm_chkkey endp
 
 ;--- Check [SHIFT] key ---
@@ -1219,7 +1219,7 @@ chks1:
 	call	initrolc
 _endif
 	clc
-	ret
+	VZ_RET
 sm_chksft endp
 
 ;--- Is DBCS mode? ---
@@ -1239,7 +1239,7 @@ _if z
 _endif
   ENDIF
 ENDIF
-	ret
+	VZ_RET
 isDBCS endp
 
 	endhs
@@ -1248,4 +1248,3 @@ isDBCS endp
 ;	End of 'keyIBM.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

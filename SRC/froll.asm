@@ -156,7 +156,7 @@ _ifn e
 	mov	dh,al
 _endif
 	call	fill_vram
-	ret
+	VZ_RET
 
 ;--- Move video ram ---
 
@@ -215,7 +215,7 @@ _endif
 	dec	dh
 _until z	
 movvr9:	popm	<ds,ax>
-	ret
+	VZ_RET
 
 vramend_si:
 	mov	cx,2000h
@@ -283,7 +283,7 @@ _repeat
 	dec	dh
 _until z
 	pop	ax
-	ret
+	VZ_RET
 
 ;--- Move code buffer ---
 
@@ -312,7 +312,7 @@ _repeat
 	dec	dh
 _until z
 movcb9:	popm	<es,ds,ax>
-	ret
+	VZ_RET
 
 ;--- Fill code buffer ---
 
@@ -334,7 +334,7 @@ _repeat
 	dec	dh
 _until z
 	popm	<es,ax>
-	ret
+	VZ_RET
 
 ;--- Hardware scroll ---
 
@@ -437,7 +437,7 @@ _endif
 	mov	bx,ax
 	mov	al,14
 	call	outcrtc
-	ret
+	VZ_RET
 
 ;--- Sub routine ---
 
@@ -460,7 +460,7 @@ outcrtc:
 	mov	al,bl
 	out	dx,al
 	sti
-	ret
+	VZ_RET
 
 ;--- Set parameter ---
 ;<--
@@ -499,7 +499,7 @@ _endif
 	inc	dh
 	inc	dl
 	pop	ax
-	ret
+	VZ_RET
 
 ;--- Make video ram ptr ---
 ;--> CX
@@ -523,7 +523,7 @@ _endif
 	add	cx,vrhome
 	and	cx,1FFFh
 	pop	ax
-	ret
+	VZ_RET
 
 ;--- Make code buffer ptr ---
 ;--> CX
@@ -543,7 +543,7 @@ mkcbufp:
 	mov	cx,ax
 	shl	bx,1
 	pop	ax
-	ret
+	VZ_RET
 
 ;--- Flick Cursor ---
 
@@ -579,7 +579,7 @@ flcsr1:
 	and	bx,1FFFh
 	jmp	flcsr1
 flcsr8:	popm	<es,cx,bx,ax>
-	ret
+	VZ_RET
 flickcsr endp
 
 fret	dd	0
@@ -597,7 +597,7 @@ _if e
 	push	fret.@seg
 	push	fret.@off
 _endif
-	ret
+	VZ_RET
 flickcsr1 endp
 
 ;--- Startup ---
@@ -687,7 +687,7 @@ free_env proc
     rep movsb
 	mov	es,envseg
 	msdos	F_FREE
-	ret
+	VZ_RET
 free_env endp
 
 ;--- Replace display cursor proc. ---
@@ -732,9 +732,9 @@ srch2:	cmpsb
     rep	movsb
 	sti
 	clc
-	ret
+	VZ_RET
 srch_x:	stc
-	ret
+	VZ_RET
 	
 resetcsrproc:
 	mov	di,es:csrprocp
@@ -749,7 +749,7 @@ _ifn z
     rep	movsb
 	sti
 _endif
-	ret
+	VZ_RET
 
 ;--- Messages ---
 

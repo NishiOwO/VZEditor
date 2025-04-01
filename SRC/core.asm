@@ -19,7 +19,7 @@
 	extrn	w_back		:word
 	endws
 
-	extrn	chkdosheight	:near
+;	extrn	chkdosheight	:near
 	extrn	chkline1	:near
 	extrn	clrbtm		:near
 	extrn	cls		:near
@@ -65,7 +65,7 @@ _if c
 	sub	al,cl
 	mov	cl,255
 _endif
-	ret
+	VZ_RET
 do_tab	endp
 
 	endes
@@ -131,7 +131,7 @@ blod5:	mov	[bp].lbseg,ss		; ##1.5
 	mov	[bp].wnxt,0
 	clc
 blod9:	pop	es
-	ret
+	VZ_RET
 bload	endp
 
 ;--- Save from Line buffer ---
@@ -229,7 +229,7 @@ _endif
 	call	offlbuf
 	clc
 bsav9:	pop	es
-	ret
+	VZ_RET
 bsave	endp
 
 ;--- Close Line buffer ---
@@ -246,7 +246,7 @@ offlbuf	proc
 	pop	si
 	mov	[bp].bmax,0FFFFh
 	mov	[bp].inbuf,FALSE
-	ret
+	VZ_RET
 offlbuf	endp
 
 ;--- Scan line start ptr  ---
@@ -265,7 +265,7 @@ topl1:	dec	si
 	cld
 	inc	si
 	inc	si
-topl9:	ret
+topl9:	VZ_RET
 toplin	endp
 
 endlin	proc
@@ -277,7 +277,7 @@ endlin	proc
   repne	scasb
 	mov	si,di
 	popm	<es,di,cx>
-	ret
+	VZ_RET
 endlin	endp
 
 ;--- Scan field start ptr ---
@@ -294,7 +294,7 @@ _if c
 	inc	[bp].lnumb
 _endif
 	inc	[bp].dnumb
-	ret
+	VZ_RET
 prefldl:
 	cmp	byte ptr [si-1],LF
 _if e
@@ -380,7 +380,7 @@ fild4:
 	jne	fild1
 	clc
 fild8:	mov	si,bx
-fild9:	ret
+fild9:	VZ_RET
 
 prefld	endp
 nxtfld	endp
@@ -402,7 +402,7 @@ _repeat
 	cmp	si,di
 _until a
 	mov	si,ax
-tfld9:	ret
+tfld9:	VZ_RET
 topfld	endp
 
 ;****************************
@@ -460,7 +460,7 @@ _endif
 	call	scrout_cp
 	call	dispstat
 dspscr9:clc
-	ret
+	VZ_RET
 
 dspscr	endp
 
@@ -519,7 +519,7 @@ tout1:
 	call	isdnumb
 	jz	tout9
 tout8:	inc	dx
-tout9:	ret
+tout9:	VZ_RET
 tout	endp
 
 ;--- Check block ---
@@ -585,10 +585,10 @@ _ifn z
 	mov	cx,-1
   _endif
 _endif
-	ret
+	VZ_RET
 noblk:	
 	clr	ah
-	ret
+	VZ_RET
 chktblk	endp
 
 chkbblk	proc
@@ -689,7 +689,7 @@ sout41:	clr	ax
 	jz	sout9
 sout5:	call	cls
 sout9:	clc
-	ret
+	VZ_RET
 scrout	endp
 
 ;--- Display lower screen ---
@@ -737,7 +737,7 @@ bout2:
 	jmp	bout1
 bout8:	pop	ds
 	clc
-	ret
+	VZ_RET
 bufout	endp
 
 ;--- Set home line number ---
@@ -757,7 +757,7 @@ sethomdnumb:
 	sub	dl,[bp].wy
 	sbb	dh,0
 _endif
-	ret
+	VZ_RET
 sethomnumb endp
 
 ;--- Set bottom line number ---
@@ -777,7 +777,7 @@ _else
 	clr	dh
 	add	dx,[bp].dnumb
 _endif
-	ret
+	VZ_RET
 setbtmnumb endp
 
 ;--- Clear message line ---
@@ -802,7 +802,7 @@ _endif
 	mov	ds,[bp].ttops
 	call	clrmsg1
 	popm	<ds,bp>
-	ret
+	VZ_RET
 
 clrmsg1:
 	mov	dx,[bp].lnumb
@@ -832,7 +832,7 @@ _else
 	call	cls
   _endif
 _endif
-	ret
+	VZ_RET
 clrmsg	endp
 
 	endcs
@@ -962,7 +962,7 @@ cpxeq:
 	mov	[bp].lx,cl
 	mov	[bp].lxs,cl
 	pop	ds
-	ret
+	VZ_RET
 cptoxy	endp
 
 	endes
@@ -1102,7 +1102,7 @@ xyc_lf:	dec	cl
 xyc8:
 	mov	[bp].tcp,si
 	mov	[bp].lx,cl
-	ret
+	VZ_RET
 xytocp	endp
 
 ;--- Adjust by cp ---
@@ -1146,7 +1146,7 @@ setlendp:
 	mov	[bp].tnxt,si
 	call	setbend
 	pop	si
-	ret
+	VZ_RET
 setlinep endp
 
 ;--- Set bend ---
@@ -1159,7 +1159,7 @@ _if e
 	dec	si
 _endif
 	mov	[bp].bend,si
-	ret
+	VZ_RET
 setbend endp
 
 ;--- Set home ptr ---
@@ -1202,7 +1202,7 @@ home4:
 	mov	[bp].wy,al		;set wy
 home5:	mov	[bp].thom,si		;set thom
 _endif
-	ret
+	VZ_RET
 sethome endp
 
 	endcs
@@ -1230,7 +1230,7 @@ _endif
 	sub	al,ah
 _if b
 hadj9:	clc
-	ret
+	VZ_RET
 _endif
 	inc	al
 	tstb	[bp].ckanj
@@ -1241,7 +1241,7 @@ _endif
 hadj4:	mov	[bp].fofs,al
 	mov	[bp].wnxt,0		; ##100.04
 	stc
-	ret
+	VZ_RET
 hadjust	endp
 
 	endes
@@ -1286,11 +1286,11 @@ vadjm:
 vadjb:
 	call	sethome
 vadjs:	stc
-	ret
+	VZ_RET
 vadj0:
 	mov	[bp].wy,al
 vadjc:	clc
-	ret
+	VZ_RET
 
 vadjust	endp
 
@@ -1332,7 +1332,7 @@ vscr2:	push	dx
 vscr3:	popf
 	call	scrout1
 vscr8:	pop	dx
-	ret
+	VZ_RET
 vscr5:
 	mov	al,dh
 vscr6:
@@ -1381,7 +1381,7 @@ _else
 	pop	si
 	call	tout
 _endif
-	ret
+	VZ_RET
 vscroll	endp
 
 	public	vscroll2
@@ -1426,4 +1426,3 @@ vscroll2 endp
 ;	End of 'core.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

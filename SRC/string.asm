@@ -131,7 +131,7 @@ schoption	db	"WCZXI"
 ;----- VWX API -----
 
 IFDEF REXP
-GDATA vwxapi	dd,	0
+GDATA vwxapi,	dd,	0
 
 		public	check_vwx
 check_vwx	proc
@@ -155,7 +155,7 @@ exist_vwx:	or	extsw,ESW_VWX
 	  _endif
 	_endif
 		pop	es
-		ret
+		VZ_RET
 check_vwx	endp
 ENDIF
 
@@ -170,7 +170,7 @@ windgetstr proc
 	mov	cx,STRSZ
 	call	windgets1
 	mov	sysmode0,SYS_SEDIT
-	ret
+	VZ_RET
 windgetstr endp
 
 ;--- Set target ptr ---
@@ -193,7 +193,7 @@ settrgtp proc
 	jmps	stgt4
 stgt3:	mov	di,[bp].tend
 stgt4:	pop	dx
-	ret
+	VZ_RET
 settrgtp endp
 
 ;--- Search next string ---
@@ -264,7 +264,7 @@ schs4:
 	pop	bx
 	stc
   _endif
-	ret
+	VZ_RET
 _endif
 ENDIF
 	mov	bp,schstr
@@ -374,7 +374,7 @@ _endif
 	stc
 schs_x:	pop	bp
 schs9:	pop	bx
-	ret
+	VZ_RET
 sch_ic:
 	pushm	<di,cx>
   repne	scasb
@@ -386,12 +386,12 @@ sch_ic:
 	sub	al,'a'-'A'
   repne	scasb
 	stz
-	ret
+	VZ_RET
 schic1:
 	popm	<cx,di>
 	sub	al,'a'-'A'
   repne	scasb
-	ret
+	VZ_RET
 
 search1	endp
 
@@ -420,7 +420,7 @@ replace1 proc
 	mov	si,di
 	popm	<ds,cx>
 	clc
-repl9:	ret
+repl9:	VZ_RET
 replace1 endp
 
 ;--- Input search string ---
@@ -433,7 +433,7 @@ se_setstr proc
 _ifn c
 	call	setretp
 _endif
-	ret
+	VZ_RET
 se_setstr endp
 	
 setstr2 proc
@@ -444,13 +444,13 @@ _if c
   _endif
 	mov	strf,FALSE
 	stc
-	ret
+	VZ_RET
 _endif
 	mov	pagm,PG_STRSCH
 	mov	strf,TRUE
 	call	dispstr
 	clc
-	ret
+	VZ_RET
 setstr2	endp
 
 inputstr proc
@@ -462,7 +462,7 @@ inputstr proc
 	stc
 	jcxz	stst9
 	call	cvtschstr
-stst9:	ret
+stst9:	VZ_RET
 inputstr endp
 
 ;----- Set title seach string -----
@@ -500,7 +500,7 @@ se_settsstr	proc
 	  _endif
 		mov	[bp].tsstr,si
 	_endif
-		ret
+		VZ_RET
 se_settsstr	endp
 
 		assume	ds:cgroup
@@ -527,7 +527,7 @@ _loop
 		clr	al
 		stosb
 		pop	ds
-		ret
+		VZ_RET
 set_schopt	endp
 
 set_schflag	proc
@@ -539,7 +539,7 @@ set_schflag	proc
 		shr	al,cl
 		or	al,dh
 		mov	schflag,al
-		ret
+		VZ_RET
 set_schflag	endp
 
 scan_optchar	proc
@@ -570,7 +570,7 @@ _repeat
 		or	ah,al
 _until
 scoptc9:	mov	si,bx
-		ret
+		VZ_RET
 scan_optchar	endp
 
 ;--- Convert string ---
@@ -687,7 +687,7 @@ _if z
 	stc
 _endif
 	pop	ds
-	ret
+	VZ_RET
 cvtstr	endp
 
 ;--- Convert search string ---
@@ -764,7 +764,7 @@ _endif
 ENDIF
 	clc
 	pop	ds
-	ret
+	VZ_RET
 cvtschstr endp
 
 	assume	ds:nothing
@@ -803,7 +803,7 @@ schini1:
 	call	getnum
 	mov	cx,strln
 	mov	si,[bp].tcp
-	ret
+	VZ_RET
 schini	endp
 
 	public	schfwd,schbwd
@@ -846,7 +846,7 @@ srch9:	pushf
 	mov	si,[bp].tcp
 	call	scrout_cp
 	popf
-	ret
+	VZ_RET
 
 srchx:	mov	dl,M_XFOUND
 	call	dispmsg
@@ -861,7 +861,7 @@ totopline:
 	je	attop9
 	inc	si
 	inc	si
-attop9:	ret
+attop9:	VZ_RET
 
 toendline:
 	cmp	si,[bp].ttop
@@ -872,7 +872,7 @@ toendline:
 	je	atend9
 	dec	si
 	dec	si
-atend9:	ret
+atend9:	VZ_RET
 
 ;--- Replace string ---
 
@@ -880,7 +880,7 @@ atend9:	ret
 se_replace proc
 chgs1:	call	inputstr
 	jnc	chgs11
-chgs9:	ret
+chgs9:	VZ_RET
 chgs11:
 	mov	dl,W_REPLACE
 	mov	al,GETS_INIT
@@ -1025,9 +1025,9 @@ se_copystr proc
 	mov	al,CM_SCOPY
 	call	ledit
 	clc
-	ret
+	VZ_RET
 copys9:	stc
-	ret
+	VZ_RET
 se_copystr endp
 
 ;--- Copy word to buffer ---
@@ -1072,7 +1072,7 @@ _ifn cxz
 _endif
 	clc
 getw9:	pop	ds
-	ret
+	VZ_RET
 
 getblk:
 	mov	cx,[bp].bofs
@@ -1137,7 +1137,7 @@ rtag2:		stosb
 _while b
 		stc
 rtag9:		pop	ds
-		ret
+		VZ_RET
 
 rt_chkpath:
 		tst	ah
@@ -1198,10 +1198,10 @@ isnamechar	proc
 		popm	<di,cx>
 		je	fn_yes
 		clc
-		ret
+		VZ_RET
 fn_yesc:	mov	ah,TRUE
 fn_yes:		stc
-		ret
+		VZ_RET
 isnamechar	endp
 
 ;--- Search 'KAKKO' ---
@@ -1309,7 +1309,7 @@ _until
 isknj8:	stz
 isknj9:	pop	bx
 	pop	si
-	ret
+	VZ_RET
 
 	endcs
 	end

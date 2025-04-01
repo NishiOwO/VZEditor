@@ -51,7 +51,7 @@ setint24 proc
 	mov	ax,offset cgroup:int24in
 	mov	dx,cs
 	call	setint1
-	ret
+	VZ_RET
 setint24 endp
 
 	public	resetint24
@@ -60,7 +60,7 @@ resetint24 proc
 	mov	di,24h*4
 	mov	dx,cs
 	call	resetint1
-	ret
+	VZ_RET
 resetint24 endp
 
 ;--- INT24h handler ---

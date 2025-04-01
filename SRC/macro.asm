@@ -16,13 +16,13 @@ KEYMACID	equ	'BK'
 UNKMACID	equ	'UN'
 PRINTPARM	equ	16
 
-MAC_GET		equ	00000001b
-MAC_CHR		equ	00000010b
-MAC_STR		equ	00000100b
-MAC_PAUSE	equ	00001000b
-MAC_MENU	equ	00010000b
-MAC_TBOX	equ	00100000b
-MAC_SEDIT	equ	10000000b
+VZ_MAC_GET		equ	00000001b
+VZ_MAC_CHR		equ	00000010b
+VZ_MAC_STR		equ	00000100b
+VZ_MAC_PAUSE	equ	00001000b
+VZ_MAC_MENU	equ	00010000b
+VZ_MAC_TBOX	equ	00100000b
+VZ_MAC_SEDIT	equ	10000000b
 
 SKPSYMCNT	equ	8
 
@@ -128,7 +128,7 @@ _mget		ends
 	extrn	scantbl		:near
 	extrn	dispmsg		:near
 	extrn	scan_flcmd	:near
-	extrn	flsyscall	:near
+;	extrn	flsyscall	:near
 	extrn	load_iniopt	:near
 	extrn	reset_histp	:near
 	extrn	open_ext	:near
@@ -385,7 +385,7 @@ _if e
 	mov	ax,readmac
 _endif
 	mov	startmac,al
-inimac9:ret
+inimac9:VZ_RET
 initmacro endp
 
 	endis
@@ -414,7 +414,7 @@ _until
 schmac3:	inc	si			; skip length word
 		inc	si
 		pop	ax
-schmac9:	ret
+schmac9:	VZ_RET
 schmacro 	endp
 
 		public	schsysmenu
@@ -442,7 +442,7 @@ schmnu1:	mov	si,bx
 		popm	<bx,ax>
 		inc	si
 		inc	si
-		ret
+		VZ_RET
 schsysmenu	endp
 
 		public	schmdlmac
@@ -450,7 +450,7 @@ schmdlmac:	mov	si,runmhp
 		jmps	schloc1
 schlocal 	proc
 		mov	si,[bx].mrootp
-		mov	dh,not LOCALMAC
+		mov	dh,not byte ptr LOCALMAC
 		tst	dl
 		jns	schloc2
 schloc1:	mov	dh,0FFh
@@ -468,8 +468,8 @@ _repeat
 _until e
 		inc	si
 		inc	si
-		ret
-schloc3:	and	dl,not LOCALMAC
+		VZ_RET
+schloc3:	and	dl,not byte ptr LOCALMAC
 		jmp	schmacro
 schlocal	endp
 
@@ -493,7 +493,7 @@ _repeat
 		lodsw
 		add	si,ax
 _until
-		ret
+		VZ_RET
 sch_last	endp
 
 ;----- Search module -----
@@ -514,7 +514,7 @@ _repeat
 	_break e
 		mov	si,[si].mh_nextmdl
 _until
-schid9:		ret
+schid9:		VZ_RET
 sch_module	endp
 
 zx_schmodule	proc
@@ -528,7 +528,7 @@ zx_schmodule	proc
 		pop	ax
 		mov	di,si
 		call	set_readmac
-		ret
+		VZ_RET
 zx_schmodule	endp
 
 ;----- Count module -----
@@ -545,7 +545,7 @@ _repeat
 		dec	cx
 _until
 		not	cx
-cntmdl9:	ret
+cntmdl9:	VZ_RET
 cnt_module	endp
 
 ;----- Get module header -----
@@ -567,7 +567,7 @@ _ifn z
   _until
 _endif
 		pop	ax
-		ret
+		VZ_RET
 get_module	endp
 
 ;----- Is it macro key? -----
@@ -578,7 +578,7 @@ get_module	endp
 ismacro		proc
 		test	extsw,ESW_MAC
 	_ifn z
-		ret
+		VZ_RET
 	_endif
 		mov	dx,ax
 		mov	si,macrobuf	
@@ -668,7 +668,7 @@ _ifn z
 	pop	dx
 _endif
 	clc
-	ret
+	VZ_RET
 
 ismac2:
 	mov	di,mputp
@@ -678,7 +678,7 @@ _if e
 	not	al
 	mov	dl,al
 	stc
-	ret
+	VZ_RET
 _endif
 	tst	di
 _ifn z
@@ -705,7 +705,7 @@ mac_on:
 	call	csroff
 _else
 	mov	bx,mnestp
-	cmp	al,MAC_PAUSE
+	cmp	al,VZ_MAC_PAUSE
   _if e
 	dec	[bx].mgetp
 	dec	[bx].mgetp
@@ -746,7 +746,7 @@ _endif
 ;_endif
 	mov	[bx].mgetp,si
 ismac9:	stc
-	ret
+	VZ_RET
 ismacro	endp
 
 chkmacbuf:
@@ -762,7 +762,7 @@ mac_putoff:
 macoff:	mov	mputp,NULL
 _endif
 	stc				; for postmacro
-	ret
+	VZ_RET
 
 scan_gmac proc
 _repeat
@@ -770,7 +770,7 @@ _repeat
 	add	di,3
 	tstb	[di]
 _while s
-	ret
+	VZ_RET
 scan_gmac endp
 
 ;--- Off macro ---
@@ -791,7 +791,7 @@ _else
 _endif
 	stc
 	pop	ds
-	ret
+	VZ_RET
 disperr	endp
 
 ;--- Do macro ---
@@ -803,7 +803,7 @@ _ifn z
 	mov	si,offset cgroup:kmg_ng
 	call	dispkeymode
 	stc
-	ret
+	VZ_RET
 _endif
 	tstw	mputp
 	jnz	mac_putoff
@@ -820,7 +820,7 @@ _endif
 	mov	si,offset cgroup:kmg_mac
 	call	dispkeymode
 	stc
-	ret
+	VZ_RET
 domacro	endp
 
 ;--- Post-macro ---
@@ -830,14 +830,14 @@ postmacro proc
 	mov	ah,macmode
 	tst	ah
 	jz	post1
-	cmp	ah,MAC_PAUSE
+	cmp	ah,VZ_MAC_PAUSE
 	je	post_pause
-	cmp	ah,MAC_CHR
+	cmp	ah,VZ_MAC_CHR
 	je	to_macget
-	cmp	ah,MAC_STR
+	cmp	ah,VZ_MAC_STR
 	je	post_str
 post9:	clc
-	ret
+	VZ_RET
 
 post_str:
 	cmp	al,CM_CR
@@ -845,8 +845,8 @@ post_str:
 	cmp	al,CM_ESC
 	jne	post9
 to_macget:
-	mov	macmode,MAC_GET
-	ret
+	mov	macmode,VZ_MAC_GET
+	VZ_RET
 
 post_pause:
 	call	to_macget
@@ -909,7 +909,7 @@ _ifn z
 	stosb
 _endif
 	pop	ax
-	ret
+	VZ_RET
 dataend endp
 
 	public	schcmdsym
@@ -925,7 +925,7 @@ _if e
 	sub	al,cl
 	clc
 _endif
-	ret
+	VZ_RET
 schcmdsym endp
 
 ;--- Update kbd macro ---
@@ -1002,7 +1002,7 @@ _ifn z
   _endif
 	jmp	mac_ok
 _endif
-	ret	
+	VZ_RET	
 addmacro endp
 
 ;--- Pre-macro ---
@@ -1030,7 +1030,7 @@ _ifn z
 	mov	si,offset cgroup:kmg_mac
 	call	dispkeymode
 _endif
-	test	macmode,MAC_GET
+	test	macmode,VZ_MAC_GET
 _if z
 	mov	dl,startmac
 	tst	dl
@@ -1046,7 +1046,7 @@ _if z
     _endif
   _endif
 	clc
-	ret
+	VZ_RET
 _endif
 	tstb	stepf
 _ifn z
@@ -1131,7 +1131,7 @@ prdata1:mov	dx,ax
 prdata2:clr	al
 	mov	[bx].mgetp,si
 	stc
-	ret
+	VZ_RET
 mac_chr:
 	call	scan_chr1
 	jmp	prdata2
@@ -1183,7 +1183,7 @@ prstop1:clr	ax
 off_silent:
 	mov	ss:silent,0
 prmac9:	clc
-	ret
+	VZ_RET
 
 prmac_pop:
 	mov	si,[bx].mgettop
@@ -1265,7 +1265,7 @@ _ifn z
 _endif
 	clr	al
 macmnu2:
-	mov	macmode,MAC_MENU
+	mov	macmode,VZ_MAC_MENU
 	xchg	bx,si
 	push	dx
 	push	sysmode
@@ -1297,7 +1297,7 @@ macmnu3:
 	call	schmdlmac
 	jmps	maccal1
 macmnu9:stc
-	ret
+	VZ_RET
 
 ;--- Command (#nn,#a) ---
 
@@ -1306,7 +1306,7 @@ mac_cmd:
 	jmpl	c,prmac_err
 	call	set_mgetp
 	stc
-	ret
+	VZ_RET
 
 ;--- Variables (a) ---
 
@@ -1335,7 +1335,7 @@ readexpr1 proc
 	call	readexpr
 	pop	bx
 	lodsb
-	ret
+	VZ_RET
 readexpr1 endp
 
 ;--- Call macro (&nn,&a,&#) ---
@@ -1495,7 +1495,7 @@ scsym_str:
 scsym4:	pop	dx
 	jmp	scsym2
 scsym8:	dec	si
-scsym9:	ret
+scsym9:	VZ_RET
 
 ;--- Label/jump (:A,>A,>nn) ---
 
@@ -1577,7 +1577,7 @@ set_mgetp:
 _if a
 	mov	[bx].mgetp,si
 _endif
-	ret
+	VZ_RET
 
 ;----- On Key goto -----
 
@@ -1653,7 +1653,7 @@ _if ae
 	mov	al,','
 	jmp	scansym1
 _endif
-	ret
+	VZ_RET
 
 tb_skipjmp:
 	ofs	scandeciw
@@ -1682,12 +1682,12 @@ skp_blk:
 scan_chr1:
 	call	scan_chr
 	dec	si
-	ret
+	VZ_RET
 
 scan_str1:
 	call	scan_str
 	dec	si
-	ret
+	VZ_RET
 
 gmacn0:	call	isupper		;; &S?
 _ifn c
@@ -1716,7 +1716,7 @@ _endif
 	add	dl,[di-3]
 	clr	al
 gmacn8:	clc
-gmacn9:	ret
+gmacn9:	VZ_RET
 
 specialjmp:
 	cmp	al,'>'
@@ -1724,13 +1724,13 @@ specialjmp:
 	cmp	al,'*'
 	je	jmp_ref
 spjmp_x:clc
-	ret
+	VZ_RET
 jmp_next:
 	mov	si,[bx].mgettop
 	add	si,[si-2]
 	add	si,3
 	stc
-	ret
+	VZ_RET
 
 jmp_ref:
 	mov	dx,readmac
@@ -1745,7 +1745,7 @@ _else
 	add	si,3
 _endif
 	stc
-	ret
+	VZ_RET
 
 jmp_abort:
 	mov	si,eventvct
@@ -1754,7 +1754,7 @@ _ifn z
 	inc	si
 	inc	si
 	stc
-	ret
+	VZ_RET
 _endif
 	inc	sp
 	inc	sp
@@ -1791,9 +1791,9 @@ _endif
 	pop	bx
 _endif
 scancm9:clc
-	ret
+	VZ_RET
 sccmd_x:stc
-	ret
+	VZ_RET
 scancmd	endp
 	
 ;--- Read parameter ---
@@ -1805,7 +1805,7 @@ readparm proc
 	call	readexpr0
 	jc	parm_x4
 	clc
-	ret
+	VZ_RET
 parm_x4:
 	inc	sp
 	inc	sp
@@ -1819,10 +1819,10 @@ readnext proc
 	cmp	al,','
 	jne	parm_x
 	call	readexpr0
-	ret
+	VZ_RET
 parm_x:
 	stc
-	ret
+	VZ_RET
 readnext endp
 
 ;--- System macro ---
@@ -1835,12 +1835,12 @@ smac_quit:
 	stl	[bx]
 set_mnestp:
 	mov	mnestp,bx
-sbrk9:	ret
+sbrk9:	VZ_RET
 
 smac_trace:
 	mov	stepf,TRUE
 smac_nop:
-	ret
+	VZ_RET
 
 smac_upper:
 	call	readparm
@@ -1853,7 +1853,7 @@ _endif
 
 smac_silent:
 	mov	silent,1
-	ret
+	VZ_RET
 
 smac_redraw:
 	call	off_silent
@@ -1861,14 +1861,14 @@ smac_redraw:
 _if z
 	call	redraw
 _endif
-	ret
+	VZ_RET
 
 smac_char:
-	mov	al,MAC_CHR
+	mov	al,VZ_MAC_CHR
 	jmps	smac8
 
 smac_line:
-	mov	al,MAC_STR
+	mov	al,VZ_MAC_STR
 	jmps	smac8
 
 smac_inkey:
@@ -1888,15 +1888,15 @@ _else
 _endif
 set_retval:
 	mov	retval,ax
-	ret
+	VZ_RET
 
 smac_pause:
-	mov	al,MAC_PAUSE
+	mov	al,VZ_MAC_PAUSE
 smac8:	mov	macmode,al
 	inc	sp
 	inc	sp
 	clc
-	ret
+	VZ_RET
 
 	public	smac_output	;;;
 smac_output:
@@ -1910,7 +1910,7 @@ _endif
 	inc	sp
 	inc	sp
 	stc
-	ret
+	VZ_RET
 
 sx_sprintf:
 	call	readparm
@@ -1958,7 +1958,7 @@ _endif
 	pop	bx
 	cmp	ax,tmpbuf3		;;
 	je	prntcall
-	ret
+	VZ_RET
 
 prntcall:
 	mov	[bx].mgetp,si
@@ -2000,7 +2000,7 @@ _else
 _endif
 	pop	bx
 	push	si
-	mov	macmode,MAC_TBOX
+	mov	macmode,VZ_MAC_TBOX
 	push	sysmode
 	call	windgetval
 	pop	sysmode
@@ -2008,7 +2008,7 @@ _endif
 	call	to_macget
 	mov	retval,dx
 	pop	bx
-	ret
+	VZ_RET
 
 smac_beep:
 	test	word ptr syssw,SW_BEEP
@@ -2016,7 +2016,7 @@ smac_beep:
 	call	beep_on
 	call	smac_wait
 	call	beep_off
-	ret
+	VZ_RET
 
 smac_wait:
 	call	readparm
@@ -2027,7 +2027,7 @@ _ifn z
 	call	waitcrtv
   _loop
 _endif
-	ret
+	VZ_RET
 
 smac_rnd:
 	mov	ax,seed
@@ -2112,7 +2112,7 @@ _if e
 	call	editloc
 	popm	<ds,si,bx>
 _endif
-	ret
+	VZ_RET
 
 smac_getdeci:
 	clr	al
@@ -2153,7 +2153,7 @@ smaccall:
 	mov	[bx].mgettop,si
 	mov	[bx].mgetp,si
 	call	set_mnestp
-	ret
+	VZ_RET
 smac_err1:
 	jmp	smac_err
 
@@ -2172,7 +2172,7 @@ _ifn c
 _endif
 	mov	retval,cx
 	pop	si			; ##156.144
-	ret
+	VZ_RET
 
 smac_video proc
 	call	readparm
@@ -2183,7 +2183,7 @@ _else
 	mov	al,insm
 	call	csron
 _endif
-	ret
+	VZ_RET
 smac_video endp
 
 smac_fep proc				; ##156.110
@@ -2198,7 +2198,7 @@ _ifn z
 _endif
 	call	ctrlfp
 	mov	fpmode,al
-	ret
+	VZ_RET
 smac_fep endp
 
 ;----- &z() macro loader -----
@@ -2243,7 +2243,7 @@ smac_macload	proc
 		movseg	ds,ss
 		mov	retval,dx
 		popm	<bp,si,bx>
-		ret
+		VZ_RET
 smac_macload	endp
 
 retry_recust	proc
@@ -2264,7 +2264,7 @@ _repeat
 	  _ifn c
 		call	re_cust1
 		jc	retry_recust
-		ret
+		VZ_RET
 	  _endif
 	_endif
 		mov	si,ss:[si].mh_nextmdl
@@ -2272,7 +2272,7 @@ _repeat
 _until z
 retry_x:	stc
 		mov	dl,E_NOBUFFER
-		ret
+		VZ_RET
 retry_recust	endp
 
 ;----- String operations -----
@@ -2305,7 +2305,7 @@ strcpy1:	tst	cx
 	_endif
 		call	strncpy
 		mov	ss:retval,di
-		ret
+		VZ_RET
 sx_strcpy	endp
 
 sx_strcat	proc
@@ -2322,7 +2322,7 @@ stcmp1:		mov	ax,0
 		inc	ax
 	_endif
 strret1:	mov	ss:retval,ax
-		ret
+		VZ_RET
 sx_strcmp	endp
 
 sx_stricmp	proc
@@ -2387,7 +2387,7 @@ sx_histcpy	proc
 		clr	cx
 		pop	ax
 		call	histcpy1
-		ret
+		VZ_RET
 sx_histcpy	endp
 
 sx_getenv	proc
@@ -2401,7 +2401,7 @@ sx_getenv	proc
 		call	strcpy1
 	_endif
 		movseg	ds,ss
-		ret
+		VZ_RET
 sx_getenv	endp
 
 sx_parsepath	proc
@@ -2411,7 +2411,7 @@ sx_parsepath	proc
 		mov	[di+2],bx
 		mov	[di+4],cx
 		mov	[di+8],si
-		ret
+		VZ_RET
 sx_parsepath	endp
 
 jx_iskanji	proc
@@ -2425,7 +2425,7 @@ jx_cvtkana	proc
 		call	cvtkanakey
 	_endif
 		mov	retval,ax
-		ret
+		VZ_RET
 jx_cvtkana	endp
 
 ;----- Long int operations -----
@@ -2434,21 +2434,21 @@ lx_mov		proc
 		xchg	si,di
 		movsw
 		movsw
-		ret
+		VZ_RET
 lx_mov		endp
 
 lx_addl		proc
 		ldl	[di]
 		add	[si],ax
 		adc	[si+2],dx
-		ret
+		VZ_RET
 lx_addl		endp
 
 lx_subl		proc
 		ldl	[di]
 		sub	[si],ax
 		sbb	[si+2],dx
-		ret
+		VZ_RET
 lx_subl		endp
 
 lx_cmpl		proc
@@ -2463,17 +2463,17 @@ lx_cmpl		proc
 	  _endif
 	_endif
 		mov	retval,ax
-		ret
+		VZ_RET
 lx_cmpl		endp
 
 lx_addlw	proc
 		addlw	[si],dx
-		ret
+		VZ_RET
 lx_addlw	endp
 
 lx_sublw	proc
 		sublw	[si],dx
-		ret
+		VZ_RET
 lx_sublw	endp
 
 lx_mullw	proc
@@ -2486,7 +2486,7 @@ lx_mullw	proc
 		popm	<dx,ax>
 		add	dx,cx
 		stl	[si]
-		ret
+		VZ_RET
 lx_mullw	endp
 
 lx_divlw	proc
@@ -2495,7 +2495,7 @@ lx_divlw	proc
 		mov	retval,dx
 		clr	dx
 		stl	[si]
-		ret
+		VZ_RET
 lx_divlw	endp
 
 ;----- Misc. functions -----
@@ -2508,9 +2508,9 @@ emac_sedit	proc
 		inc	sp
 		inc	sp
 		clc
-		ret
+		VZ_RET
 	_endif
-		ret
+		VZ_RET
 emac_sedit	endp
 
 ;----- Insert macro -----
@@ -2573,7 +2573,7 @@ ins_macro	proc
 		call	init_maclink
 		pop	ax
 		clc
-insmac_x:	ret
+insmac_x:	VZ_RET
 ins_macro	endp
 
 ;----- Set store ptr -----
@@ -2597,7 +2597,7 @@ set_storep	proc
 ;		dec	si
 ;		mov	macendp,si
 ;		mov	bx,di
-;		ret
+;		VZ_RET
 	    _endif
 	  _endif
 		clr	dl
@@ -2667,7 +2667,7 @@ _until
 		mov	di,bx
 	  _endif
 	_endif
-		ret
+		VZ_RET
 set_storep	endp
 
 ;---- Set readmac -----
@@ -2688,7 +2688,7 @@ _repeat
 		jz	stread9
 _loop
 		mov	readmac,di
-stread9:	ret
+stread9:	VZ_RET
 set_readmac	endp
 
 ;----- Delete macro -----
@@ -2738,7 +2738,7 @@ del_macro	proc
 		call	init_maclink
 		clc
 delmac9:	popm	<es,ds>
-		ret
+		VZ_RET
 del_macro	endp
 
 zx_delmacro	proc
@@ -2759,7 +2759,7 @@ _until a
 		skip1
 onrun_x:	stc
 		pop	bx
-		ret
+		VZ_RET
 onrun		endp
 
 		public	isrun
@@ -2775,7 +2775,7 @@ _repeat
 _until a
 		clc
 isrun9:		pop	bx
-		ret
+		VZ_RET
 isrun		endp
 
 ;--- Print keyboard macro ---
@@ -2798,7 +2798,7 @@ wmac2:	lods	ss:dummyw
 _until
 	pop	si
 	call	scrout_cp
-	ret	
+	VZ_RET	
 wmac3:
 	pushm	<ax,si>
 	mov	di,[bp].tnow
@@ -2934,7 +2934,7 @@ _until
 		sub	ax,si
 		mov	macrosz,ax
 		popm	<es,ds>
-		ret
+		VZ_RET
 init_maclink	endp
 
 ;----- Init Event macro -----
@@ -2964,7 +2964,7 @@ initevmac	proc
 		dec	si
 		dec	si
 	_endif
-		ret
+		VZ_RET
 initevmac	endp
 
 ;----- Do Event macro -----
@@ -3001,7 +3001,7 @@ do_evmac	proc
 		skip2
 doevmac8:	clr	ax
 		popm	<ds,si,dx,cx>
-		ret
+		VZ_RET
 do_evmac	endp
 
 ;----- Do Event macro -----
@@ -3024,7 +3024,7 @@ run_evmac	proc
 	_endif
 		mov	mnestbase,0
 		pop	ds
-		ret
+		VZ_RET
 run_evmac	endp
 
 		endes
@@ -3034,4 +3034,3 @@ run_evmac	endp
 ;	End of 'macro.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

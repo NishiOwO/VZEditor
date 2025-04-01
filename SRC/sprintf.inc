@@ -30,6 +30,7 @@ _printwk	ends
 ; SS:BX :parameter top ptr
 ; $ld_strseg :load %s str seg to DS
 ;   usage :" %[-][0][n][,][l]{d|u|x|c|s} "
+sprintf	proc
 
 $sprintf	proc
 		pushm	<bx,cx,dx,si,bp,ds,es>
@@ -52,7 +53,7 @@ prnt8:
 		stosb
 		add	sp,type _printwk
 		popm	<es,ds,bp,si,dx,cx,bx>
-		ret
+		VZ_RET
 $sprintf	endp
 
 ;----- Analyze format -----
@@ -96,7 +97,7 @@ prnt_form	proc
 		je	prnt_str
 		cmp	dl,'c'
 		je	prnt_chr
-		ret
+		VZ_RET
 
 ;----- %c : character -----
 
@@ -111,7 +112,7 @@ prnt_chr:
 		stosw
 	  _endif
 	_endif
-		ret
+		VZ_RET
 
 ;----- %s : string -----
 
@@ -145,7 +146,7 @@ pstr1:
 		mov	al,SPC
 	rep	stosb
 pstr8:		popm	<ds,si>
-		ret
+		VZ_RET
 
 ;----- %x,%u,%d : number -----
 ;(special thanks to Oh!No! & moritan)
@@ -233,7 +234,7 @@ _until z
 		call	prnt_fill
 	_endif
 		popm	<si,bx>
-		ret
+		VZ_RET
 
 ;----- Fill space or '0' -----
 
@@ -251,7 +252,7 @@ prnt_fill	proc
 	rep	stosb
 	_endif
 		pop	cx
-		ret
+		VZ_RET
 prnt_fill	endp
 
 prnt_form	endp
@@ -284,10 +285,10 @@ _repeat
 		add	dx,ax
 		lodsb
 _until
-		ret
+		VZ_RET
 scandeci	endp
 
+sprintf	endp
 ;------------------------------------------------
 ;	End of sprintf.inc
 ;------------------------------------------------
-

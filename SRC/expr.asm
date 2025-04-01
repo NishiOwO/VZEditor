@@ -180,10 +180,10 @@ _endif
 	call	readexpr
 	jc	setopt_x
 	mov	optptr,NULL
-	ret
+	VZ_RET
 setopt_x:
 	stc
-	ret
+	VZ_RET
 setoption endp
 
 ;----- Set open option -----
@@ -207,9 +207,9 @@ set_opnopt	proc
 	_endif
 		mov	dl,OPE_SET
 		call	readexpr
-		ret
+		VZ_RET
 setopop_x:	stc
-		ret
+		VZ_RET
 set_opnopt	endp
 
 ;--- Read expression ---
@@ -457,7 +457,7 @@ _endif
 	clc
 rexp9:	mov	sp,sp_save
 	pop	di
-	ret
+	VZ_RET
 readexpr endp
 
 ;--- Set option No. ---
@@ -489,7 +489,7 @@ _if z
 	neg	cx
 	clc
 _endif
-	ret
+	VZ_RET
 setoptnum endp
 
 ;--- Set option value ---
@@ -638,7 +638,7 @@ IFNDEF NEWEXPR
 	clr	cx
 ENDIF
 stval9:	popm	<es,bx>
-	ret
+	VZ_RET
 
 ;--- Operate ---
 ;-->
@@ -738,7 +738,7 @@ ELSE
 ENDIF
 op_get:
 op_nop:
-	ret
+	VZ_RET
 op_push:
 	mov	bx,macsp
 	dec	bx
@@ -751,46 +751,46 @@ op_pop:
 	inc	bx
 	inc	bx
 oppop1:	mov	macsp,bx
-	ret	
+	VZ_RET	
 
 op_inc:
 	inc	ax
-	ret
+	VZ_RET
 op_dec:
 	dec	ax
-	ret
+	VZ_RET
 op_com:
 	not	ax
-	ret
+	VZ_RET
 op_swap:
 	xchg	al,ah
-	ret
+	VZ_RET
 IFDEF NEWEXPR
 op_wptr:
 	movhl	cx,VARPTR+WORDPTR,0
 	add	ax,dx
 	add	ax,dx
-	ret
+	VZ_RET
 op_ptr:
 	movhl	cx,VARPTR,0
 ENDIF
 op_add:
 	add	ax,dx
-	ret
+	VZ_RET
 op_sub:
 	sub	ax,dx
-	ret
+	VZ_RET
 op_shl:
 	mov	cl,dl
 	shl	ax,cl
-	ret
+	VZ_RET
 op_shr:
 	mov	cl,dl
 	sar	ax,cl
-	ret
+	VZ_RET
 op_mul:
 	imul	dx
-	ret
+	VZ_RET
 op_div:
 	tst	dx
 _ifn z
@@ -798,12 +798,12 @@ _ifn z
 	cwd
 	idiv	cx
 _endif
-	ret
+	VZ_RET
 op_mod:
 	call	op_div
 op_equ:
 	mov	ax,dx
-	ret
+	VZ_RET
 op_pushequ:
 	call	op_push
 	jmps	op_equ
@@ -811,17 +811,17 @@ op_andc:
 	call	tobool
 op_and:
 	and	ax,dx
-	ret
+	VZ_RET
 op_orc:
 	call	tobool
 op_or:
 	or	ax,dx
-	ret
+	VZ_RET
 op_xorc:
 	call	tobool
 op_xor:
 	xor	ax,dx
-	ret
+	VZ_RET
 tobool:
 	tst	ax
 	mov	ax,FALSE
@@ -833,7 +833,7 @@ _endif
 _ifn z
 	inc	dx
 _endif
-	ret
+	VZ_RET
 
 op_lt:
 	jl	op_set
@@ -854,13 +854,13 @@ op_ne:
 	jne	op_set
 op_clr:
 	mov	ax,FALSE
-	ret
+	VZ_RET
 op_not:
 	tst	ax
 	jnz	op_clr
 op_set:
 	mov	ax,TRUE
-	ret
+	VZ_RET
 
 setoptval endp
 
@@ -933,7 +933,7 @@ _if z
   _endif
 _endif
 	popm	<cx,bx>
-	ret
+	VZ_RET
 
 	public	scan_chr,scan_str
 scan_chr:
@@ -950,7 +950,7 @@ scan_str:
 	call	strskip
 scstr8:	lodsb
 	clc
-	ret
+	VZ_RET
 scannum	endp
 
 ;--- Scan decimal word ---
@@ -975,9 +975,9 @@ deciw1:
 	aad
 	mov	dx,ax
 	clc	
-	ret
+	VZ_RET
 deciw_x:stc
-	ret
+	VZ_RET
 scandeciw endp
 
 ;--- Scan decimal word or alpha ---
@@ -995,9 +995,9 @@ scandecial proc
 	xchg	al,ah
 	call	deciw1
 	mov	al,0
-	ret
+	VZ_RET
 scand9:	clc
-	ret
+	VZ_RET
 scandecial endp
 
 ;--- Option in 'puts' ---
@@ -1034,7 +1034,7 @@ _else
 	call	putval
 _endif
 oputs8:	pop	ds
-oputs9:	ret
+oputs9:	VZ_RET
 optputs endp
 
 
@@ -1057,7 +1057,7 @@ get_optkwd	proc
 		add	di,offset cgroup:tb_opt_b
 		mov	ax,es:[di]
 		popm	<es,di,cx>
-		ret
+		VZ_RET
 get_optkwd	endp
 
 ;----- Scan Long hexa -----
@@ -1093,7 +1093,7 @@ _until
 sclh8:		mov	ax,bx
 		popm	<cx,bx>
 		dec	si
-		ret
+		VZ_RET
 scan_lhexa	endp
 
 	endes

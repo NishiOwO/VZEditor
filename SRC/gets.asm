@@ -159,7 +159,7 @@ gets_esc:
 	stc
 gets8:
 	popm	<ds,bp,si>
-	ret
+	VZ_RET
 
 ;--- Init gets ---
 
@@ -202,7 +202,7 @@ igets5:	call	loadstr
 igets6:	call	getwindow
 	mov	word ptr [bp].tw_px,dx
 	mov	word ptr [bp].tw_sx,cx
-	ret
+	VZ_RET
 	
 ;--- Scan history buffer ---
 
@@ -220,9 +220,9 @@ _repeat
 stup1:	call	nextstr
 	tstb	[si]
 _until z
-	ret
+	VZ_RET
 stup2:	call	loadstr
-stup9:	ret
+stup9:	VZ_RET
 
 histdwn:
 	mov	si,[bp].hbptr
@@ -246,7 +246,7 @@ stdn2:	call	prestr
 	jc	newstr
 	call	prestr
 stdn3:	call	loadstr
-stdn9:	ret
+stdn9:	VZ_RET
 
 newstr:	
 	mov	[bp].hbptr,si
@@ -254,7 +254,7 @@ newstr:
 	mov	byte ptr [di],LF
 	mov	[bp].bend,di
 	mov	[bp].bword,0
-	ret
+	VZ_RET
 
 curstr:
 	mov	di,[bp].btop
@@ -265,7 +265,7 @@ curstr:
 	dec	di
 	mov	[di],al
 	mov	[bp].bend,di
-	ret
+	VZ_RET
 
 ;
 loadstr:
@@ -295,7 +295,7 @@ _ifn z
 _endif
 	mov	[bp].hbptr,si
 	mov	[bp].bend,di
-	ret
+	VZ_RET
 
 nextstr:
 	tstw	[bp].bword
@@ -304,7 +304,7 @@ _repeat
 	lodsb
 	tst	al
 _until	z
-	ret
+	VZ_RET
 nextword:
 _repeat
 	lodsb
@@ -318,7 +318,7 @@ _repeat
 	or	al,[si]
 _until z
 	dec	si
-	ret
+	VZ_RET
 
 prestr:
 	cmp	si,[bp].hbtop
@@ -331,7 +331,7 @@ _repeat
 	je	prest_c
 	tstb	[si-1]
 _until z
-	ret
+	VZ_RET
 preword:
 _repeat
 	dec	si
@@ -343,9 +343,9 @@ _repeat
 	cmp	al,SPC
 _until be
 	clc
-	ret
+	VZ_RET
 prest_c:stc
-	ret
+	VZ_RET
 
 ;
 skipword proc
@@ -369,7 +369,7 @@ _until be
 	ja	skword8
 	clr	al			; stz
 skword8:pop	si
-skword9:ret
+skword9:VZ_RET
 skipword endp
 
 ;
@@ -405,7 +405,7 @@ iscmp2:	mov	si,[bp].hbtop
   _endif
 	mov	[bp].bword,di
 _endif
-	ret
+	VZ_RET
 
 histcmp:
 	push	si
@@ -420,7 +420,7 @@ _repeat
 	cmpsb
 _while e
 	pop	si
-	ret
+	VZ_RET
 
 gets	endp
 
@@ -495,7 +495,7 @@ _endif
     rep	movsb
 	pop	cx
 	dec	cx
-stst9:	ret
+stst9:	VZ_RET
 
 stcut:
 	mov	si,[bp].hbend
@@ -517,7 +517,7 @@ stct3:	mov	byte ptr [si],0
 	inc	si
 	mov	di,si
 	add	di,cx
-	ret
+	VZ_RET
 storestr endp
 
 
@@ -565,7 +565,7 @@ _ifn cxz
 _endif
 	add	sp,type _getswk-bufwk_top
 	popm	<ds,bp>
-	ret
+	VZ_RET
 histcpy	endp
 
 	endes

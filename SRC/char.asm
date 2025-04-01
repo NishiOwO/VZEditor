@@ -16,9 +16,9 @@ isupper	proc
 	cmp	al,'Z'
 	ja	notup
 	stc
-isupr9:	ret
+isupr9:	VZ_RET
 notup:	clc
-	ret
+	VZ_RET
 isupper	endp
 
 ;--- Is lower/alpha? ---
@@ -34,9 +34,9 @@ islower:
 	cmp	al,'z'
 	ja	notalp
 	stc
-	ret
+	VZ_RET
 notalp:	clc
-isal9:	ret
+isal9:	VZ_RET
 isalpha	endp
 
 	endbs
@@ -53,9 +53,9 @@ isdigit proc
 	cmp	al,'9'
 	ja	notdig
 	stc
-	ret
+	VZ_RET
 notdig:	clc
-	ret
+	VZ_RET
 isdigit endp
 
 ;--- Is kanji ? ---
@@ -65,9 +65,9 @@ isdigit endp
 iskanji	proc
 	ifkanji kjyes
 	clc
-	ret
+	VZ_RET
 kjyes:	stc
-	ret
+	VZ_RET
 iskanji	endp
 
 ;--- Char to upper/lower case ---
@@ -81,7 +81,7 @@ _if c
 	sub	al,'a'-'A'
 	stc
 _endif
-	ret
+	VZ_RET
 toupper	endp
 
 tolower	proc
@@ -90,7 +90,7 @@ _if c
 	add	al,'a'-'A'
 	stc
 _endif
-	ret
+	VZ_RET
 tolower	endp
 
 ;--- String to upper/lower case ---
@@ -110,7 +110,7 @@ _repeat
   _cont
 strup2:	lodsb
 _until
-	ret
+	VZ_RET
 strupr	endp
 
 strlwr	proc
@@ -126,7 +126,7 @@ _repeat
   _cont
 strlw2:	lodsb
 _until
-	ret
+	VZ_RET
 strlwr	endp
 
 ;--- Copy string ---
@@ -142,7 +142,7 @@ _repeat
 	tst	al
 _until z
 	dec	di
-	ret
+	VZ_RET
 strcpy	endp
 
 ;--- Copy string (max) ---
@@ -163,7 +163,7 @@ _loop
 sncpy2:	clr	al
 	stosb
 sncpy3:	dec	di
-	ret
+	VZ_RET
 strncpy endp
 
 ;--- Copy word ---
@@ -181,7 +181,7 @@ _until be
 	dec	si
 	dec	di
 	mov	byte ptr es:[di],0
-	ret
+	VZ_RET
 wrdcpy	endp
 
 ;--- Compare two strings ---
@@ -193,7 +193,7 @@ strcmp	proc
 	pushm	<si,di>
 	call	strcmp1
 	popm	<di,si>
-	ret
+	VZ_RET
 strcmp	endp
 
 strcmp1	proc
@@ -207,7 +207,7 @@ strcmp1	proc
     rep cmpsb
 	mov	al,es:[di-1]
 	pop	cx
-	ret
+	VZ_RET
 strcmp1	endp
 
 ;----- Ignore case compare -----
@@ -229,7 +229,7 @@ _repeat
 	tst	al
 _until z
 	popm	<di,si>
-	ret
+	VZ_RET
 stricmp	endp
 
 ;--- Ignore case word compare ---
@@ -258,7 +258,7 @@ wcmp1:	cmp	ah,SPC
 	stc
 wcmp9:	mov	ax,si			; AX=next si
 	pop	si
-	ret
+	VZ_RET
 wrdicmp	endp
 
 ;--- String length ---
@@ -274,7 +274,7 @@ strlen	proc
 	not	ax
 	dec	ax
 	popm	<es,di,cx>
-	ret
+	VZ_RET
 strlen	endp
 
 	public	skipstr
@@ -285,7 +285,7 @@ skipstr	proc
   repnz	scasb
 	mov	ax,cx
 	pop	cx
-	ret
+	VZ_RET
 skipstr	endp
 
 	public	strskip
@@ -296,7 +296,7 @@ strskip	proc
 	call	skipstr
 	mov	si,di
 	popm	<es,di>
-	ret
+	VZ_RET
 strskip	endp
 
 ;--- Skip SPC,TAB ---
@@ -313,7 +313,7 @@ skipspc1:
 	cmp	al,SPC
 	je	skipspc
 skpspc8:dec	si
-	ret
+	VZ_RET
 skipspc	endp
 
 ;--- Skip to next char ---
@@ -328,7 +328,7 @@ _repeat
 	cmp	al,SPC
 _until be
 	call	skipspc1
-	ret
+	VZ_RET
 skipchar endp
 
 ;--- Change LF to NULL ---
@@ -347,7 +347,7 @@ lftonull proc
 	dec	ax
 	mov	byte ptr [di],0
 	pop	cx
-	ret
+	VZ_RET
 lftonull endp
 
 ;--- Scan CS:table ---
@@ -358,9 +358,9 @@ scantbl	proc
 	movseg	es,cs
   repne	scasb
 	pop	es
-	ret
+	VZ_RET
 scantbl	endp
-	ret
+	VZ_RET
 
 ;----- strchr(s,c) -----
 ;<-- CY :found(SI:ptr, CX:index)
@@ -407,7 +407,7 @@ _until e
 	_endif
 		stc
 strchr_x:	pop	bx
-		ret
+		VZ_RET
 strchr		endp
 
 ;----- strstr(si,di) -----
@@ -448,7 +448,7 @@ _repeat
 _loop
 strstr8:	clc
 strstr9:	pop	bx
-		ret
+		VZ_RET
 strstr		endp
 
 	endes

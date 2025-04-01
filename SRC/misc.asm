@@ -105,7 +105,7 @@ _ifn e
 	call	scrout_lx
 	call	touch
 _endif
-	ret
+	VZ_RET
 
 lmarg:
 	clr	cx
@@ -182,7 +182,7 @@ _repeat
 _until e
 	pop	es
 lmrg8:	clc
-lmrg9:	ret
+lmrg9:	VZ_RET
 se_chgindent endp
 
 ;--- Modefy mode ---
@@ -195,11 +195,11 @@ _if e
 _else
 	not	[bp].tchf
 _endif
-mmod9:	ret
+mmod9:	VZ_RET
 
 isviewmode:
 	cmp	[bp].tchf,TCH_VIEW
-	ret
+	VZ_RET
 se_readonly endp
 
 ;--- Compare two text ---
@@ -282,7 +282,7 @@ tcmp3:	pushf
 	xchg	bp,bx
 	call	dspscr
 	popf
-	ret
+	VZ_RET
 se_textcomp endp
 
 	endcs

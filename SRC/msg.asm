@@ -8,7 +8,7 @@
 
 ;--- Messages ---
 
-GDATA idword	label	byte
+GDATA idword,	label,	byte
 IFDEF PC98
 		db	'98'
 ENDIF
@@ -81,7 +81,7 @@ GDATA mg_install,db,	<'ÉÅÉÇÉäÇ…èÌíìÇµÇ‹ÇµÇΩ.'>
 GDATA mg_tsr2,	db,	<'Åi-zÇ≈âï˙Åj',CR,LF,'$'>
 GDATA mg_nospc,	db,	<'ÉÅÉÇÉäÇ™ë´ÇËÇ‹ÇπÇÒ.',CR,LF,'$'> ; ##155.85
 
-GDATA mg_harderr label byte			; ##151.08
+GDATA mg_harderr, label, byte			; ##151.08
 		db	'èëçûÇ›ã÷é~Ç≈Ç∑',0
 		db	'éwíËÇ™à·Ç¢Ç‹Ç∑',0
 		db	'èÄîıÇ™Ç≈Ç´ÇƒÇ¢Ç‹ÇπÇÒ',0
@@ -132,12 +132,12 @@ GDATA message,	db,	0
 		db	'Abandon Edit',0				;37
 		db	1,'Delete %u files. Sure',0			;38
 
-GDATA mg_exit,	db	<'Type EXIT to return.',CR,LF,'$'>
-GDATA mg_install,db	<'installed.'>
-GDATA mg_tsr2,	db	<'(-z to remove)',CR,LF,'$'>
+GDATA mg_exit,	db,	<'Type EXIT to return.',CR,LF,'$'>
+GDATA mg_install,db,	<'installed.'>
+GDATA mg_tsr2,	db,	<'(-z to remove)',CR,LF,'$'>
 GDATA mg_nospc,	db,	<'Out of memory.',CR,LF,'$'>
 
-GDATA mg_harderr label byte			; ##151.08
+GDATA mg_harderr, label, byte			; ##151.08
 		db	'write protected',0
 		db	'not exist',0
 		db	'not ready',0
@@ -249,4 +249,3 @@ GDATA code_end,	label,	near
 _tail		ends
 
 	end
-

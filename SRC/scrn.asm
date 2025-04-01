@@ -7,7 +7,7 @@
 ;--- External symbols ---
 
 	wseg
-	extrn	altsize		:byte
+;	extrn	altsize		:byte
 	extrn	atrtbl		:byte
 	extrn	atrucsr		:byte
 	extrn	atrflag		:byte
@@ -48,7 +48,9 @@ ENDIF
 	extrn	optputs		:near
 	extrn	toupper		:near
 	extrn	resetfp		:near
+IFDEF PC98
 	extrn	sm_sensekey	:near
+ENDIF
 
 	dseg
 
@@ -103,7 +105,7 @@ initscrn proc
 	mov	vsplit,cl
 	mov	hsplit,ch
 	call	resetscrnh
-	ret
+	VZ_RET
 initscrn endp
 
 	endis
@@ -120,7 +122,7 @@ _ifn z
 	inc	sp
 	inc	sp
 _endif
-	ret
+	VZ_RET
 issilent endp
 
 is_dossilent proc
@@ -129,7 +131,7 @@ _ifn z
 	inc	sp
 	inc	sp
 _endif
-	ret
+	VZ_RET
 is_dossilent endp
 
 ;--- Get/set window ---
@@ -140,14 +142,14 @@ is_dossilent endp
 getwindow proc
 	mov	dx,word ptr win.px
 	mov	cx,word ptr win.sx
-	ret
+	VZ_RET
 getwindow endp
 
 	public	setwindow
 setwindow proc
 	mov	word ptr win.px,dx
 	mov	word ptr win.sx,cx
-	ret
+	VZ_RET
 setwindow endp
 
 ;--- Get dos window ---
@@ -160,7 +162,7 @@ doswindow proc
 	call	dosheight
 	mov	cl,byte ptr doswd
 	clr	dx
-	ret
+	VZ_RET
 doswindow endp
 
 ;--- Set dos window ---
@@ -171,7 +173,7 @@ setdoswindow proc
 	call	doswindow
 	call	setwindow
 	popm	<dx,cx,ax>
-	ret
+	VZ_RET
 setdoswindow endp
 
 ;--- Set command line window ---
@@ -184,7 +186,7 @@ setcmdwindow proc
 	mov	ch,1
 	call	setwindow
 	call	setrefloc
-	ret
+	VZ_RET
 setcmdwindow endp
 
 dosloc1 proc
@@ -195,7 +197,7 @@ dosloc1 proc
 _if a
 	mov	dh,ch
 _endif
-	ret
+	VZ_RET
 dosloc1 endp
 
 ;--- Save window,location ---
@@ -235,7 +237,7 @@ chkscreen proc
 	mov	win.py,dh
 	mov	dosloc.py,dh
 	mov	byte ptr refloc+1,dh
-	ret
+	VZ_RET
 chkscreen endp
 
 ;--- Locate x,y ---
@@ -248,7 +250,7 @@ locate	proc
 	call	mkwindp
 	mov	dsp.@off,di
 	pop	di
-	ret
+	VZ_RET
 locate	endp
 
 ;--- Get GVRAM work @seg ---
@@ -259,7 +261,7 @@ getgvseg proc
 	call	ems_savemap
 	mov	ax,farseg
 	call	ems_map
-	ret
+	VZ_RET
 getgvseg endp
 
 ;--- Get locate x,y ---
@@ -268,7 +270,7 @@ getgvseg endp
 	public	getloc
 getloc	proc
 	mov	dx,loc
-	ret
+	VZ_RET
 getloc	endp
 
 ;--- Set dos location ---
@@ -278,7 +280,7 @@ setdosloc proc
 	mov	ax,loc
 	add	ax,word ptr win.px
 	mov	dosloc,ax
-	ret
+	VZ_RET
 setdosloc endp
 
 ;--- Set dos cursor ---
@@ -291,7 +293,7 @@ setdoscsr proc
 	call	locate
 	mov	al,CSR_SYS
 	call	csron
-	ret
+	VZ_RET
 setdoscsr endp
 
 ;--- Get graphic char ---
@@ -307,7 +309,7 @@ getgrafchr proc
 	sub	al,GRC
 	xlat	cs:dummy
 	pop	bx
-	ret
+	VZ_RET
 getgrafchr endp
 
 ;--- Init window parm. ---
@@ -327,7 +329,7 @@ initwind proc
 	mov	dl,ch
 	clr	dh
 	clr	ch
-	ret
+	VZ_RET
 initwind endp
 
 ;--- Reset image ptr ---
@@ -336,7 +338,7 @@ initwind endp
 clrwstack proc
 	mov	ax,imgstack
 	mov	imagep,ax
-	ret
+	VZ_RET
 clrwstack endp
 
 ;--- Set/Get cursor type ---
@@ -347,14 +349,14 @@ clrwstack endp
 setcsrtype proc
 	mov	csr_i,dl
 	mov	csr_o,dh
-	ret
+	VZ_RET
 setcsrtype endp
 
 	public	getcsrtype
 getcsrtype proc
 	mov	dl,csr_i
 	mov	dh,csr_o
-	ret
+	VZ_RET
 getcsrtype endp
 
 ;--- Convert shift-JIS to JIS ---
@@ -365,7 +367,7 @@ getcsrtype endp
 cvtjis	proc
 	mov	ax,dx
 	mstojis
-	ret
+	VZ_RET
 cvtjis	endp
 
 	endes
@@ -400,7 +402,7 @@ _else
 	pop	bx
 _endif
 	pop	ax
-	ret
+	VZ_RET
 setgbank endp
 
 	endbs
@@ -409,7 +411,7 @@ ENDIF
 IFDEF PC98
 	include	scrn98.asm
 ELSE
-	include	scrnIBM.asm
+	include	scrnibm.asm
 ENDIF
 
 	end
@@ -418,4 +420,3 @@ ENDIF
 ;	End of 'scrn.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

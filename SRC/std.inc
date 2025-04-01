@@ -116,7 +116,7 @@ O_UPDATE	equ	2
 IFDEF STDSEG
 cgroup		group	_TEXT,_DATA
 
-_TEXT		segment	byte public 'TEXT'
+_TEXT		segment	word public 'TEXT'
 _TEXT		ends
 _DATA		segment	word public 'DATA'
 _DATA		ends
@@ -292,8 +292,27 @@ rcrm	macro	reg,imm
 	shiftm	rcr,reg,imm
 	endm
 
+echg	macro	reg
+	ifidni <reg>, <ax>
+	xchg ah, al
+	endif
+	ifidni <reg>, <bx>
+	xchg bh, bl
+	endif
+	ifidni <reg>, <cx>
+	xchg ch, cl
+	endif
+	ifidni <reg>, <dx>
+	xchg dh, dl
+	endif
+	endm
+
 movhl	macro	wreg,imm_h,imm_l
 	mov	wreg,((imm_h) shl 8)+((imm_l) and 0FFh)
+;	xor	wreg, wreg
+;	or	wreg, imm_h
+;	echg	wreg
+;	or	wreg, imm_l
 	endm
 
 bios	macro	cmd
@@ -504,4 +523,3 @@ ENDIF
 ; Copyright (C) 1989 by c.mos
 ;****************************
 	.list	
-

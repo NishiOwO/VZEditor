@@ -64,7 +64,7 @@ _pblk		ends
 	extrn	stopintnum	:word
 	extrn	stops		:word
 	extrn	syssw		:word
-	extrn	texts		:word
+	;extrn	texts		:word
 	extrn	tmpbuf		:word
 ;	extrn	tmpbuf2		:word
 	extrn	parbuf		:near	; ##156.96
@@ -90,7 +90,7 @@ _pblk		ends
 	extrn	xmem_close	:near
 	extrn	xmem_extend	:near
 	extrn	tmp_close	:near
-	extrn	ems_free	:near
+;	extrn	ems_free	:near
 	extrn	ems_resetmap	:near
 	extrn	ems_restore	:near
 	extrn	ems_save	:near
@@ -146,7 +146,7 @@ ENDIF
 
 	extrn	cs_stack	:near
 	extrn	windgets1	:near
-	extrn	dos_go		:near
+;	extrn	dos_go		:near
 
 ;--- Local work ---
 
@@ -241,7 +241,7 @@ isfreeme proc
 	mov	es,ax
 	tstw	es:[mcb_psp]
 _ifn z
-	ret
+	VZ_RET
 _endif
 	pop	ax
 	mov	dx,loseg
@@ -275,7 +275,7 @@ exec1:
 	call	setfnckey
 	call	setdosloc
 	mov	si,xbuf
-	mov	buflen,DOSLEN-2
+	mov	buflen,VZ_DOSLEN-2
 	call	dosgets
 	mov	flret,0
 	jnc	exec2
@@ -338,7 +338,7 @@ _endif
 	call	resetint24
 	call	swapout
 ;	call	resetgbank
-	jmp	lo_exec
+	jmp	near ptr lo_exec
 
 cs_exec:
 	pop	bp
@@ -507,7 +507,7 @@ isvz3:	cmp	al,'.'
 	ja	isvz2
 isvz_o:	clc
 isvz8:	popm	<di,es>
-	ret
+	VZ_RET
 ENDIF
 
 intdos:
@@ -725,7 +725,7 @@ dosget_i:
 dosget1:
 	mov	flcmdp,0		; ##153.43
 	mov	cl,buflen
-	test	dossw,DOS_RETURN
+	test	dossw,VZ_DOS_RETURN
 _ifn z
 	tstb	flret
   _if z
@@ -774,7 +774,7 @@ dos_esc:
 	mov	execcmd,0
 dosesc1:mov	frompool,ah
 	stc
-	ret
+	VZ_RET
 IFNDEF NOFILER
 dos_filer:
 	mov	pathp,0
@@ -794,7 +794,7 @@ dosfl0:
 	tstb	doslen			; by DOSBOX
 _ifn z
 doscr1:
-	and	dossw,not DOS_GO
+	and	dossw,not VZ_DOS_GO
 	clr	cx
 	xchg	cx,word ptr doslen
 	jmps	dos_cr
@@ -874,7 +874,7 @@ dosget8:
 ;ENDIF
 	popm	<si,cx>
 	clc
-	ret
+	VZ_RET
 dosgets	endp
 
 ;--- Skip command ---			; ##1.5
@@ -893,7 +893,7 @@ _until be
 	mov	flcmdp,si
 	jmp	skcmd1
 skcmd7:	mov	si,bx
-skcmd8:	ret
+skcmd8:	VZ_RET
 skipcmd	endp
 ENDIF
 
@@ -920,7 +920,7 @@ _until
 	call	strcpy
 	mov	al,LF
 	stosb
-	ret
+	VZ_RET
 dosspread endp
 ENDIF
 
@@ -963,7 +963,7 @@ _endif
 ;	mov	ax,cs
 ;	mov	ss,ax
 ;	sti
-	ret
+	VZ_RET
 quit_tsr endp
 
 	endcs
@@ -986,7 +986,7 @@ _if e
 ;  _endif
 _endif
 ENDIF
-	ret	
+	VZ_RET	
 install_vz endp
 
 	endis	; endws
@@ -1019,7 +1019,7 @@ ENDIF
 	stc
 _endif
 	pop	ds
-	ret	
+	VZ_RET	
 remove_vz endp
 
 	endis
@@ -1047,7 +1047,7 @@ _ifn z
 	mov	gends,ax
 	pop	es
 _endif
-	ret
+	VZ_RET
 expandfar endp
 
 ;--- Init far area ---
@@ -1086,10 +1086,10 @@ _if ae
 _endif
 	mov	gends,bx
 	clr	ax
-	ret
+	VZ_RET
 inifar_x:
 	stc
-	ret
+	VZ_RET
 initfar endp
 
 ;--- Allocate TPA ---
@@ -1145,9 +1145,9 @@ _until e
 	mov	cs:tpafreep,bx
 alloc8:	pop	es
 	mov	es:[bx],dx
-alloc9:	ret
+alloc9:	VZ_RET
 alloc_x:pop	ax
-	ret
+	VZ_RET
 allocTPA endp
 
 	endes
@@ -1172,7 +1172,7 @@ _endif
 	jz	chkmcb9
 	cmp	es:[mcb_psp],ax
 chkmcb9:pop	es
-	ret
+	VZ_RET
 checkmcb endp
 
 ;--- Free TPA ---
@@ -1188,7 +1188,7 @@ _ifn z
 	msdos	F_FREE
   _endif
 _endif
-	ret
+	VZ_RET
 freeTPA endp
 
 ;--- Get TPA top seg ptr ---
@@ -1207,7 +1207,7 @@ _if ae
 _endif
 	inc	bx
 	inc	bx
-	ret
+	VZ_RET
 TPAptr	endp
 
 ;--- Set/reset INT06h ---
@@ -1235,7 +1235,7 @@ setintstop proc
 	mov	ax,offset cgroup:int06in
 	call	setint
 	mov	cs:stopf,FALSE
-	ret
+	VZ_RET
 setintstop endp
 
 	public	resetintstop
@@ -1243,7 +1243,7 @@ resetintstop proc
 	mov	bx,offset cgroup:vct06
 	mov	di,cs:stopintnum
 	call	resetint
-	ret
+	VZ_RET
 resetintstop endp
 
 	endes
@@ -1261,7 +1261,7 @@ setint21 proc
 	mov	di,21h*4
 	mov	ax,offset cgroup:int21in
 	call	setint
-	ret
+	VZ_RET
 setint21 endp
 
 
@@ -1269,7 +1269,7 @@ resetint21 proc
 	mov	bx,offset cgroup:vct21
 	mov	di,21h*4
 	call	resetint1
-	ret
+	VZ_RET
 resetint21 endp
 
 ;--- Set/reset INT vector ---
@@ -1305,7 +1305,7 @@ _endif
 	pop	es
 	pop	ds
 	sti
-	ret
+	VZ_RET
 setint	endp
 
 	public	resetint,resetint1
@@ -1330,7 +1330,7 @@ _ifn z
 _endif
 	pop	ds
 	sti
-	ret
+	VZ_RET
 resetint endp
 
 IFDEF DEBUG21
@@ -1345,4 +1345,3 @@ ENDIF
 ;	End of 'dos.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

@@ -135,7 +135,7 @@ newline	proc
 	mov	msgon,-1
 	popm	<dx,cx,ax>
 	popf
-	ret
+	VZ_RET
 newline	endp
 
 	endes
@@ -183,7 +183,7 @@ _endif
 	call	getloc		; ##156.139
 	call	locate
 	popm	<ds,di,si,dx>
-	ret
+	VZ_RET
 dispmsg	endp
 
 messagep proc
@@ -195,7 +195,7 @@ _repeat
 	dec	dl
 _until z
 	mov	si,di
-	ret
+	VZ_RET
 messagep endp
 
 	assume	ds:cgroup
@@ -213,7 +213,7 @@ dispstr	proc
 	mov	si,sbuf
 	call	puts
 	pop	ds
-	ret
+	VZ_RET
 dispstr	endp
 
 	assume	ds:nothing
@@ -264,7 +264,7 @@ ask8:	pushf
 	call	csroff
 	pop	ax
 	popf
-	ret
+	VZ_RET
 
 dispaskn:
 	mov	al,dl
@@ -289,7 +289,7 @@ disppole proc
 	mov	dl,vsplit
 	call	locate
 	call	vlinec
-	ret
+	VZ_RET
 disppole endp
 
 ;****************************
@@ -368,14 +368,14 @@ _endif
 	mov	al,ATR_TXT
 	call	setatr
 	pop	ds
-	ret
+	VZ_RET
 
 setatr_r:
 	mov	al,[bp].atrstt1
 	tst	al
 _ifn z
 	call	set_attr
-	ret
+	VZ_RET
 _endif
 	mov	al,ATR_STT
 	tstb	[bp].tchf
@@ -387,7 +387,7 @@ _if z
 	mov	al,ATR_STT2
 _endif
 	call	setatr
-	ret
+	VZ_RET
 
 fillright proc
 _ifn cxz
@@ -395,7 +395,7 @@ _ifn cxz
 	call	putspc
   _loop
 _endif
-	ret
+	VZ_RET
 fillright endp
 
 ;--- Edit mode ---
@@ -444,7 +444,7 @@ _endif
 	mov	bx,sp
 	call	printf
 	add	sp,4
-	ret
+	VZ_RET
 
 ;--- Indicator bar ---
 
@@ -511,7 +511,7 @@ _endif
 	mov	dl,33
 	call	fillspc
 	mov	al,GRC_VL
-	ret
+	VZ_RET
 	
 ;--- System parameter ---
 
@@ -572,7 +572,7 @@ sys_cp:	push	ax		; %
 	mov	si,offset cgroup:pf_sysparm
 	call	printf
 	add	sp,10
-	ret
+	VZ_RET
 dispstat endp
 
 	assume	ds:nothing
@@ -605,7 +605,7 @@ _if z
 	sub	ax,1
 	sbb	dx,0
 _endif
-tsize9:	ret
+tsize9:	VZ_RET
 textsize endp
 
 ;--- Get current ptr ---
@@ -626,7 +626,7 @@ _if a
 	mov	dx,cx
 	mov	ax,bx
 _endif
-	ret
+	VZ_RET
 getcurptr endp
 
 gettcp	proc
@@ -640,7 +640,7 @@ _ifn z
 	mov	ax,[bp].tnxt
   _endif
 _endif
-	ret
+	VZ_RET
 gettcp	endp
 
 ;--- Display text label ---
@@ -659,7 +659,7 @@ _else
   _endif
  _endif
 	pop	ax
-	ret
+	VZ_RET
 setatr_p endp
 
 displabel1 proc
@@ -667,7 +667,7 @@ displabel1 proc
 	call	displabel
 	call	putspc
 	call	setatr_r
-	ret
+	VZ_RET
 displabel1 endp
 
 	public	displabel
@@ -704,7 +704,7 @@ _endif
 	pop	ds
 	mov	dl,28
 	call	fillspc
-	ret
+	VZ_RET
 displabel endp
 	
 ;--- Display Line header ---
@@ -761,7 +761,7 @@ _ifn z
 	pop	si
 _endif
 	pop	dx
-	ret
+	VZ_RET
 disphead endp
 
 	endcs
@@ -804,7 +804,7 @@ dispframe proc
 	call	locate
 	call	vlinec
 	popm	<dx,cx>
-	ret
+	VZ_RET
 dispframe endp
 
 ;--- Repeat put char ---
@@ -821,7 +821,7 @@ _repeat
 	pop	ax
 _loop
 	pop	cx
-	ret
+	VZ_RET
 repputc endp
 
 	assume	ds:cgroup
@@ -838,7 +838,7 @@ dispprmpt proc
 	mov	si,prompt
 	call	puts_t
 	pop	ds
-	ret
+	VZ_RET
 dispprmpt endp
 
 ;--- Display key mode ---
@@ -887,7 +887,7 @@ dspk2:	clr	ah
 	call	abputc
 _loop
 dspk8:	pop	ax
-dspk9:	ret
+dspk9:	VZ_RET
 dispkeymode endp
 
 ;--- Display macro message ---
@@ -943,7 +943,7 @@ _ifn z
 _endif
 	call	loadwloc
 	pop	silent
-macmsg9:ret
+macmsg9:VZ_RET
 dispmacmsg endp
 
 ;--- Put message ---
@@ -954,7 +954,7 @@ putmg	proc
 	movseg	ds,cs
 	call	puts
 	pop	ds
-	ret
+	VZ_RET
 putmg	endp
 
 	endes

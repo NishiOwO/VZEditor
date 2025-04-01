@@ -27,13 +27,11 @@ printf	proc
 	movseg	ds,ss
 	call	puts
 	popm	<es,ds,di,si>
-	ret
+	VZ_RET
 printf	endp
 
 	public	sprintf
-sprintf	proc
 	include	sprintf.inc
-sprintf	endp
 
 	endes
 
@@ -43,4 +41,3 @@ sprintf	endp
 ;	End of 'printf.asm'
 ; Copyright (C) 1989 by c.mos
 ;****************************
-

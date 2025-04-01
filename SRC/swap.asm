@@ -137,7 +137,7 @@ swapo8:
 		sub	cx,si
 		call	memcopy
 	_endif
-		ret
+		VZ_RET
 swapout		endp
 
 ;----- Swap out CS & SS -----
@@ -150,7 +150,7 @@ swapout_cs	proc
 		tstb	usefar
 	_ifn z
 		stc
-		ret
+		VZ_RET
 	_endif
 		push	es
 		mov	ax,offset cgroup:cstop
@@ -193,7 +193,7 @@ swapout_cs	proc
 	_endif
 		pop	bx
 		pop	es
-		ret
+		VZ_RET
 swapout_cs 	endp
 
 ;----- Swap out Text -----
@@ -225,7 +225,7 @@ _repeat
 		cmp	si,di
 _while b
 		mov	textslots,cx
-		ret
+		VZ_RET
 swapout_text	endp
 
 ;----- Swap out block -----
@@ -245,7 +245,7 @@ swapout_blk	proc
 		mov	[bx].xs_handle,ax
 		call	xmem_write
 	_endif
-		ret
+		VZ_RET
 swapout_blk	endp
 
 		endes
@@ -265,7 +265,7 @@ swapin_blk	proc
 		mov	cx,ax
 		mov	ax,[bx].xs_handle
 		call	xmem_read
-		ret
+		VZ_RET
 swapin_blk	endp
 
 ;----- Swap in CS & SS -----
@@ -325,7 +325,7 @@ swapin8:
 		call	memcopy
 	_endif
 		clc
-swapin9:	ret
+swapin9:	VZ_RET
 swapin_es 	endp
 
 		endbs
@@ -340,7 +340,7 @@ swapin_cs	proc
 		call	swapclose
 		mov	bx,offset cgroup:xslot_ss
 		call	swapclose
-		ret
+		VZ_RET
 swapin_cs	endp
 
 ;----- Swap in text -----
@@ -374,7 +374,7 @@ _repeat
 		pop	cx
 		add	bx,type _swapslot
 _loop
-		ret
+		VZ_RET
 swapin_text	endp
 
 ;--- Close Swap buffer ---
@@ -383,7 +383,7 @@ swapclose	proc
 		clr	ax
 		xchg	ax,[bx].xs_handle
 		call	xmem_free
-		ret
+		VZ_RET
 swapclose	endp
 
 ;--- Change Stack ---
@@ -429,7 +429,7 @@ set_ss:		mov	ss,ax
 		mov	cs:save_ds,ds
 		mov	es,cs:loseg
 		mov	es:save_ds,ds
-		ret
+		VZ_RET
 stack_ss	endp
 
 move_wseg	proc
@@ -438,7 +438,7 @@ move_wseg	proc
 		mov	cx,offset cgroup:parbuf
 		sub	cx,si
 		call	memcopy
-		ret
+		VZ_RET
 move_wseg	endp
 
 		endes
@@ -481,7 +481,7 @@ _endif
 	msdos	F_REALLOC
 swapo8:	call	allocTPA
 	pop	es
-	ret
+	VZ_RET
 swapout endp
 
 	endes
@@ -500,7 +500,7 @@ memcopy proc
 _if c
 	movsb
 _endif
-	ret
+	VZ_RET
 memcopy endp
 
 	endbs
