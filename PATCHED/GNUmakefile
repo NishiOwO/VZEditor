@@ -10,7 +10,7 @@ HARD =
 FLAG = -DPC98
 
 default:
-	@echo "Available paltforms: 98 J31 IBM IBMJ AX 55 US"
+	@echo "Available platforms: 98 J31 IBM IBMJ AX 55 US"
 	@echo "Run $(MAKE) vz PLATFORM=<platform> to build"
 
 ifeq ($(PLATFORM),98)
